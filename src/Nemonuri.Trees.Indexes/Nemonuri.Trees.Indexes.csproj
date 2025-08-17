@@ -4,11 +4,10 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>Nemonuri.Trees</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Diagnostics" />
+    <ProjectReference Include="..\Nemonuri.Trees\Nemonuri.Trees.csproj" />
   </ItemGroup>
 
 </Project>
