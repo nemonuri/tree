@@ -5,23 +5,23 @@ public static class TreeNodeAggregatingTheory
 {
     public static bool TryAggregateAsRoot<TTreeNode, TTarget, TContext>
     (
-        IAggregator<TreeNodeWithIndex<TTreeNode>, TContext> fromRootContextAggregator,
+        IAggregator<TreeNodeWithIndex<TTreeNode>, TContext> rootOriginatedContextAggregator,
         IAggregator2DWithContext<TTreeNode, TTarget, TContext> treeNodeAggregator,
         IChildrenProvider<TTreeNode> childrenProvider,
         TTreeNode treeNode,
         [NotNullWhen(true)] out TTarget? aggregated
     )
     {
-        Debug.Assert(fromRootContextAggregator is not null);
+        Debug.Assert(rootOriginatedContextAggregator is not null);
         Debug.Assert(treeNodeAggregator is not null);
         Debug.Assert(childrenProvider is not null);
         Debug.Assert(treeNode is not null);
 
         if
         (
-            !fromRootContextAggregator.TryAggregate
+            !rootOriginatedContextAggregator.TryAggregate
             (
-                fromRootContextAggregator.DefaultAggregated,
+                rootOriginatedContextAggregator.DefaultAggregated,
                 new TreeNodeWithIndex<TTreeNode>(treeNode),
                 out TContext? context
             )
@@ -32,7 +32,7 @@ public static class TreeNodeAggregatingTheory
         (
             !TryAggregateChildren
             (
-                fromRootContextAggregator,
+                rootOriginatedContextAggregator,
                 treeNodeAggregator,
                 childrenProvider,
                 context,
@@ -64,7 +64,7 @@ public static class TreeNodeAggregatingTheory
 
     public static bool TryAggregateChildren<TTreeNode, TTarget, TContext>
     (
-        IAggregator<TreeNodeWithIndex<TTreeNode>, TContext> fromRootContextAggregator,
+        IAggregator<TreeNodeWithIndex<TTreeNode>, TContext> rootOriginatedContextAggregator,
         IAggregator2DWithContext<TTreeNode, TTarget, TContext> treeNodeAggregator,
         IChildrenProvider<TTreeNode> childrenProvider,
         TContext context,
@@ -72,7 +72,7 @@ public static class TreeNodeAggregatingTheory
         [NotNullWhen(true)] out TTarget? childrenAggregated
     )
     {
-        Debug.Assert(fromRootContextAggregator is not null);
+        Debug.Assert(rootOriginatedContextAggregator is not null);
         Debug.Assert(treeNodeAggregator is not null);
         Debug.Assert(childrenProvider is not null);
         Debug.Assert(context is not null);
@@ -85,7 +85,7 @@ public static class TreeNodeAggregatingTheory
         {
             if
             (
-                !fromRootContextAggregator.TryAggregate
+                !rootOriginatedContextAggregator.TryAggregate
                 (
                     context,
                     new TreeNodeWithIndex<TTreeNode>(child, childIndex),
@@ -98,7 +98,7 @@ public static class TreeNodeAggregatingTheory
             (
                 !TryAggregateChildren
                 (
-                    fromRootContextAggregator,
+                    rootOriginatedContextAggregator,
                     treeNodeAggregator,
                     childrenProvider,
                     childContext,

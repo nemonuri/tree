@@ -3,9 +3,9 @@ using System.Collections;
 
 namespace Nemonuri.Trees;
 
-public class DefaultFromRootContext<TTreeNode> : IReadOnlyList<TreeNodeWithIndex<TTreeNode>>
+public class RootOriginatedTreeNodeWithIndexSequence<TTreeNode> : IReadOnlyList<TreeNodeWithIndex<TTreeNode>>
 {
-    public static DefaultFromRootContext<TTreeNode> Empty { get; } = new();
+    public static RootOriginatedTreeNodeWithIndexSequence<TTreeNode> Empty { get; } = new();
 
     private readonly TTreeNode? _root;
 
@@ -15,7 +15,7 @@ public class DefaultFromRootContext<TTreeNode> : IReadOnlyList<TreeNodeWithIndex
     private readonly ImmutableList<TTreeNode> _treeNodes;
     private readonly ImmutableList<int> _indexes;
 
-    private DefaultFromRootContext(bool isEmpty, TTreeNode? root, ImmutableList<TTreeNode> treeNodes, ImmutableList<int> indexes)
+    private RootOriginatedTreeNodeWithIndexSequence(bool isEmpty, TTreeNode? root, ImmutableList<TTreeNode> treeNodes, ImmutableList<int> indexes)
     {
         Debug.Assert(treeNodes is not null);
         Debug.Assert(indexes is not null);
@@ -29,7 +29,7 @@ public class DefaultFromRootContext<TTreeNode> : IReadOnlyList<TreeNodeWithIndex
         Debug.Assert(IsEmpty || _root is not null);
     }
 
-    private DefaultFromRootContext() : this(true, default, [], [])
+    private RootOriginatedTreeNodeWithIndexSequence() : this(true, default, [], [])
     { }
 
     public int Count
@@ -70,7 +70,7 @@ public class DefaultFromRootContext<TTreeNode> : IReadOnlyList<TreeNodeWithIndex
     public bool TryAppend
     (
         TreeNodeWithIndex<TTreeNode> appending,
-        [NotNullWhen(true)] out DefaultFromRootContext<TTreeNode>? context
+        [NotNullWhen(true)] out RootOriginatedTreeNodeWithIndexSequence<TTreeNode>? context
     )
     {
         var (node, index) = appending;

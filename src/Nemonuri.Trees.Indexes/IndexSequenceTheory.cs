@@ -10,7 +10,7 @@ public static class IndexSequenceTheory
 
     public static IndexSequence ToIndexSequence<TNode>
     (
-        this DefaultFromRootContext<TNode> indexedPath
+        this RootOriginatedTreeNodeWithIndexSequence<TNode> indexedPath
     )
     {
         return new IndexSequence(indexedPath.InternalIndexes);

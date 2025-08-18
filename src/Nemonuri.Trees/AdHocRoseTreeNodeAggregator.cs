@@ -3,14 +3,14 @@
 namespace Nemonuri.Trees;
 
 public class AdHocRoseTreeNodeAggregator<T, TTarget> :
-    IAggregator2DWithContext<RoseTreeNode<T>, TTarget, DefaultFromRootContextAggregator<RoseTreeNode<T>>>
+    IAggregator2DWithContext<RoseTreeNode<T>, TTarget, RootOriginatedTreeNodeWithIndexSequenceAggregator<RoseTreeNode<T>>>
 {
     private readonly AdHocTreeNodeAggregator<RoseTreeNode<T>, TTarget> _internalSource;
 
     public AdHocRoseTreeNodeAggregator
     (
         Func<TTarget> defaultSeedProvider,
-        TryAggregator2DWithContext<RoseTreeNode<T>, TTarget, DefaultFromRootContextAggregator<RoseTreeNode<T>>> tryAggregator
+        TryAggregator2DWithContext<RoseTreeNode<T>, TTarget, RootOriginatedTreeNodeWithIndexSequenceAggregator<RoseTreeNode<T>>> tryAggregator
     )
     {
         _internalSource = new(defaultSeedProvider, tryAggregator);
@@ -19,7 +19,7 @@ public class AdHocRoseTreeNodeAggregator<T, TTarget> :
     public AdHocRoseTreeNodeAggregator
     (
         Func<TTarget> defaultSeedProvider,
-        OptionalAggregator2DWithContext<RoseTreeNode<T>, TTarget, DefaultFromRootContextAggregator<RoseTreeNode<T>>> optionalAggregator
+        OptionalAggregator2DWithContext<RoseTreeNode<T>, TTarget, RootOriginatedTreeNodeWithIndexSequenceAggregator<RoseTreeNode<T>>> optionalAggregator
     )
     {
         _internalSource = new(defaultSeedProvider, optionalAggregator);
@@ -27,14 +27,14 @@ public class AdHocRoseTreeNodeAggregator<T, TTarget> :
 
     public Func<TTarget> DefaultSeedProvider => _internalSource.DefaultSeedProvider;
 
-    public TryAggregator2DWithContext<RoseTreeNode<T>, TTarget, DefaultFromRootContextAggregator<RoseTreeNode<T>>> TryAggregator =>
+    public TryAggregator2DWithContext<RoseTreeNode<T>, TTarget, RootOriginatedTreeNodeWithIndexSequenceAggregator<RoseTreeNode<T>>> TryAggregator =>
         _internalSource.TryAggregator;
 
     public TTarget DefaultAggregated => _internalSource.DefaultAggregated;
 
     public bool TryAggregate
     (
-        DefaultFromRootContextAggregator<RoseTreeNode<T>> context,
+        RootOriginatedTreeNodeWithIndexSequenceAggregator<RoseTreeNode<T>> context,
         TTarget siblingsAggregated,
         TTarget childrenAggregated,
         RoseTreeNode<T> source,
