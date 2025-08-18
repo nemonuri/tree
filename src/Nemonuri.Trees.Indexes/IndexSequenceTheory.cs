@@ -10,10 +10,16 @@ public static class IndexSequenceTheory
 
     public static IndexSequence ToIndexSequence<TNode>
     (
-        this RootOriginatedTreeNodeWithIndexSequence<TNode> indexedPath
+        this IHasIndexSequence hasIndexSequence
     )
     {
-        return new IndexSequence(indexedPath.InternalIndexes);
+        Debug.Assert(hasIndexSequence is not null);
+
+        return hasIndexSequence.IndexSequence switch
+        {
+            ImmutableList<int> v => new(v),
+            { } v => new([.. v])
+        };
     }
 
     public static IndexSequence UpdateAsInserted

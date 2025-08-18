@@ -3,7 +3,9 @@ using System.Collections;
 
 namespace Nemonuri.Trees;
 
-public class RootOriginatedTreeNodeWithIndexSequence<TTreeNode> : IReadOnlyList<TreeNodeWithIndex<TTreeNode>>
+public class RootOriginatedTreeNodeWithIndexSequence<TTreeNode> : 
+    IReadOnlyList<TreeNodeWithIndex<TTreeNode>>,
+    IHasIndexSequence
 {
     public static RootOriginatedTreeNodeWithIndexSequence<TTreeNode> Empty { get; } = new();
 
@@ -122,9 +124,5 @@ public class RootOriginatedTreeNodeWithIndexSequence<TTreeNode> : IReadOnlyList<
         }
     }
 
-    // note
-    // - Nemonuri.Trees.Indexes.csproj 이 접근할 수 있도록 하기 위해 이 메서드를 만들었다.
-    // - internal 로 선언하고, InternalVisibleTo 특성을 붙이는 것이 더 낫지 않나?
-    // - 아니면, IHasImmutableIndexesList 인터페이스를 만들고, 구현한다거나.
-    public ImmutableList<int> InternalIndexes => _indexes;
+    IEnumerable<int> IHasIndexSequence.IndexSequence => _indexes;
 }
