@@ -1,4 +1,5 @@
 
+
 namespace Nemonuri.Trees;
 
 public class RootOriginatedTreeNodeWithIndexSequenceAggregator<TTreeNode> :
