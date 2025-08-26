@@ -5,4 +5,8 @@
   
   <Import Project="$(MSBuildThisFileDirectory)res/package/Directory.Pack.props" />
 
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+  </ItemGroup>
+
 </Project>

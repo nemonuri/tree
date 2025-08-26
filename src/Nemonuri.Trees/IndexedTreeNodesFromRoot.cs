@@ -124,7 +124,7 @@ public class IndexedTreeNodesFromRoot<TTreeNode> :
         }
     }
 
-    IEnumerable<int> IHasIndexSequence.IndexSequence => _indexes;
+    IEnumerable<int> IHasIndexes.Indexes => _indexes;
 
     public TTreeNode? Root => _root;
 }

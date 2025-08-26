@@ -8,14 +8,14 @@ public static class IndexSequenceTheory
         return new IndexSequence(internalList);
     }
 
-    public static IndexSequence ToIndexSequence<TNode>
+    public static IndexSequence ToIndexSequence
     (
-        this IHasIndexSequence hasIndexSequence
+        this IHasIndexes hasIndexSequence
     )
     {
         Debug.Assert(hasIndexSequence is not null);
 
-        return hasIndexSequence.IndexSequence switch
+        return hasIndexSequence.Indexes switch
         {
             ImmutableList<int> v => new(v),
             { } v => new([.. v])

@@ -1,7 +1,7 @@
 
 namespace Nemonuri.Trees;
 
-public interface IIndexesFromRoot<TTreeNode> : IHasIndexSequence
+public interface IIndexesFromRoot<TTreeNode> : IHasIndexes
 {
     TTreeNode? Root { get; }
 }
@@ -19,5 +19,5 @@ public readonly struct IndexesFromRoot<TTreeNode> : IIndexesFromRoot<TTreeNode>
 
     public TTreeNode? Root => _root;
 
-    public IEnumerable<int> IndexSequence => _indexSequence ?? [];
+    public IEnumerable<int> Indexes => _indexSequence ?? [];
 }
