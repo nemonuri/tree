@@ -3,16 +3,16 @@
 namespace Nemonuri.Trees;
 
 public class AdHocTreeNodeAggregator<TTreeNode, TTarget> :
-    IAggregator2DWithContext<TTreeNode, TTarget, RootOriginatedTreeNodeWithIndexSequence<TTreeNode>>
+    IAggregator2DWithContext<TTreeNode, TTarget, IndexedTreeNodesFromRoot<TTreeNode>>
 {
     public Func<TTarget> DefaultSeedProvider { get; }
 
-    public TryAggregator2DWithContext<TTreeNode, TTarget, RootOriginatedTreeNodeWithIndexSequence<TTreeNode>> TryAggregator { get; }
+    public TryAggregator2DWithContext<TTreeNode, TTarget, IndexedTreeNodesFromRoot<TTreeNode>> TryAggregator { get; }
 
     public AdHocTreeNodeAggregator
     (
         Func<TTarget> defaultSeedProvider,
-        TryAggregator2DWithContext<TTreeNode, TTarget, RootOriginatedTreeNodeWithIndexSequence<TTreeNode>> tryAggregator
+        TryAggregator2DWithContext<TTreeNode, TTarget, IndexedTreeNodesFromRoot<TTreeNode>> tryAggregator
     )
     {
         Debug.Assert(defaultSeedProvider is not null);
@@ -25,7 +25,7 @@ public class AdHocTreeNodeAggregator<TTreeNode, TTarget> :
     public AdHocTreeNodeAggregator
     (
         Func<TTarget> defaultSeedProvider,
-        OptionalAggregator2DWithContext<TTreeNode, TTarget, RootOriginatedTreeNodeWithIndexSequence<TTreeNode>> optionalAggregator
+        OptionalAggregator2DWithContext<TTreeNode, TTarget, IndexedTreeNodesFromRoot<TTreeNode>> optionalAggregator
     )
     : this(defaultSeedProvider, optionalAggregator.ToTryAggregator2DWithContext())
     { }
@@ -34,7 +34,7 @@ public class AdHocTreeNodeAggregator<TTreeNode, TTarget> :
 
     public bool TryAggregate
     (
-        RootOriginatedTreeNodeWithIndexSequence<TTreeNode> context,
+        IndexedTreeNodesFromRoot<TTreeNode> context,
         TTarget siblingsAggregated,
         TTarget childrenAggregated,
         TTreeNode source,

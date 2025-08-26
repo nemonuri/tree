@@ -52,7 +52,7 @@ public class WalkingTheory_Test
         // Act
         bool success = TreeNodeAggregatingTheory.TryAggregateAsRoot
         (
-            rootOriginatedContextAggregator: new RoseTreeNodeBasedRootOriginatedTreeNodeWithIndexSequenceAggregator<int>(),
+            contextFromRootAggregator: new IndexedRoseTreeNodesFromRootAggregator<int>(),
             treeNodeAggregator: aggregatingPremise,
             childrenProvider: new RoseTreeNodeChildrenProvider<int>(),
             treeNode: roseTreeNode,

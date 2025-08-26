@@ -3,11 +3,11 @@ using System.Collections;
 
 namespace Nemonuri.Trees;
 
-public class RootOriginatedTreeNodeWithIndexSequence<TTreeNode> : 
-    IReadOnlyList<TreeNodeWithIndex<TTreeNode>>,
-    IHasIndexSequence
+public class IndexedTreeNodesFromRoot<TTreeNode> : 
+    IReadOnlyList<IndexedTreeNode<TTreeNode>>,
+    IIndexesFromRoot<TTreeNode>
 {
-    public static RootOriginatedTreeNodeWithIndexSequence<TTreeNode> Empty { get; } = new();
+    public static IndexedTreeNodesFromRoot<TTreeNode> Empty { get; } = new();
 
     private readonly TTreeNode? _root;
 
@@ -17,7 +17,7 @@ public class RootOriginatedTreeNodeWithIndexSequence<TTreeNode> :
     private readonly ImmutableList<TTreeNode> _treeNodes;
     private readonly ImmutableList<int> _indexes;
 
-    private RootOriginatedTreeNodeWithIndexSequence(bool isEmpty, TTreeNode? root, ImmutableList<TTreeNode> treeNodes, ImmutableList<int> indexes)
+    private IndexedTreeNodesFromRoot(bool isEmpty, TTreeNode? root, ImmutableList<TTreeNode> treeNodes, ImmutableList<int> indexes)
     {
         Debug.Assert(treeNodes is not null);
         Debug.Assert(indexes is not null);
@@ -31,7 +31,7 @@ public class RootOriginatedTreeNodeWithIndexSequence<TTreeNode> :
         Debug.Assert(IsEmpty || _root is not null);
     }
 
-    private RootOriginatedTreeNodeWithIndexSequence() : this(true, default, [], [])
+    private IndexedTreeNodesFromRoot() : this(true, default, [], [])
     { }
 
     public int Count
@@ -47,19 +47,19 @@ public class RootOriginatedTreeNodeWithIndexSequence<TTreeNode> :
         }
     }
 
-    public TreeNodeWithIndex<TTreeNode> this[int index]
+    public IndexedTreeNode<TTreeNode> this[int index]
     {
         get
         {
             Guard.IsInRange(index, 0, Count);
 
             return index == 0 ?
-                new TreeNodeWithIndex<TTreeNode>(_root) :
-                new TreeNodeWithIndex<TTreeNode>(_treeNodes[index - 1], _indexes[index - 1]);
+                new IndexedTreeNode<TTreeNode>(_root) :
+                new IndexedTreeNode<TTreeNode>(_treeNodes[index - 1], _indexes[index - 1]);
         }
     }
 
-    public IEnumerator<TreeNodeWithIndex<TTreeNode>> GetEnumerator()
+    public IEnumerator<IndexedTreeNode<TTreeNode>> GetEnumerator()
     {
         for (int i = 0; i < Count; i++)
         {
@@ -71,8 +71,8 @@ public class RootOriginatedTreeNodeWithIndexSequence<TTreeNode> :
 
     public bool TryAppend
     (
-        TreeNodeWithIndex<TTreeNode> appending,
-        [NotNullWhen(true)] out RootOriginatedTreeNodeWithIndexSequence<TTreeNode>? context
+        IndexedTreeNode<TTreeNode> appending,
+        [NotNullWhen(true)] out IndexedTreeNodesFromRoot<TTreeNode>? context
     )
     {
         var (node, index) = appending;
@@ -125,4 +125,6 @@ public class RootOriginatedTreeNodeWithIndexSequence<TTreeNode> :
     }
 
     IEnumerable<int> IHasIndexSequence.IndexSequence => _indexes;
+
+    public TTreeNode? Root => _root;
 }
