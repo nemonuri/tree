@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/nemonuri/tree</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IncludeSymbols>true</IncludeSymbols>
-    <IncludeSource>true</IncludeSource>
+    <IncludeSource>false</IncludeSource>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageReadmeFilePath>$(MSBuildThisFileDirectory)README.md</PackageReadmeFilePath>
   </PropertyGroup>
