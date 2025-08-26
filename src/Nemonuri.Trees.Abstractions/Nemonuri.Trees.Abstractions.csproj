@@ -11,4 +11,11 @@
     <PackageReference Include="CommunityToolkit.Diagnostics" />
   </ItemGroup>
 
+  <PropertyGroup Label="Package Metadata">
+    <IsPackable>true</IsPackable>
+    <Description>Abstractions for tree data sturcture.</Description>
+    <PackageReadmeFilePath>$(ResourceDirectory)package/README.$(MSBuildProjectName).md</PackageReadmeFilePath>
+    <PackageTags>tree</PackageTags>
+  </PropertyGroup>
+
 </Project>

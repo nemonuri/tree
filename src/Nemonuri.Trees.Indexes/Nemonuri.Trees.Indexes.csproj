@@ -10,4 +10,11 @@
     <ProjectReference Include="..\Nemonuri.Trees.Abstractions\Nemonuri.Trees.Abstractions.csproj" />
   </ItemGroup>
 
+  <PropertyGroup Label="Package Metadata">
+    <IsPackable>true</IsPackable>
+    <Description>Package about tree data sturcture index.</Description>
+    <PackageReadmeFilePath>$(ResourceDirectory)package/README.$(MSBuildProjectName).md</PackageReadmeFilePath>
+    <PackageTags>tree</PackageTags>
+  </PropertyGroup>
+
 </Project>

@@ -4,10 +4,20 @@
           Condition="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../')) != ''" />
   <PropertyGroup>
     <ArtifactDirectory>$(MSBuildThisFileDirectory)artifact/</ArtifactDirectory>
+    <ResourceDirectory>$(MSBuildThisFileDirectory)res/</ResourceDirectory>
     <UseArtifactsOutput>true</UseArtifactsOutput>
     <ArtifactsPath>$(ArtifactDirectory)dotnet</ArtifactsPath>
-
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>0.0.1</Version>
   </PropertyGroup>
+
+  <PropertyGroup Label="Package Metadata">
+    <Version>0.0.2-preview.1</Version>
+    <Authors>Nemonuri</Authors>
+    <RepositoryUrl>https://github.com/nemonuri/tree</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageReadmeFilePath>$(MSBuildThisFileDirectory)README.md</PackageReadmeFilePath>
+  </PropertyGroup>
+
 </Project>
