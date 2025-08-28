@@ -21,7 +21,7 @@ public static class TreeNodeAggregatingTheory
         (
             !contextFromRootAggregator.TryAggregate
             (
-                contextFromRootAggregator.DefaultAggregated,
+                contextFromRootAggregator.InitialAggregation,
                 new IndexedTreeNode<TTreeNode>(treeNode),
                 out TContextFromRoot? contextFromRoot
             )

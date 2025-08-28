@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Nemonuri.Trees.Abstractions</name>
+    </assembly>
+    <members>
+        <member name="T:Nemonuri.Trees.IHasChildren`1">
+            <summary>
+            자신의 자식 노드들을 드러냅니다.
+            </summary>
+            <typeparam name="TNode">자식 노드의 타입</typeparam>
+        </member>
+    </members>
+</doc>

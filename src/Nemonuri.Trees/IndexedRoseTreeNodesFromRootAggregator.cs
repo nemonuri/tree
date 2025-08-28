@@ -12,7 +12,7 @@ public class IndexedRoseTreeNodesFromRootAggregator<T> :
         _internalSource = new();
     }
 
-    public IndexedTreeNodesFromRoot<RoseTreeNode<T>> DefaultAggregated => _internalSource.DefaultAggregated;
+    public IndexedTreeNodesFromRoot<RoseTreeNode<T>> InitialAggregation => _internalSource.InitialAggregation;
 
     public bool TryAggregate
     (

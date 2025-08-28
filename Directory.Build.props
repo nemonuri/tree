@@ -7,6 +7,8 @@
     <ResourceDirectory>$(MSBuildThisFileDirectory)res/</ResourceDirectory>
     <UseArtifactsOutput>true</UseArtifactsOutput>
     <ArtifactsPath>$(ArtifactDirectory)dotnet</ArtifactsPath>
+    <DefaultTargetFrameworks>netstandard2.0;net9.0</DefaultTargetFrameworks>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <PropertyGroup Label="Package Metadata">

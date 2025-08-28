@@ -7,7 +7,7 @@ public class IndexedTreeNodesFromRootAggregator<TTreeNode> :
 {
     public IndexedTreeNodesFromRootAggregator() { }
 
-    public IndexedTreeNodesFromRoot<TTreeNode> DefaultAggregated => IndexedTreeNodesFromRoot<TTreeNode>.Empty;
+    public IndexedTreeNodesFromRoot<TTreeNode> InitialAggregation => IndexedTreeNodesFromRoot<TTreeNode>.Empty;
 
     public bool TryAggregate
     (
