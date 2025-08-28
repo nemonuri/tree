@@ -2,13 +2,13 @@
 namespace Nemonuri.Trees;
 
 /// <summary>
-/// Defines type-specific methods for aggregation.
+/// Defines type-specific methods for one-to-one aggregation.
 /// </summary>
-/// <typeparam name="TSource">The type of objects to be aggregated.</typeparam>
-/// <typeparam name="TAggregation">The type of aggregated values.</typeparam>
-public interface IAggregator<TSource, TAggregation>
+/// <typeparam name="TElement">The type of elements to be aggregated.</typeparam>
+/// <typeparam name="TAggregation">The type of the aggregated value.</typeparam>
+public interface IAggregator<TElement, TAggregation>
 #if NET9_0_OR_GREATER
-    where TSource : allows ref struct
+    where TElement : allows ref struct
     where TAggregation : allows ref struct
 #endif
 {
@@ -18,21 +18,19 @@ public interface IAggregator<TSource, TAggregation>
     TAggregation InitialAggregation { get; }
 
     /// <summary>
-    /// Tries to aggregate the spcified object with the previous aggregated value.
+    /// Aggregate the spcified element with the previous aggregated value.
     /// </summary>
-    /// <param name="oldAggregation">The previous aggregated value.</param>
-    /// <param name="source">The object to be aggregated.</param>
     /// <param name="aggregation">
-    /// When this method returns, contains the aggregated result value, if the operation succeeded;
-    /// otherwise, the <see langword="default"/> value for the type of the <paramref name="aggregation"/> parameter.
+    /// The previous aggregated value, if <paramref name="element"/> has preceding elements;
+    /// otherwise, the value of <see cref="InitialAggregation"/>.
     /// </param>
+    /// <param name="element">The element to be aggregated.</param>
     /// <returns>
-    /// <see langword="true"/> if the operation succeeded; otherwise, <see langword="false"/>.
+    /// The next aggregated value.
     /// </returns>
-    bool TryAggregate
+    TAggregation Aggregate
     (
-        TAggregation oldAggregation,
-        TSource source,
-        [NotNullWhen(true)] out TAggregation? aggregation
+        TAggregation aggregation,
+        TElement element
     );
 }

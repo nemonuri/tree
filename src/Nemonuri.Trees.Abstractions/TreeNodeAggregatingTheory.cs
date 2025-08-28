@@ -1,4 +1,5 @@
 
+#if false
 namespace Nemonuri.Trees;
 
 public static class TreeNodeAggregatingTheory
@@ -131,3 +132,4 @@ public static class TreeNodeAggregatingTheory
         return false;
     }
 }
+#endif

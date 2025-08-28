@@ -1,3 +1,4 @@
+#if false
 
 namespace Nemonuri.Trees;
 
@@ -14,3 +15,5 @@ public interface IAggregator2DWithContext<TSource, TTarget, TContext>
         [NotNullWhen(true)] out TTarget? aggregated
     );
 }
+
+#endif
