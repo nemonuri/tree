@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Nemonuri.Trees</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1712</NoWarn>
     <LangVersion>13</LangVersion>
   </PropertyGroup>
 

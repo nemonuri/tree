@@ -5,7 +5,7 @@
 /// </summary>
 public static class AggregatingTheory
 {
-    /// <inheritdoc cref="Aggregate{_,_,_,_,_,_,_}"/>
+    /// <inheritdoc cref="Aggregate{_,_,_,_,_,_,_}" />
     public static TAggregation Aggregate
     <TElement, TAggregation, TAncestor, TAncestorsAggregation>
     (
@@ -107,7 +107,7 @@ public static class AggregatingTheory
     }
 
 
-    /// <inheritdoc cref="AggregateChildren{_,_,_,_,_,_,_}"/>
+    /// <inheritdoc cref="AggregateChildren{_,_,_,_,_,_,_}" />
     public static TAggregation AggregateChildren
     <TElement, TAggregation, TAncestor, TAncestorsAggregation>
     (
@@ -154,23 +154,12 @@ public static class AggregatingTheory
     /// <typeparam name="TAncestorConverter">
     /// The concrete type of <see cref="IAncestorConverter{_,_,_}"/>
     /// </typeparam>
-    /// <typeparam name="TElement">
-    /// <inheritdoc cref="IAggregator3D{_,_,_,_}" path="/typeparam[@name='TElement']" />
-    /// </typeparam>
-    /// <typeparam name="TAggregation">
-    /// <inheritdoc cref="IAggregator3D{_,_,_,_}" path="/typeparam[@name='TAggregation']" />
-    /// </typeparam>
-    /// <typeparam name="TAncestor">
-    /// <inheritdoc cref="IAggregator3D{_,_,_,_}" path="/typeparam[@name='TAncestor']" />
-    /// </typeparam>
-    /// <typeparam name="TAncestorsAggregation">
-    /// <inheritdoc cref="IAggregator3D{_,_,_,_}" path="/typeparam[@name='TAncestorsAggregation']" />
-    /// </typeparam>
+    /// <inheritdoc cref="IAggregator3D{_,_,_,_}" path="/typeparam"/>
     /// <param name="aggregator3D"></param>
     /// <param name="childrenProvider"></param>
     /// <param name="ancestorConverter"></param>
     /// <param name="ancestorsAggregation"></param>
-    /// <param name="element">5</param>
+    /// <param name="element"></param>
     /// <returns>The aggregated value from children of <paramref name="element"/></returns>
     public static TAggregation AggregateChildren
     <

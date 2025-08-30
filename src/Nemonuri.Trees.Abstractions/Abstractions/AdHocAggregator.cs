@@ -1,5 +1,5 @@
 
-namespace Nemonuri.Trees;
+namespace Nemonuri.Trees.Abstractions;
 
 /// <summary>An ad-hoc implementation of <see cref="IAggregator{_,_}"/></summary>
 /// <inheritdoc cref="IAggregator{_,_}" path="/typeparam" />

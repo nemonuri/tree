@@ -5,10 +5,10 @@ namespace Nemonuri.Trees;
 /// Defines type-specific methods for three-to-one aggregation.
 /// </summary>
 /// <typeparam name="TElement">
-/// <inheritdoc cref="IAggregator{_,_}" path="/typeparam[@name='TElement']" />
+///     <inheritdoc cref="IAggregator{_,_}" path="/typeparam[@name='TElement']" />
 /// </typeparam>
 /// <typeparam name="TAggregation">
-/// <inheritdoc cref="IAggregator{_,_}" path="/typeparam[@name='TAggregation']" />
+///     <inheritdoc cref="IAggregator{_,_}" path="/typeparam[@name='TAggregation']" />
 /// </typeparam>
 /// <typeparam name="TAncestor">
 /// The type of ancestor elements to be aggregated.

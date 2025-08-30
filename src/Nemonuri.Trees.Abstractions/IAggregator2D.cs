@@ -6,6 +6,10 @@ namespace Nemonuri.Trees;
 /// </summary>
 /// <inheritdoc cref="IAggregator{_,_}" path="/typeparam" />
 public interface IAggregator2D<TElement, TAggregation>
+#if NET9_0_OR_GREATER
+    where TElement: allows ref struct
+    where TAggregation: allows ref struct
+#endif
 {
     /// <inheritdoc cref="IAggregator{_,_}.InitialAggregation" />
     TAggregation InitialAggregation { get; }
