@@ -485,3 +485,4 @@ $RECYCLE.BIN/
 
 artifact/
 res/docfx/api/
+!.vscode/*.code-snippets
