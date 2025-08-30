@@ -1,6 +1,9 @@
 
 namespace Nemonuri.Trees.Abstractions;
 
+/// <summary>
+/// An ad-hoc implementation of <see cref="IAggregator2D{_,_}"/>
+/// </summary>
 /// <inheritdoc cref="IAggregator2D{_,_}" path="/typeparam" />
 public readonly struct AdHocAggregator2D<TElement, TAggregation> :
     IAggregator2D<TElement, TAggregation>

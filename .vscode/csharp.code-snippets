@@ -26,11 +26,21 @@
 	
 	"Allows ref struct": {
 		"scope": "csharp",
-		"prefix": ["allowsrefstruct","ihd"],
+		"prefix": ["allowsrefstruct","ars"],
 		"body": [
 			"#if NET9_0_OR_GREATER",
 			"    $0${1|where T : allows ref struct,\\, allows ref struct|}",
 			"#endif"
+		]
+	},
+
+	"Summary ad-Hoc ": {
+		"scope": "csharp",
+		"prefix": ["summaryadhoc","sad"],
+		"body": [
+			"/// <summary>",
+			"/// An ad-hoc implementation of <see cref=\"${1:Interface}\"/>",
+			"/// </summary>"
 		]
 	}
 }
