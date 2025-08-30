@@ -5,10 +5,9 @@ namespace Nemonuri.Trees;
 /// </summary>
 /// <inheritdoc cref="IAggregator3D{_,_,_,_}" path="/typeparam" />
 public interface IAncestorConverter
-<TElement, TAggregation, TAncestor>
+<TElement, TAncestor>
 #if NET9_0_OR_GREATER
     where TElement : allows ref struct
-    where TAggregation : allows ref struct
     where TAncestor : allows ref struct
 #endif
 {

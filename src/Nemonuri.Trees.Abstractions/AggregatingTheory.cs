@@ -1,17 +1,19 @@
 ﻿namespace Nemonuri.Trees;
 
+using Abstractions;
+
 /// <summary>
 /// General theory of aggregating tree structured objects.
 /// </summary>
 public static class AggregatingTheory
 {
-    /// <inheritdoc cref="Aggregate{_,_,_,_,_,_,_}" />
+    /// <inheritdoc cref="Aggregate{_,_,_,_,_,_,_}(_,_,_,_)" />
     public static TAggregation Aggregate
     <TElement, TAggregation, TAncestor, TAncestorsAggregation>
     (
         IAggregator3D<TElement, TAggregation, TAncestor, TAncestorsAggregation> aggregator3D,
         IChildrenProvider<TElement> childrenProvider,
-        IAncestorConverter<TElement, TAggregation, TAncestor> ancestorConverter,
+        IAncestorConverter<TElement, TAncestor> ancestorConverter,
         TElement element
     )
 #if NET9_0_OR_GREATER
@@ -20,12 +22,12 @@ public static class AggregatingTheory
         where TAncestor : allows ref struct
         where TAncestorsAggregation : allows ref struct
 #endif
-    { 
+    {
         return Aggregate
         <
             IAggregator3D<TElement, TAggregation, TAncestor, TAncestorsAggregation>,
             IChildrenProvider<TElement>,
-            IAncestorConverter<TElement, TAggregation, TAncestor>,
+            IAncestorConverter<TElement, TAncestor>,
 
             TElement, TAggregation, TAncestor, TAncestorsAggregation
         >
@@ -40,8 +42,8 @@ public static class AggregatingTheory
     /// <summary>
     /// Aggregate the specified object as tree root.
     /// </summary>
-    /// <inheritdoc cref="AggregateChildren{_,_,_,_,_,_,_}" 
-    ///     path="//*[(self::remarks) or (self::typeparam) or (self::param)]"/>
+    /// <inheritdoc cref="AggregateChildren{_,_,_,_,_,_,_}(_,_,_,_,_)" 
+    ///     path="/*[(self::remarks) or (self::typeparam) or (self::param)]"/>
     /// <returns>The aggregated value.</returns>
     public static TAggregation Aggregate
     <
@@ -62,7 +64,7 @@ public static class AggregatingTheory
 #if NET9_0_OR_GREATER
         , allows ref struct
 #endif
-        where TAncestorConverter : IAncestorConverter<TElement, TAggregation, TAncestor>
+        where TAncestorConverter : IAncestorConverter<TElement, TAncestor>
 #if NET9_0_OR_GREATER
         , allows ref struct
 #endif
@@ -107,13 +109,13 @@ public static class AggregatingTheory
     }
 
 
-    /// <inheritdoc cref="AggregateChildren{_,_,_,_,_,_,_}" />
+    /// <inheritdoc cref="AggregateChildren{_,_,_,_,_,_,_}(_,_,_,_,_)" />
     public static TAggregation AggregateChildren
     <TElement, TAggregation, TAncestor, TAncestorsAggregation>
     (
         IAggregator3D<TElement, TAggregation, TAncestor, TAncestorsAggregation> aggregator3D,
         IChildrenProvider<TElement> childrenProvider,
-        IAncestorConverter<TElement, TAggregation, TAncestor> ancestorConverter,
+        IAncestorConverter<TElement, TAncestor> ancestorConverter,
         TAncestorsAggregation ancestorsAggregation,
         TElement element
     )
@@ -128,7 +130,7 @@ public static class AggregatingTheory
         <
             IAggregator3D<TElement, TAggregation, TAncestor, TAncestorsAggregation>,
             IChildrenProvider<TElement>,
-            IAncestorConverter<TElement, TAggregation, TAncestor>,
+            IAncestorConverter<TElement, TAncestor>,
 
             TElement, TAggregation, TAncestor, TAncestorsAggregation
         >
@@ -152,7 +154,7 @@ public static class AggregatingTheory
     /// The concrete type of <see cref="IChildrenProvider{_}"/>
     /// </typeparam>
     /// <typeparam name="TAncestorConverter">
-    /// The concrete type of <see cref="IAncestorConverter{_,_,_}"/>
+    /// The concrete type of <see cref="IAncestorConverter{_,_}"/>
     /// </typeparam>
     /// <inheritdoc cref="IAggregator3D{_,_,_,_}" path="/typeparam"/>
     /// <param name="aggregator3D"></param>
@@ -181,7 +183,7 @@ public static class AggregatingTheory
 #if NET9_0_OR_GREATER
         , allows ref struct
 #endif
-        where TAncestorConverter : IAncestorConverter<TElement, TAggregation, TAncestor>
+        where TAncestorConverter : IAncestorConverter<TElement, TAncestor>
 #if NET9_0_OR_GREATER
         , allows ref struct
 #endif
@@ -231,5 +233,124 @@ public static class AggregatingTheory
         }
 
         return childrenAggregation;
+    }
+
+    /// <inheritdoc cref="Aggregate{_,_,_,_}(_,_,_)"/>
+    public static TAggregation Aggregate<TElement, TAggregation>
+    (
+        IAggregator2D<TElement, TAggregation> aggregator2D,
+        IChildrenProvider<TElement> childrenProvider,
+        TElement element
+    )
+    {
+        return Aggregate
+        <
+            IAggregator2D<TElement, TAggregation>,
+            IChildrenProvider<TElement>,
+
+            TElement, TAggregation
+        >
+        (
+            aggregator2D, childrenProvider, element
+        );
+    }
+
+    /// <inheritdoc 
+    ///     cref="Aggregate{_,_,_,_,_,_,_}(_,_,_,_)" 
+    ///     path="/*[(self::summary) or (self::remarks) or (self::returns)]"/>
+    public static TAggregation Aggregate
+    <
+        TAggregator2D, TChildrenProvider,
+        TElement, TAggregation
+    >
+    (
+        TAggregator2D aggregator2D,
+        TChildrenProvider childrenProvider,
+        TElement element
+    )
+        where TAggregator2D : IAggregator2D<TElement, TAggregation>
+        where TChildrenProvider : IChildrenProvider<TElement>
+#if NET9_0_OR_GREATER
+        , allows ref struct
+#endif
+#if NET9_0_OR_GREATER
+        where TElement : allows ref struct
+        where TAggregation : allows ref struct
+#endif
+    {
+        return Aggregate
+        <
+            NullAncestorAggregator3D<TAggregator2D, TElement, TAggregation>,
+            TChildrenProvider, NullAncestorConverter<TElement>,
+            TElement, TAggregation, NullAggregation, NullAggregation
+        >
+        (
+            new(aggregator2D),
+            childrenProvider,
+            default,
+            element
+        );
+    }
+
+    /// <inheritdoc cref="AggregateChildren{_,_,_,_}(_,_,_)"/>
+    public static TAggregation AggregateChildren<TElement, TAggregation>
+    (
+        IAggregator2D<TElement, TAggregation> aggregator2D,
+        IChildrenProvider<TElement> childrenProvider,
+        TElement element
+    )
+#if NET9_0_OR_GREATER
+        where TElement : allows ref struct
+        where TAggregation : allows ref struct
+#endif
+    {
+        return AggregateChildren
+        <
+            IAggregator2D<TElement, TAggregation>,
+            IChildrenProvider<TElement>,
+
+            TElement, TAggregation
+        >
+        (
+            aggregator2D, childrenProvider, element
+        );
+    }
+
+    /// <inheritdoc 
+    ///     cref="AggregateChildren{_,_,_,_,_,_,_}(_,_,_,_,_)" 
+    ///     path="/*[(self::summary) or (self::remarks) or (self::returns)]"/>
+    public static TAggregation AggregateChildren
+    <
+        TAggregator2D, TChildrenProvider,
+        TElement, TAggregation
+    >
+    (
+        TAggregator2D aggregator2D,
+        TChildrenProvider childrenProvider,
+        TElement element
+    )
+        where TAggregator2D : IAggregator2D<TElement, TAggregation>
+        where TChildrenProvider : IChildrenProvider<TElement>
+#if NET9_0_OR_GREATER
+        , allows ref struct
+#endif
+#if NET9_0_OR_GREATER
+        where TElement : allows ref struct
+        where TAggregation : allows ref struct
+#endif
+    {
+        return AggregateChildren
+        <
+            NullAncestorAggregator3D<TAggregator2D, TElement, TAggregation>,
+            TChildrenProvider, NullAncestorConverter<TElement>,
+            TElement, TAggregation, NullAggregation, NullAggregation
+        >
+        (
+            new(aggregator2D),
+            childrenProvider,
+            default,
+            default,
+            element
+        );
     }
 }
