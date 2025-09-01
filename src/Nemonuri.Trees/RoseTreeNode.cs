@@ -1,6 +1,6 @@
 ﻿namespace Nemonuri.Trees;
 
-public class RoseTreeNode<T> : IHasChildren<RoseTreeNode<T>>
+public class RoseTreeNode<T> : ISupportChildren<RoseTreeNode<T>>
 {
     public T? Value { get; }
 
@@ -22,5 +22,5 @@ public class RoseTreeNode<T> : IHasChildren<RoseTreeNode<T>>
     public RoseTreeNode<T> WithChildrenValues(params IEnumerable<T> childrenValues) =>
         WithChildren([.. childrenValues.Select(static a => new RoseTreeNode<T>(a))]);
 
-    IEnumerable<RoseTreeNode<T>> IHasChildren<RoseTreeNode<T>>.Children => Children;
+    IEnumerable<RoseTreeNode<T>> ISupportChildren<RoseTreeNode<T>>.Children => Children;
 }

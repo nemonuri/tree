@@ -1,7 +1,7 @@
 namespace Nemonuri.Trees;
 
 public class TrivialChildrenProvider<TNode> : IChildrenProvider<TNode>
-    where TNode : IHasChildren<TNode>
+    where TNode : ISupportChildren<TNode>
 {
     public TrivialChildrenProvider() { }
 

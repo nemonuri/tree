@@ -4,7 +4,7 @@ namespace Nemonuri.Trees;
 /// Exposes own children nodes.
 /// </summary>
 /// <typeparam name="TNode">The type of children nodes.</typeparam>
-public interface IHasChildren<TNode>
+public interface ISupportChildren<TNode>
 #if NET9_0_OR_GREATER
     where TNode : allows ref struct
 #endif

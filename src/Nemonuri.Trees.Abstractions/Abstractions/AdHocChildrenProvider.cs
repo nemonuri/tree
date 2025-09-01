@@ -6,6 +6,9 @@ namespace Nemonuri.Trees.Abstractions;
 /// </summary>
 /// <inheritdoc cref="IChildrenProvider{_}" path="/typeparam" />
 public class AdHocChildrenProvider<TNode> : IChildrenProvider<TNode>
+#if NET9_0_OR_GREATER
+    where TNode : allows ref struct
+#endif
 {
     private readonly Func<TNode, IEnumerable<TNode>> _getChildrenImplementation;
 
