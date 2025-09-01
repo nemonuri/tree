@@ -4,10 +4,9 @@
 /// Defines type-specific methods to aggregate tree structured objects.
 /// </summary>
 /// <inheritdoc cref="AggregatingTheory.Aggregate{_,_,_,_}(IAggregator3D{_,_,_,_},IChildrenProvider{_},IAncestorConverter{_,_},_)" path="/typeparam" />
-public interface ITreeWalker
+public interface ITreeAggregator
 <TElement, TAggregation, TAncestor, TAncestorsAggregation> :
     IAggregator3D<TElement, TAggregation, TAncestor, TAncestorsAggregation>,
-    IChildrenProvider<TElement>,
     IAncestorConverter<TElement, TAncestor>
 #if NET9_0_OR_GREATER
     where TElement : allows ref struct
