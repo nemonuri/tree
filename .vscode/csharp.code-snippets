@@ -42,5 +42,11 @@
 			"/// An ad-hoc implementation of <see cref=\"${1:Interface}\"/>",
 			"/// </summary>"
 		]
+	},
+
+	"Implementation": {
+		"scope": "csharp",
+		"prefix": "imp",
+		"body": "Implementation"
 	}
 }

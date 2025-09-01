@@ -1,6 +1,6 @@
-namespace Nemonuri.Trees;
+namespace Nemonuri.Trees.Abstractions;
 
-public class TrivialChildrenProvider<TNode> : IChildrenProvider<TNode>
+public readonly struct TrivialChildrenProvider<TNode> : IChildrenProvider<TNode>
     where TNode : ISupportChildren<TNode>
 {
     public TrivialChildrenProvider() { }
