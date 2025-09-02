@@ -55,5 +55,15 @@
 		"prefix": "conversion",
 		"body": "${1|public,internal,private|} static ${2|implicit,explicit|} operator ${3:TargetType}(${4:SourceType} v) => ${5:throw new System.NotImplementedException()};",
 		"description": "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/user-defined-conversion-operators"
+	},
+
+	"Arrange Act Assert": {
+		"scope": "csharp",
+		"prefix": "aaa",
+		"body": [
+			"// Arrange" ,"",
+			"// Act", "",
+			"// Assert", ""
+		]
 	}
 }

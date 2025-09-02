@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5B2B0638-7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemonuri.Trees.Abstractions.Tests", "test\Nemonuri.Trees.Abstractions.Tests\Nemonuri.Trees.Abstractions.Tests.csproj", "{055A4533-96CE-4C6C-8AB2-748BEDDE16A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemonuri.Trees.Tests", "test\Nemonuri.Trees.Tests\Nemonuri.Trees.Tests.csproj", "{27A52FF6-520F-403A-8850-EE269CB6943D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,11 +73,24 @@ Global
 		{055A4533-96CE-4C6C-8AB2-748BEDDE16A5}.Release|x64.Build.0 = Release|Any CPU
 		{055A4533-96CE-4C6C-8AB2-748BEDDE16A5}.Release|x86.ActiveCfg = Release|Any CPU
 		{055A4533-96CE-4C6C-8AB2-748BEDDE16A5}.Release|x86.Build.0 = Release|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Debug|x64.Build.0 = Debug|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Debug|x86.Build.0 = Debug|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Release|x64.ActiveCfg = Release|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Release|x64.Build.0 = Release|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Release|x86.ActiveCfg = Release|Any CPU
+		{27A52FF6-520F-403A-8850-EE269CB6943D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{055A4533-96CE-4C6C-8AB2-748BEDDE16A5} = {5B2B0638-7B77-48A7-9284-83E45A17B3DE}
+		{27A52FF6-520F-403A-8850-EE269CB6943D} = {5B2B0638-7B77-48A7-9284-83E45A17B3DE}
 	EndGlobalSection
 EndGlobal
