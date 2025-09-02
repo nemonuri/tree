@@ -19,7 +19,7 @@ public static partial class TreeTheory
             initialAggregationImplementation: static () => true,
             aggregateImplementation: (s, c, e) =>
             {
-                if ((s || c) is false) { return false; }
+                if ((s && c) is false) { return false; }
                 return predicate(e);
             }
         );
