@@ -1,3 +1,5 @@
+#if false
+
 namespace Nemonuri.Trees;
 
 public class RoseTreeNodeChildrenProvider<T> : IChildrenProvider<RoseTreeNode<T>>
@@ -12,3 +14,5 @@ public class RoseTreeNodeChildrenProvider<T> : IChildrenProvider<RoseTreeNode<T>
     public IEnumerable<RoseTreeNode<T>> GetChildren(RoseTreeNode<T> source) =>
         _internalSource.GetChildren(source);
 }
+
+#endif

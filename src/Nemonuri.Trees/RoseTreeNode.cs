@@ -1,4 +1,6 @@
-﻿namespace Nemonuri.Trees;
+﻿#if false
+
+namespace Nemonuri.Trees;
 
 public class RoseTreeNode<T> : ISupportChildren<RoseTreeNode<T>>
 {
@@ -24,3 +26,5 @@ public class RoseTreeNode<T> : ISupportChildren<RoseTreeNode<T>>
 
     IEnumerable<RoseTreeNode<T>> ISupportChildren<RoseTreeNode<T>>.Children => Children;
 }
+
+#endif

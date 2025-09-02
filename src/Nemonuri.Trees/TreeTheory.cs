@@ -1,6 +1,7 @@
-using Nemonuri.Trees.Abstractions;
 
 namespace Nemonuri.Trees;
+
+using Abstractions;
 
 public static partial class TreeTheory
 {
@@ -58,100 +59,9 @@ public static partial class TreeTheory
         );
     }
 
-    public static bool All<TElement>
-    (
-        this ITree<TElement> tree,
-        Func<TElement, bool> predicate
-    )
-    {
-        Guard.IsNotNull(tree);
-        Guard.IsNotNull(predicate);
-
-        var treeAggregator = TreeAggregatorTheory.Create<TElement, bool>
-        (
-            initialAggregationImplementation: static () => true,
-            aggregateImplementation: (s, c, e) =>
-            {
-                if ((s || c) is false) { return false; }
-                return predicate(e);
-            }
-        );
-
-        return tree.Aggregate(treeAggregator);
-    }
-
-    public static bool All<TElement>
-    (
-        this IRoseNode<TElement> roseNode,
-        Func<TElement, bool> predicate
-    )
-    {
-        return roseNode.ToTree().All(PredicateImpl);
-
-        bool PredicateImpl(IRoseNode<TElement> roseNode) => predicate(roseNode.Value);
-    }
-
-    public static bool Any<TElement>
-    (
-        this ITree<TElement> tree,
-        Func<TElement, bool> predicate
-    )
-    {
-        Guard.IsNotNull(tree);
-        Guard.IsNotNull(predicate);
-
-        var treeAggregator = TreeAggregatorTheory.Create<TElement, bool>
-        (
-            initialAggregationImplementation: static () => false,
-            aggregateImplementation: (s, c, e) =>
-            {
-                if ((s || c) is true) { return true; }
-                return predicate(e);
-            }
-        );
-
-        return tree.Aggregate(treeAggregator);
-    }
-
-    public static bool Any<TElement>
-    (
-        this IRoseNode<TElement> roseNode,
-        Func<TElement, bool> predicate
-    )
-    {
-        return roseNode.ToTree().Any(PredicateImpl);
-        
-        bool PredicateImpl(IRoseNode<TElement> roseNode) => predicate(roseNode.Value);
-    }
 
 
-    public static IRoseNode<TResult> Select<TSource, TResult>
-    (
-        this ITree<TSource> tree,
-        Func<TSource, TResult> selector
-    )
-    {
-        Guard.IsNotNull(tree);
-        Guard.IsNotNull(selector);
 
-        var treeAggregator = TreeAggregatorTheory.Create<TSource, ImmutableList<IRoseNode<TResult>>>
-        (
-            initialAggregationImplementation: static () => [],
-            aggregateImplementation: (s, c, e) =>
-            {
-                TResult r = selector(e);
-                IRoseNode<TResult> roseNode = new RoseNode<TResult>(r, c);
-                return s.Add(roseNode);
-            }
-        );
-
-        ImmutableList<IRoseNode<TResult>> aggregation = tree.Aggregate(treeAggregator);
-
-        Guard.IsEqualTo(aggregation.Count, 1);
-        return aggregation[0];
-    }
-
-    
 
 
 #if REF_TREE

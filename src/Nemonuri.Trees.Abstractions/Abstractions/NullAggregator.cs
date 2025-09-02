@@ -7,6 +7,11 @@ namespace Nemonuri.Trees.Abstractions;
 public readonly struct NullAggregator :
     IAggregator<NullAggregation, NullAggregation>
 {
+    /// <summary>
+    /// The boxed instance of <see langword="default"/> <see cref="NullAggregator"/>
+    /// </summary>
+    public readonly static IAggregator<NullAggregation, NullAggregation> BoxedInstance = (NullAggregator)default;
+
     /// <inheritdoc cref="IAggregator{_,_}.InitialAggregation"/>
     /// <value>
     /// The <see langword="default"/> value of <see cref="NullAggregation"/>

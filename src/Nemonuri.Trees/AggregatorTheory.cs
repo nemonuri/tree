@@ -1,3 +1,4 @@
+#if false
 namespace Nemonuri.Trees;
 
 public static class AggregatorTheory
@@ -77,3 +78,4 @@ public static class AggregatorTheory
         }
     }
 }
+#endif

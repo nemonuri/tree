@@ -1,9 +1,9 @@
-
+#if false
 
 namespace Nemonuri.Trees;
 
 public class IndexedTreeNodesFromRootAggregator<TTreeNode> :
-    IAggregator<IndexedTreeNode<TTreeNode>, IndexedTreeNodesFromRoot<TTreeNode>>
+    IAggregator<IndexedNode<TTreeNode>, IndexedTreeNodesFromRoot<TTreeNode>>
 {
     public IndexedTreeNodesFromRootAggregator() { }
 
@@ -12,10 +12,12 @@ public class IndexedTreeNodesFromRootAggregator<TTreeNode> :
     public bool TryAggregate
     (
         IndexedTreeNodesFromRoot<TTreeNode> siblingsAggregated,
-        IndexedTreeNode<TTreeNode> source,
+        IndexedNode<TTreeNode> source,
         [NotNullWhen(true)] out IndexedTreeNodesFromRoot<TTreeNode>? aggregated
     )
     {
         return siblingsAggregated.TryAppend(source, out aggregated);
     }
 }
+
+#endif

@@ -1,4 +1,4 @@
-
+#if false
 
 namespace Nemonuri.Trees;
 
@@ -44,3 +44,4 @@ public class AdHocRoseTreeNodeAggregator<T, TTarget> :
         return _internalSource.TryAggregate(context, siblingsAggregated, childrenAggregated, source, out aggregated);
     }
 }
+#endif

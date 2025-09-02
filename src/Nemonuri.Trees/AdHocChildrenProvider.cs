@@ -1,3 +1,4 @@
+#if false
 namespace Nemonuri.Trees;
 
 public class AdHocChildrenProvider<TNode> : IChildrenProvider<TNode>
@@ -13,3 +14,4 @@ public class AdHocChildrenProvider<TNode> : IChildrenProvider<TNode>
     public IEnumerable<TNode> GetChildren(TNode source) =>
         ChildrenProvider(source);
 }
+#endif

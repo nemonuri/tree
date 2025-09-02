@@ -1,3 +1,5 @@
+#if false
+
 namespace Nemonuri.Trees;
 
 public delegate bool TryAggregator<TSource, TTarget>
@@ -44,3 +46,5 @@ public delegate (TTarget?, bool) OptionalAggregator2DWithContext<TSource, TTarge
     TTarget childrenAggregated,
     TSource source
 );
+
+#endif

@@ -11,6 +11,12 @@ public readonly struct NullAncestorConverter<TElement> :
     where TElement : allows ref struct
 #endif
 {
+    /// <summary>
+    /// The boxed instance of <see langword="default"/> <see cref="NullAncestorConverter{_}"/>
+    /// </summary>
+    public readonly static IAncestorConverter<TElement, NullAggregation> BoxedInstance =
+        (NullAncestorConverter<TElement>)default;
+
     /// <inheritdoc 
     ///     cref="IAncestorConverter{_,_}.ConvertToAncestor(_, int?)"
     ///     path="//*[not(self::returns)]"/>

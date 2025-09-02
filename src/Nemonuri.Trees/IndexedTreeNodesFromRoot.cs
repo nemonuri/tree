@@ -1,10 +1,11 @@
+#if false
 
 using System.Collections;
 
 namespace Nemonuri.Trees;
 
 public class IndexedTreeNodesFromRoot<TTreeNode> : 
-    IReadOnlyList<IndexedTreeNode<TTreeNode>>,
+    IReadOnlyList<IndexedNode<TTreeNode>>,
     IIndexesFromRoot<TTreeNode>
 {
     public static IndexedTreeNodesFromRoot<TTreeNode> Empty { get; } = new();
@@ -47,19 +48,19 @@ public class IndexedTreeNodesFromRoot<TTreeNode> :
         }
     }
 
-    public IndexedTreeNode<TTreeNode> this[int index]
+    public IndexedNode<TTreeNode> this[int index]
     {
         get
         {
             Guard.IsInRange(index, 0, Count);
 
             return index == 0 ?
-                new IndexedTreeNode<TTreeNode>(_root) :
-                new IndexedTreeNode<TTreeNode>(_treeNodes[index - 1], _indexes[index - 1]);
+                new IndexedNode<TTreeNode>(_root) :
+                new IndexedNode<TTreeNode>(_treeNodes[index - 1], _indexes[index - 1]);
         }
     }
 
-    public IEnumerator<IndexedTreeNode<TTreeNode>> GetEnumerator()
+    public IEnumerator<IndexedNode<TTreeNode>> GetEnumerator()
     {
         for (int i = 0; i < Count; i++)
         {
@@ -71,7 +72,7 @@ public class IndexedTreeNodesFromRoot<TTreeNode> :
 
     public bool TryAppend
     (
-        IndexedTreeNode<TTreeNode> appending,
+        IndexedNode<TTreeNode> appending,
         [NotNullWhen(true)] out IndexedTreeNodesFromRoot<TTreeNode>? context
     )
     {
@@ -128,3 +129,5 @@ public class IndexedTreeNodesFromRoot<TTreeNode> :
 
     public TTreeNode? Root => _root;
 }
+
+#endif

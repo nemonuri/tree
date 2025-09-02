@@ -1,4 +1,4 @@
-
+#if false
 namespace Nemonuri.Trees;
 
 public interface IIndexesFromRoot<TTreeNode> : IHasIndexes
@@ -21,3 +21,4 @@ public readonly struct IndexesFromRoot<TTreeNode> : IIndexesFromRoot<TTreeNode>
 
     public IEnumerable<int> Indexes => _indexSequence ?? [];
 }
+#endif

@@ -1,4 +1,4 @@
-
+#if false
 
 namespace Nemonuri.Trees;
 
@@ -42,3 +42,5 @@ public class AdHocTreeNodeAggregator<TTreeNode, TTarget> :
     ) =>
     TryAggregator.Invoke(context, siblingsAggregated, childrenAggregated, source, out aggregated);
 }
+
+#endif

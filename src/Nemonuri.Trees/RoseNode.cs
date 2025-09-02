@@ -24,4 +24,9 @@ public class RoseNode<TElement> : IRoseNode<TElement>
     { }
 
     public IEnumerable<IRoseNode<TElement>> Children => _children;
+
+    public static implicit operator RoseNode<TElement>(TElement v) => new(v);
+    
+    public static implicit operator RoseNode<TElement>((TElement Value, RoseNode<TElement>[] Children) v) =>
+        new(v.Value, v.Children.Cast<IRoseNode<TElement>>().ToImmutableList());
 }
