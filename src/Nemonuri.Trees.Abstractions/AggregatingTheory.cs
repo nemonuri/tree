@@ -146,7 +146,9 @@ public static class AggregatingTheory
     /// <summary>
     /// Aggregate children of the specified object.
     /// </summary>
-    /// <remarks>Operation order is depth-first.</remarks>
+    /// <remarks>
+    /// Operation order is <see href="https://en.wikipedia.org/wiki/Tree_traversal">depth-first post-order.</see>
+    /// </remarks>
     /// <typeparam name="TAggregator3D">
     /// The concrete type of <see cref="IAggregator3D{_,_,_,_}"/>
     /// </typeparam>
