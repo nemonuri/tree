@@ -59,7 +59,7 @@ public static partial class TreeTheory
         );
     }
 
-
+    private static T Identity<T>(T t) => t;
 
 
 

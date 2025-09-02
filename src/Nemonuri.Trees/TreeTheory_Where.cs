@@ -62,6 +62,4 @@ public static partial class TreeTheory
     {
         return roseNode.Where(predicate, Identity);
     }
-
-    private static T Identity<T>(T t) => t;
 }

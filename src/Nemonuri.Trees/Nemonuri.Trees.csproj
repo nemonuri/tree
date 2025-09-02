@@ -5,6 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Include="$(SrcDirectory)Common/System/Collections/Generic/ArrayBuilder.cs" >
+      <Link>ArrayBuilder.cs</Link>
+    </Compile>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Nemonuri.Trees.Abstractions\Nemonuri.Trees.Abstractions.csproj" />
