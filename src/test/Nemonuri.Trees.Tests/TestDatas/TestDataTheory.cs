@@ -18,4 +18,13 @@ public static class TestDataTheory
         { Int32PredicateLabel.IsZero, static i => i == 0 }
     };
     public static IReadOnlyDictionary<Int32PredicateLabel, Func<int, bool>> Int32PredicateMap => _int32PredicateMap;
+
+    private readonly static Dictionary<Int32SelectorLabel, Func<int, object>> _int32SelectorMap = new()
+    {
+        { Int32SelectorLabel.AddOne, static i => i+1 },
+        { Int32SelectorLabel.MultiplyTwo, static i => i*2 },
+        { Int32SelectorLabel.ConvertToString, static i => i.ToString() },
+        { Int32SelectorLabel.IsEven, static i => i % 2 == 0 }
+    };
+    public static IReadOnlyDictionary<Int32SelectorLabel, Func<int, object>> Int32SelectorMap => _int32SelectorMap;
 }

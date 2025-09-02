@@ -13,3 +13,11 @@ public enum Int32PredicateLabel
     IsEven, IsOdd,
     IsZero
 }
+
+public enum Int32SelectorLabel
+{
+    AddOne,
+    MultiplyTwo,
+    ConvertToString,
+    IsEven
+}
