@@ -14,7 +14,8 @@ public static class TestDataTheory
     private readonly static Dictionary<Int32PredicateLabel, Func<int, bool>> _int32PredicateMap = new()
     {
         { Int32PredicateLabel.IsEven, static i => i % 2 == 0 },
-        { Int32PredicateLabel.IsOdd, static i => i % 2 == 1 }
+        { Int32PredicateLabel.IsOdd, static i => i % 2 == 1 },
+        { Int32PredicateLabel.IsZero, static i => i == 0 }
     };
     public static IReadOnlyDictionary<Int32PredicateLabel, Func<int, bool>> Int32PredicateMap => _int32PredicateMap;
 }

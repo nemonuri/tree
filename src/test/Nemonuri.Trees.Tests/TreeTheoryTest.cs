@@ -36,4 +36,65 @@ public class TreeTheoryTest
         { Int32RoseNodeLabel.Height3_NumbersIn0To10, Int32PredicateLabel.IsOdd, false }
     };
 
+    [Theory]
+    [MemberData(nameof(Data2))]
+    public void Any_WhenSourceIsInt32RoseNode
+    (
+        Int32RoseNodeLabel roseNodeLabel,
+        Int32PredicateLabel predicateLabel,
+        bool expected
+    )
+    {
+        // Arrange
+        var roseNode = TestDataTheory.Int32RoseNodeMap[roseNodeLabel];
+        var predicate = TestDataTheory.Int32PredicateMap[predicateLabel];
+
+        // Act
+        bool actual = roseNode.Any(predicate);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+    public static
+    TheoryData<Int32RoseNodeLabel, Int32PredicateLabel, bool> Data2 => new()
+    {
+        { Int32RoseNodeLabel.Single_0, Int32PredicateLabel.IsEven, true },
+        { Int32RoseNodeLabel.Single_0, Int32PredicateLabel.IsOdd, false },
+        { Int32RoseNodeLabel.Height1_EvenNumbersIn2To10, Int32PredicateLabel.IsEven, true },
+        { Int32RoseNodeLabel.Height1_EvenNumbersIn2To10, Int32PredicateLabel.IsOdd, false },
+        { Int32RoseNodeLabel.Height1_3Pow1To3Pow4, Int32PredicateLabel.IsOdd, true },
+        { Int32RoseNodeLabel.Height1_3Pow1To3Pow4, Int32PredicateLabel.IsEven, false },
+        { Int32RoseNodeLabel.Height3_NumbersIn0To10, Int32PredicateLabel.IsEven, true },
+        { Int32RoseNodeLabel.Height3_NumbersIn0To10, Int32PredicateLabel.IsOdd, true },
+
+        { Int32RoseNodeLabel.Single_0, Int32PredicateLabel.IsZero, true },
+        { Int32RoseNodeLabel.Height1_EvenNumbersIn2To10, Int32PredicateLabel.IsZero, false },
+        { Int32RoseNodeLabel.Height1_3Pow1To3Pow4, Int32PredicateLabel.IsZero, false },
+        { Int32RoseNodeLabel.Height3_NumbersIn0To10, Int32PredicateLabel.IsZero, true }
+    };
+
+    [Theory]
+    [MemberData(nameof(Data3))]
+    public void ToArray_WhenSourceIsInt32RoseNode
+    (
+        Int32RoseNodeLabel roseNodeLabel,
+        int[] expected
+    )
+    {
+        // Arrange
+        var roseNode = TestDataTheory.Int32RoseNodeMap[roseNodeLabel];
+
+        // Act
+        var actual = roseNode.ToArray();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+    public static TheoryData<Int32RoseNodeLabel, int[]> Data3 => new()
+    {
+        { Int32RoseNodeLabel.Single_0, [0] },
+        { Int32RoseNodeLabel.Height1_EvenNumbersIn2To10, [6,8,10,4,2] },
+        { Int32RoseNodeLabel.Height1_3Pow1To3Pow4, [3,27,81,9] },
+        { Int32RoseNodeLabel.Height3_NumbersIn0To10, [1,3,5,4,6,2,7,9,10,8,0] }
+    };
 }

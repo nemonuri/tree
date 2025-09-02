@@ -9,6 +9,7 @@ public enum Int32RoseNodeLabel
 }
 
 public enum Int32PredicateLabel
-{ 
-    IsEven, IsOdd
+{
+    IsEven, IsOdd,
+    IsZero
 }
