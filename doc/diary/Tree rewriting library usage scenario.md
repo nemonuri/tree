@@ -21,8 +21,12 @@ private static IEnumerable<TreeStructureChangedInfo> DoRewrite(ITree<SyntaxNode>
     // (...)
 }
 
-private static SyntaxNode CreateSyntaxNode(SyntaxNode value, ImmutableList<SyntaxNode> children)
+private static SyntaxNode CreateSyntaxNode(SyntaxNode value, ImmutableList<ITree<SyntaxNode>> children)
 {
-    // (...)
+    return (value, children.Parse(GetParser())) switch 
+    {
+        (BlockSyntax, [SyntaxList<AttributeListSyntax> v1, SyntaxToken v2, SyntaxList<StatementSyntax> v3, SyntaxToken v4]) => SyntaxFactory.Block(v1, v2, v3, v4),
+        // (...)
+    }
 }
 ```
