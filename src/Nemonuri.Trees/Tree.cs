@@ -1,6 +1,8 @@
 
 namespace Nemonuri.Trees;
 
+using Theories;
+
 /// <summary>The default implementation of <see cref="ITree{_}"/></summary>
 /// <inheritdoc cref="ITree{_}" path="/typeparam"/>
 public class Tree<TElement> :

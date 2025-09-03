@@ -1,6 +1,6 @@
 using Nemonuri.Trees.Abstractions;
 
-namespace Nemonuri.Trees;
+namespace Nemonuri.Trees.Theories;
 
 public static partial class TreeTheory
 {

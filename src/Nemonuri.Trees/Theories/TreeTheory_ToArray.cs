@@ -1,4 +1,4 @@
-namespace Nemonuri.Trees;
+namespace Nemonuri.Trees.Theories;
 
 using Abstractions;
 

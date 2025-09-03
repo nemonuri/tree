@@ -1,6 +1,6 @@
-using IndexesFromRoot = System.Collections.Immutable.ImmutableList<int>;
+using IndexPathFromRoot = System.Collections.Immutable.ImmutableList<int>;
 
-namespace Nemonuri.Trees;
+namespace Nemonuri.Trees.Theories;
 
 using Abstractions;
 
@@ -38,15 +38,15 @@ public static class TreeAggregatorTheory
         );
     }
 
-    public static TreeAggregator<TElement, TAggregation, int?, IndexesFromRoot>
+    public static TreeAggregator<TElement, TAggregation, int?, IndexPathFromRoot>
     Create<TElement, TAggregation>
     (
-        IContextualAggregator2D<TElement, TAggregation, IndexesFromRoot> contextualAggregator2D
+        IContextualAggregator2D<TElement, TAggregation, IndexPathFromRoot> contextualAggregator2D
     )
     {
         Guard.IsNotNull(contextualAggregator2D);
 
-        return new TreeAggregator<TElement, TAggregation, int?, ImmutableList<int>>
+        return new TreeAggregator<TElement, TAggregation, int?, IndexPathFromRoot>
         (
             ElementIndexAggregator.BoxedInstance,
             contextualAggregator2D,
@@ -54,11 +54,11 @@ public static class TreeAggregatorTheory
         );
     }
 
-    public static TreeAggregator<TElement, TAggregation, int?, IndexesFromRoot>
+    public static TreeAggregator<TElement, TAggregation, int?, IndexPathFromRoot>
     Create<TElement, TAggregation>
     (
         Func<TAggregation> initialAggregationImplementation,
-        Func<IndexesFromRoot, TAggregation, TAggregation, TElement, TAggregation> aggregateImplementation
+        Func<IndexPathFromRoot, TAggregation, TAggregation, TElement, TAggregation> aggregateImplementation
     )
     { 
         Guard.IsNotNull(initialAggregationImplementation);
@@ -66,7 +66,7 @@ public static class TreeAggregatorTheory
         
         return Create
         (
-            new AdHocContextualAggregator2D<TElement, TAggregation, IndexesFromRoot>
+            new AdHocContextualAggregator2D<TElement, TAggregation, IndexPathFromRoot>
             (
                 initialAggregationImplementation,
                 aggregateImplementation
