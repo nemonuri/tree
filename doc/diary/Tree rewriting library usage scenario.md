@@ -25,7 +25,7 @@ private static SyntaxNode CreateSyntaxNode(ITree<SyntaxNode> tree, ImmutableList
 {
     if (!tree.IsRewrited()) { return tree.Root; }
 
-    return (tree, children.Parse(GetParser())) switch 
+    return (tree.Root, children.Match(GetGrammar()).Select(static a => a.Root).ToArray()) switch 
     {
         (BlockSyntax, [SyntaxList<AttributeListSyntax> v1, SyntaxToken v2, SyntaxList<StatementSyntax> v3, SyntaxToken v4]) => SyntaxFactory.Block(v1, v2, v3, v4),
         // (...)
