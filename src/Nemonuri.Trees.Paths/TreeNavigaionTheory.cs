@@ -112,7 +112,7 @@ public static class TreeNavigaionTheory
         {
             Guard.HasSizeGreaterThan(nextIndexPath, 0);
 
-            nextIndexPath = nextIndexPath.SetItem(^1, oldIndexPath[^1] + 1);
+            nextIndexPath = nextIndexPath.SetItem(^1, nextIndexPath[^1] + 1);
             if (tree.TryGetItem(nextIndexPath, out var tree1))
             {
                 var toConcat = tree1.GetFirstIndexPathAsDepthFirstPostOrder(out treeAtNextIndexPath);
