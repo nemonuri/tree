@@ -1,6 +1,6 @@
-namespace Nemonuri.Trees.Tests;
+using Nemonuri.Trees.TestDatas;
 
-using TestDatas;
+namespace Nemonuri.Trees.Tests;
 
 public class TreeTheoryTest
 {

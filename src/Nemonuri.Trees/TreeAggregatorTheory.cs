@@ -1,6 +1,6 @@
 using IndexPathFromRoot = System.Collections.Immutable.ImmutableList<int>;
 
-namespace Nemonuri.Trees.Theories;
+namespace Nemonuri.Trees;
 
 using Abstractions;
 

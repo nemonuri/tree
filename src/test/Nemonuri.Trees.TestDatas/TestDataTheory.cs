@@ -1,4 +1,4 @@
-namespace Nemonuri.Trees.Tests.TestDatas;
+namespace Nemonuri.Trees.TestDatas;
 
 public static class TestDataTheory
 {

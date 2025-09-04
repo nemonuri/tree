@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Nemonuri.Trees.Tests</RootNamespace>
+    <RootNamespace>Nemonuri.Trees.Paths.Tests</RootNamespace>
     <TargetFramework>net9.0</TargetFramework>
     <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Nemonuri.Trees\Nemonuri.Trees.csproj" />
+    <ProjectReference Include="..\..\Nemonuri.Trees.Paths\Nemonuri.Trees.Paths.csproj" />
     <ProjectReference Include="..\Nemonuri.Trees.TestDatas\Nemonuri.Trees.TestDatas.csproj" />
   </ItemGroup>
 

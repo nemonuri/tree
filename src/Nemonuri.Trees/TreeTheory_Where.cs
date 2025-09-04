@@ -1,4 +1,4 @@
-namespace Nemonuri.Trees.Theories;
+namespace Nemonuri.Trees;
 
 public static partial class TreeTheory
 {
