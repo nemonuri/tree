@@ -1,8 +1,4 @@
-﻿
-using System.Collections;
-using Nemonuri.Trees.DefaultTheories;
-
-namespace Nemonuri.Trees.Paths;
+﻿namespace Nemonuri.Trees.Paths;
 
 public static class TreeNavigaionTheory
 {
@@ -57,34 +53,5 @@ public static class TreeNavigaionTheory
         Span<int> indexes = stackalloc int[depth];
         indexes.Fill(0);
         return new IndexPath(ImmutableList.Create<int>(indexes));
-    }
-}
-
-public class TreeIterator<TSource, TResult> : IEnumerator<TResult>
-{
-    public TreeIterator(ITree<TSource> root)
-    {
-        Root = root;
-    }
-
-    public ITree<TSource> Root { get; }
-    public IIndexPath? CurrentIndexPath { get; }
-
-    public TResult Current => throw new NotImplementedException();
-
-    public bool MoveNext()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Reset()
-    {
-        throw new NotImplementedException();
-    }
-
-    object IEnumerator.Current => Current!;
-
-    public void Dispose()
-    {
     }
 }
