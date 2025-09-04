@@ -5,6 +5,7 @@ namespace Nemonuri.Trees.Paths;
 [CollectionBuilder(typeof(IndexPathTheory), nameof(IndexPathTheory.Create))]
 public interface IIndexPath : IReadOnlyList<int>
 {
-    IIndexPath Take(int count);
+    IIndexPath Slice(int start, int length);
     IIndexPath Concat(IEnumerable<int> indexes);
+    IIndexPath SetItem(int index, int value);
 }
