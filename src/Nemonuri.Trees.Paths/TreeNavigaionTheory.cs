@@ -124,11 +124,7 @@ public static class TreeNavigaionTheory
             }
 
             nextIndexPath = nextIndexPath[..^1];
-            if (nextIndexPath is [])
-            {
-                treeAtNextIndexPath = tree;
-                return true;
-            }
+            return tree.TryGetItem(nextIndexPath, out treeAtNextIndexPath);
         }
     }
 }
