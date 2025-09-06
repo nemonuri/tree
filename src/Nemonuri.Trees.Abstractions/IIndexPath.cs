@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
 
-namespace Nemonuri.Trees.Paths;
+namespace Nemonuri.Trees;
 
-[CollectionBuilder(typeof(IndexPathTheory), nameof(IndexPathTheory.Create))]
+//[CollectionBuilder(typeof(IndexPathTheory), nameof(IndexPathTheory.Create))]
 public interface IIndexPath : IReadOnlyList<int>
 {
     IIndexPath Slice(int start, int length);

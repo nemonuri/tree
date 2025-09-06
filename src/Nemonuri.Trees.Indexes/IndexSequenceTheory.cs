@@ -1,3 +1,5 @@
+#if false
+
 namespace Nemonuri.Trees.Indexes;
 
 public static class IndexSequenceTheory
@@ -149,3 +151,5 @@ public static class IndexSequenceTheory
     }
 
 }
+
+#endif

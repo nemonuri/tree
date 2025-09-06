@@ -1,3 +1,4 @@
+#if false
 
 namespace Nemonuri.Trees.Indexes;
 
@@ -8,3 +9,5 @@ public class IndexSequenceFromDownLeftToTopRightComparer : IComparer<IndexSequen
     public int Compare(IndexSequence? x, IndexSequence? y) =>
         Int32ReadOnlyListCompareTheory.CompareFromDownLeftToTopRight(x, y);
 }
+
+#endif

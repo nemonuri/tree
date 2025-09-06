@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#if false
+
+using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -88,3 +90,5 @@ public class IndexSequence : IReadOnlyList<int>
         return new(_internalList.RemoveAt(_internalList.Count - 1));
     }
 }
+
+#endif

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Nemonuri.Trees\Nemonuri.Trees.csproj" />
+    <ProjectReference Include="..\Nemonuri.Trees.Indexes\Nemonuri.Trees.Indexes.csproj" />
   </ItemGroup>
 
 </Project>

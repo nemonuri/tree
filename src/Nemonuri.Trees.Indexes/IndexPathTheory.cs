@@ -1,5 +1,5 @@
 
-namespace Nemonuri.Trees.Paths;
+namespace Nemonuri.Trees.Indexes;
 
 public static class IndexPathTheory
 {

@@ -1,3 +1,4 @@
+#if false
 
 namespace Nemonuri.Trees.Indexes;
 
@@ -11,3 +12,5 @@ public class IndexSequenceEqualityComparer : IEqualityComparer<IndexSequence>
     public int GetHashCode([DisallowNull] IndexSequence obj) =>
         Int32ReadOnlyListCompareTheory.CalculateHashCode(obj);
 }
+
+#endif

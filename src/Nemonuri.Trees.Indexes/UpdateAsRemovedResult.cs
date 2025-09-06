@@ -2,7 +2,7 @@ namespace Nemonuri.Trees.Indexes;
 
 public readonly struct UpdateAsRemovedResult
 {
-    internal UpdateAsRemovedResult(bool boundInRemovedSubtree, IndexSequence indexSequence)
+    internal UpdateAsRemovedResult(bool boundInRemovedSubtree, IIndexPath indexSequence)
     {
         Debug.Assert(indexSequence is not null);
         BoundInRemovedSubtree = boundInRemovedSubtree;
@@ -10,5 +10,5 @@ public readonly struct UpdateAsRemovedResult
     }
 
     public bool BoundInRemovedSubtree { get; }
-    public IndexSequence IndexSequence { get; }
+    public IIndexPath IndexSequence { get; }
 }

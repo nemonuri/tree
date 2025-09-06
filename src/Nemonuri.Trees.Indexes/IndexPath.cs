@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Nemonuri.Trees.Paths;
+namespace Nemonuri.Trees.Indexes;
 
 public class IndexPath : IIndexPath
 {

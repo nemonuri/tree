@@ -6,7 +6,7 @@ namespace Nemonuri.Trees;
 /// <inheritdoc cref="ITreeAggregator{_,_,_,_}" path="/typeparam" />
 public interface ITree<TElement>
 #if NET9_0_OR_GREATER
-        where TElement : allows ref struct
+    where TElement : allows ref struct
 #endif
 {
     /// <summary>
