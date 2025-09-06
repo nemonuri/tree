@@ -16,6 +16,7 @@ public class Tree<TElement> :
     (
         TElement root,
         IChildrenProvider<TElement> childrenProvider,
+        ITreeFactory<TElement> treeFactory,
         ITree<TElement>? parent
     )
     {
@@ -24,6 +25,7 @@ public class Tree<TElement> :
 
         Root = root;
         ChildrenProvider = childrenProvider;
+        TreeFactory = treeFactory;
         _parent = parent;
     }
 
@@ -32,7 +34,8 @@ public class Tree<TElement> :
     /// </summary>
     /// <param name="root"></param>
     /// <param name="treeWalker"></param>
-    public Tree(TElement root, IChildrenProvider<TElement> childrenProvider) : this(root, childrenProvider, default)
+    public Tree(TElement root, IChildrenProvider<TElement> childrenProvider, ITree<TElement>? parent = default) :
+        this(root, childrenProvider, TreeFactory<TElement>.Instance, parent)
     { }
 
     /// <inheritdoc cref="ITree{_}.Root" />
@@ -40,6 +43,8 @@ public class Tree<TElement> :
 
     /// <inheritdoc cref="ITree{_}.ChildrenProvider" />
     public IChildrenProvider<TElement> ChildrenProvider { get; }
+
+    public ITreeFactory<TElement> TreeFactory { get; }
 
 
     /// <inheritdoc cref="IEquatable{_}.Equals(_)" />
@@ -73,7 +78,7 @@ public class Tree<TElement> :
     }
 
     /// <inheritdoc cref="ISupportChildren{_}.Children" />
-    public IEnumerable<ITree<TElement>> Children => _children ??= this.GetChildrenCore();
+    public IEnumerable<ITree<TElement>> Children => _children ??= this.CreateChildren();
 
     /// <inheritdoc cref="ISupportParent{_}.TryGetParent(out _?)" />
     public bool TryGetParent([NotNullWhen(true)] out ITree<TElement>? parent)
@@ -81,4 +86,6 @@ public class Tree<TElement> :
         parent = _parent;
         return parent is not null;
     }
+
+
 }

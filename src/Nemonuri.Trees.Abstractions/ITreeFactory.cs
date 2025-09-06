@@ -5,5 +5,8 @@ public interface ITreeFactory<TElement>
     where TElement : allows ref struct
 #endif
 {
-    ITree<TElement> Create(TElement root, IChildrenProvider<TElement> childrenProvider);
+    ITree<TElement> Create
+    (
+        TElement root, IChildrenProvider<TElement> childrenProvider, ITree<TElement>? parent
+    );
 }

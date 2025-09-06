@@ -45,10 +45,11 @@ public static partial class TreeTheory
         TResult SelectorImpl(IRoseNode<TSource> roseNode) => selector(roseNode.Value);
     }
 
+#if false
     public static IRoseNode<TResult> Select<TSource, TResult>
     (
         this ITree<TSource> tree,
-        Func<TSource, IReadOnlyList<int>, TResult> selector
+        Func<TSource, IIndexPath, TResult> selector
     )
     {
         Guard.IsNotNull(tree);
@@ -74,7 +75,7 @@ public static partial class TreeTheory
     public static IRoseNode<TResult> Select<TSource, TResult>
     (
         this IRoseNode<TSource> roseNode,
-        Func<TSource, IReadOnlyList<int>, TResult> selector
+        Func<TSource, IIndexPath, TResult> selector
     )
     {
         Guard.IsNotNull(roseNode);
@@ -82,6 +83,7 @@ public static partial class TreeTheory
 
         return roseNode.ToTree().Select(SelectorImpl);
 
-        TResult SelectorImpl(IRoseNode<TSource> roseNode, IReadOnlyList<int> indexesFromRoot) => selector(roseNode.Value, indexesFromRoot);
+        TResult SelectorImpl(IRoseNode<TSource> roseNode, IIndexPath indexesFromRoot) => selector(roseNode.Value, indexesFromRoot);
     }
+#endif
 }

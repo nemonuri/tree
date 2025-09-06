@@ -18,4 +18,6 @@ public interface ITree<TElement>
     /// Gets the mechanism to get children of the tree.
     /// </summary>
     IChildrenProvider<TElement> ChildrenProvider { get; }
+
+    ITreeFactory<TElement> TreeFactory { get; }
 }

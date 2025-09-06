@@ -1,16 +1,14 @@
-#if false
 
 namespace Nemonuri.Trees.Indexes;
 
-public class IndexSequenceEqualityComparer : IEqualityComparer<IndexSequence>
+public class IndexPathEqualityComparer : IEqualityComparer<IIndexPath>
 {
-    public IndexSequenceEqualityComparer() { }
+    public IndexPathEqualityComparer() { }
 
-    public bool Equals(IndexSequence? x, IndexSequence? y) =>
-        Int32ReadOnlyListCompareTheory.AreEqual(x, y);
+    public bool Equals(IIndexPath? x, IIndexPath? y) =>
+        IndexPathTheory.AreEqual(x, y);
 
-    public int GetHashCode([DisallowNull] IndexSequence obj) =>
-        Int32ReadOnlyListCompareTheory.CalculateHashCode(obj);
+    public int GetHashCode([DisallowNull] IIndexPath obj) =>
+        IndexPathTheory.CalculateHashCode(obj);
 }
 
-#endif

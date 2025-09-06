@@ -1,16 +1,19 @@
+#if false
 
 namespace Nemonuri.Trees;
 
-public readonly struct ElementIndexAggregator : IAggregator<int?, ImmutableList<int>>
+public readonly struct ElementIndexAggregator : IAggregator<int?, IIndexPath>
 {
-    public static readonly IAggregator<int?, ImmutableList<int>> BoxedInstance = (ElementIndexAggregator)default;
+    public static readonly IAggregator<int?, IIndexPath> BoxedInstance = (ElementIndexAggregator)default;
 
     public ElementIndexAggregator() { }
 
-    public ImmutableList<int> InitialAggregation => [];
+    public IIndexPath InitialAggregation => [];
 
-    public ImmutableList<int> Aggregate(ImmutableList<int> aggregation, int? element)
+    public IIndexPath Aggregate(IIndexPath aggregation, int? element)
     {
-        return element is int i ? aggregation.Add(i) : aggregation;
+        return element is int i ? aggregation.Concat([i]) : aggregation;
     }
 }
+
+#endif

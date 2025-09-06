@@ -10,7 +10,7 @@ public static partial class TreeTheory
     {
         if (root is ITree<TElement> tree) { return tree; }
 
-        return new Tree<TElement>(root, (TrivialChildrenProvider<TElement>)default);
+        return new Tree<TElement>(root, TrivialChildrenProvider<TElement>.BoxedInstance);
     }
 
     public static ITree<IRoseNode<TElement>> ToTree<TElement>(this IRoseNode<TElement> roseNode)
@@ -48,14 +48,14 @@ public static partial class TreeTheory
             return supportChildren.Children;
         }
 
-        return tree.GetChildrenCore();
+        return tree.CreateChildren();
     }
 
-    internal static IEnumerable<ITree<TElement>> GetChildrenCore<TElement>(this ITree<TElement> tree)
+    public static IEnumerable<ITree<TElement>> CreateChildren<TElement>(this ITree<TElement> tree)
     {
         return tree.ChildrenProvider.GetChildren(tree.Root).Select
         (
-            a => new Tree<TElement>(a, tree.ChildrenProvider, tree)
+            a => tree.TreeFactory.Create(a, tree.ChildrenProvider, tree)
         );
     }
 

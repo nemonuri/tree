@@ -38,6 +38,7 @@ public static class TreeAggregatorTheory
         );
     }
 
+#if false
     public static TreeAggregator<TElement, TAggregation, int?, IndexPathFromRoot>
     Create<TElement, TAggregation>
     (
@@ -73,4 +74,5 @@ public static class TreeAggregatorTheory
             )
         );
     }
+#endif
 }
