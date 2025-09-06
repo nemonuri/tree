@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace Nemonuri.Trees.Parsers;
 
-public readonly struct StringSegment<TChar> : IString<TChar>
+public class StringSegment<TChar> : IString<TChar>
 {
     public StringSegment(IString<TChar> internalString, int offset, int count)
     {
@@ -16,12 +16,9 @@ public readonly struct StringSegment<TChar> : IString<TChar>
         Count = count;
     }
 
-    public IString<TChar>? InternalString { get; }
+    public IString<TChar> InternalString { get; }
     public int Offset { get; }
     public int Count { get; }
-
-    [MemberNotNullWhen(true, nameof(InternalString))]
-    public bool HasValue => InternalString is not null;
 
     public TChar this[int index]
     {

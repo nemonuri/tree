@@ -1,4 +1,7 @@
 
+
+using Nemonuri.Trees.Abstractions;
+
 namespace Nemonuri.Trees;
 
 public class TreeFactory<TElement> : ITreeFactory<TElement>
@@ -7,12 +10,7 @@ public class TreeFactory<TElement> : ITreeFactory<TElement>
 
     public TreeFactory() { }
 
-    public ITree<TElement> Create
-    (
-        TElement root,
-        IChildrenProvider<TElement> childrenProvider,
-        ITree<TElement>? parent
-    )
+    public ITree<TElement> Create(TElement root, IChildrenProvider<TElement> childrenProvider, ITree<TElement>? parent)
     {
         return new Tree<TElement>(root, childrenProvider, this, parent);
     }

@@ -2,7 +2,7 @@
 
 public interface IParser<TChar, TInfo>
 {
-    IEnumerable<IReadOnlyList<ISyntaxTree<TChar, TInfo>>> Parse(IString<TChar> @string, int offset);
+    IEnumerable<IReadOnlyList<ITree<IInformedString<TChar, TInfo>>>> Parse(IString<TChar> @string, int offset);
 }
 
 #if false

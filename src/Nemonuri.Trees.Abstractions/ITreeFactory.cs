@@ -1,3 +1,5 @@
+using Nemonuri.Trees.Abstractions;
+
 namespace Nemonuri.Trees;
 
 public interface ITreeFactory<TElement>
