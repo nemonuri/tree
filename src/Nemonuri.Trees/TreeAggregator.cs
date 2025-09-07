@@ -8,13 +8,13 @@ using Abstractions;
 public class TreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggregation> :
     ITreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggregation>
 {
-    private readonly IAggregator3D<TElement, TAggregation, TAncestor, TAncestorsAggregation> _aggregator3D;
-    private readonly IAncestorConverter<TElement, TAncestor> _ancestorConverter;
+    private readonly IAggregator3D<ITree<TElement>, TAggregation, TAncestor, TAncestorsAggregation> _aggregator3D;
+    private readonly IAncestorConverter<ITree<TElement>, TAncestor> _ancestorConverter;
 
     public TreeAggregator
     (
-        IAggregator3D<TElement, TAggregation, TAncestor, TAncestorsAggregation> aggregator3D,
-        IAncestorConverter<TElement, TAncestor> ancestorConverter
+        IAggregator3D<ITree<TElement>, TAggregation, TAncestor, TAncestorsAggregation> aggregator3D,
+        IAncestorConverter<ITree<TElement>, TAncestor> ancestorConverter
     )
     {
         Guard.IsNotNull(aggregator3D);
@@ -27,12 +27,12 @@ public class TreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggrega
     public TreeAggregator
     (
         IAggregator<TAncestor, TAncestorsAggregation> ancestorAggregator,
-        IContextualAggregator2D<TElement, TAggregation, TAncestorsAggregation> elementAggregator,
-        IAncestorConverter<TElement, TAncestor> ancestorConverter
+        IContextualAggregator2D<ITree<TElement>, TAggregation, TAncestorsAggregation> elementAggregator,
+        IAncestorConverter<ITree<TElement>, TAncestor> ancestorConverter
     ) :
         this
         (
-            new Aggregator3D<TElement, TAggregation, TAncestor, TAncestorsAggregation>
+            new Aggregator3D<ITree<TElement>, TAggregation, TAncestor, TAncestorsAggregation>
             (
                 ancestorAggregator, elementAggregator
             ),
@@ -45,14 +45,14 @@ public class TreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggrega
         Func<TAncestorsAggregation> initialAncestorsAggregationImplementation,
         Func<TAncestorsAggregation, TAncestor, TAncestorsAggregation> aggregateAncestorImplementation,
         Func<TAggregation> initialAggregationImplementation,
-        Func<TAncestorsAggregation, TAggregation, TAggregation, TElement, TAggregation> aggregateImplementation,
-        Func<TElement, int?, TAncestor> convertToAncestorImplementation
+        Func<TAncestorsAggregation, TAggregation, TAggregation, ITree<TElement>, TAggregation> aggregateImplementation,
+        Func<ITree<TElement>, int?, TAncestor> convertToAncestorImplementation
     ) :
         this
         (
             new AdHocAggregator<TAncestor, TAncestorsAggregation>(initialAncestorsAggregationImplementation, aggregateAncestorImplementation),
-            new AdHocContextualAggregator2D<TElement, TAggregation, TAncestorsAggregation>(initialAggregationImplementation, aggregateImplementation),
-            new AdHocAncestorConverter<TElement, TAncestor>(convertToAncestorImplementation)
+            new AdHocContextualAggregator2D<ITree<TElement>, TAggregation, TAncestorsAggregation>(initialAggregationImplementation, aggregateImplementation),
+            new AdHocAncestorConverter<ITree<TElement>, TAncestor>(convertToAncestorImplementation)
         )
     { }
 
@@ -63,9 +63,9 @@ public class TreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggrega
 
     public TAggregation InitialAggregation => _aggregator3D.InitialAggregation;
 
-    public TAggregation Aggregate(TAncestorsAggregation ancestorsAggregation, TAggregation siblingsAggregation, TAggregation childrenAggregation, TElement element) =>
+    public TAggregation Aggregate(TAncestorsAggregation ancestorsAggregation, TAggregation siblingsAggregation, TAggregation childrenAggregation, ITree<TElement> element) =>
         _aggregator3D.Aggregate(ancestorsAggregation, siblingsAggregation, childrenAggregation, element);
 
-    public TAncestor ConvertToAncestor(TElement element, int? elementIndex) =>
+    public TAncestor ConvertToAncestor(ITree<TElement> element, int? elementIndex) =>
         _ancestorConverter.ConvertToAncestor(element, elementIndex);
 }

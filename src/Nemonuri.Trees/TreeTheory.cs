@@ -10,7 +10,7 @@ public static partial class TreeTheory
     {
         if (root is ITree<TElement> tree) { return tree; }
 
-        return new Tree<TElement>(root, TrivialChildrenProvider<TElement>.BoxedInstance);
+        return new TopDownTree<TElement>(root, TrivialChildrenProvider<TElement>.BoxedInstance);
     }
 
     public static ITree<IRoseNode<TElement>> ToTree<TElement>(this IRoseNode<TElement> roseNode)
@@ -36,7 +36,7 @@ public static partial class TreeTheory
     {
         Debug.Assert(tree is not null);
 
-        return AggregatingTheory.Aggregate(treeWalker, tree.ChildrenProvider, treeWalker, tree.Root);
+        return AggregatingTheory.Aggregate(treeWalker, TrivialChildrenProvider<ITree<TElement>>.BoxedInstance, treeWalker, tree);
     }
 
     public static IEnumerable<ITree<TElement>> GetChildren<TElement>(this ITree<TElement> tree)
@@ -53,7 +53,7 @@ public static partial class TreeTheory
 
     public static IEnumerable<ITree<TElement>> CreateChildren<TElement>(this ITree<TElement> tree)
     {
-        return tree.ChildrenProvider.GetChildren(tree.Root).Select
+        return tree.ChildrenProvider.GetChildren(tree.Value).Select
         (
             a => tree.TreeFactory.Create(a, tree.ChildrenProvider, tree)
         );

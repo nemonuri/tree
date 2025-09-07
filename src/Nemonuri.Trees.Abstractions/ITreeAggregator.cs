@@ -6,8 +6,8 @@
 /// <inheritdoc cref="AggregatingTheory.Aggregate{_,_,_,_}(IAggregator3D{_,_,_,_},IChildrenProvider{_},IAncestorConverter{_,_},_)" path="/typeparam" />
 public interface ITreeAggregator
 <TElement, TAggregation, TAncestor, TAncestorsAggregation> :
-    IAggregator3D<TElement, TAggregation, TAncestor, TAncestorsAggregation>,
-    IAncestorConverter<TElement, TAncestor>
+    IAggregator3D<ITree<TElement>, TAggregation, TAncestor, TAncestorsAggregation>,
+    IAncestorConverter<ITree<TElement>, TAncestor>
 #if NET9_0_OR_GREATER
     where TElement : allows ref struct
     where TAggregation : allows ref struct

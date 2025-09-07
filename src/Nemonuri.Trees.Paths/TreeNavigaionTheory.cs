@@ -30,7 +30,7 @@ public static class TreeNavigaionTheory
         var e = new TreeEnumerator<TSource>(root);
         while (e.MoveNext())
         {
-            yield return selector(e.Current.Root, e.CurrentIndexPath!);
+            yield return selector(e.Current.Value, e.CurrentIndexPath!);
         }
     }
 
