@@ -10,14 +10,6 @@ public static class TreeNavigaionTheory
         return ToEnumerable(root, Identity);
     }
 
-    public static IEnumerable<TElement> ToEnumerable<TElement>
-    (
-        IRoseNode<TElement> roseNode
-    )
-    {
-        return ToEnumerable(roseNode.ToTree(), IdentityForRoseNode);
-    }
-
     public static IEnumerable<TResult> ToEnumerable<TSource, TResult>
     (
         ITree<TSource> root,
@@ -35,7 +27,7 @@ public static class TreeNavigaionTheory
     }
 
     private static T Identity<T>(T t, IReadOnlyList<int> indexes) => t;
-    private static T IdentityForRoseNode<T>(IRoseNode<T> t, IReadOnlyList<int> indexes) => t.Value;
+    //private static T IdentityForRoseNode<T>(IRoseNode<T> t, IReadOnlyList<int> indexes) => t.Value;
 
     public static bool TryGetItem<TElement>
     (
@@ -50,7 +42,7 @@ public static class TreeNavigaionTheory
         ITree<TElement> currentTree = tree;
         foreach (var index in indexPath)
         {
-            if (currentTree.GetChildren().ElementAtOrDefault(index) is not { } nextTree)
+            if (currentTree.Children.ElementAtOrDefault(index) is not { } nextTree)
             {
                 result = default;
                 return false;
@@ -70,7 +62,7 @@ public static class TreeNavigaionTheory
 
         while
         (
-            currentTree.GetChildren() is { } children &&
+            currentTree.Children is { } children &&
             children.Any()
         )
         {
