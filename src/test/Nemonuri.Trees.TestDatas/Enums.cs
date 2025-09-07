@@ -1,6 +1,6 @@
 namespace Nemonuri.Trees.TestDatas;
 
-public enum Int32RoseNodeLabel
+public enum Int32TreeLabel
 {
     Single_0,
     Height1_EvenNumbersIn2To10,

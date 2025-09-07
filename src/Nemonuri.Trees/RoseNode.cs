@@ -1,4 +1,4 @@
-
+#if false
 namespace Nemonuri.Trees;
 
 public class RoseNode<TElement> : IRoseNode<TElement>
@@ -30,3 +30,4 @@ public class RoseNode<TElement> : IRoseNode<TElement>
     public static implicit operator RoseNode<TElement>((TElement Value, RoseNode<TElement>[] Children) v) =>
         new(v.Value, v.Children.Cast<IRoseNode<TElement>>().ToImmutableList());
 }
+#endif
