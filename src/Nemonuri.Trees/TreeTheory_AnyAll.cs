@@ -1,14 +1,13 @@
+using static Nemonuri.Trees.FunctionTheory;
 
 namespace Nemonuri.Trees;
-
-using Abstractions;
 
 public static partial class TreeTheory
 { 
     public static bool All<TElement>
     (
         this ITree<TElement> tree,
-        Func<TElement, bool> predicate
+        Func<ITree<TElement>, bool> predicate
     )
     {
         Guard.IsNotNull(tree);
@@ -29,19 +28,17 @@ public static partial class TreeTheory
 
     public static bool All<TElement>
     (
-        this IRoseNode<TElement> roseNode,
+        this ITree<TElement> tree,
         Func<TElement, bool> predicate
     )
     {
-        return roseNode.ToTree().All(PredicateImpl);
-
-        bool PredicateImpl(IRoseNode<TElement> roseNode) => predicate(roseNode.Value);
+        return tree.All(WarpParameterInTree(predicate));
     }
 
     public static bool Any<TElement>
     (
         this ITree<TElement> tree,
-        Func<TElement, bool> predicate
+        Func<ITree<TElement>, bool> predicate
     )
     {
         Guard.IsNotNull(tree);
@@ -62,12 +59,10 @@ public static partial class TreeTheory
 
     public static bool Any<TElement>
     (
-        this IRoseNode<TElement> roseNode,
+        this ITree<TElement> tree,
         Func<TElement, bool> predicate
     )
     {
-        return roseNode.ToTree().Any(PredicateImpl);
-
-        bool PredicateImpl(IRoseNode<TElement> roseNode) => predicate(roseNode.Value);
+        return tree.Any(WarpParameterInTree(predicate));
     }
 }

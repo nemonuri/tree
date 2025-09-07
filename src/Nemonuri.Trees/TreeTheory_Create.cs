@@ -66,13 +66,4 @@ public static partial class TreeTheory
 
         return new ParentBoundTree<TElement>(ensuredSource, parent);
     }
-
-    public static ITree<TElement> CreateChildrenOnly<TElement>
-    (
-        TElement value,
-        IEnumerable<ITree<TElement>> children
-    )
-    {
-        return new ChildrenOnlyTree<TElement>(value, children);
-    }
 }

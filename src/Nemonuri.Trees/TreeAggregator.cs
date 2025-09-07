@@ -1,11 +1,9 @@
 ﻿
 namespace Nemonuri.Trees;
 
-using Abstractions;
-
 /// <summary>The default implementation of <see cref="ITreeAggregator{_,_,_,_}"/></summary>
 /// <inheritdoc cref="ITreeAggregator{_,_,_,_}" path="/typeparam"/>
-public class TreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggregation> :
+internal class TreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggregation> :
     ITreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggregation>
 {
     private readonly IAggregator3D<ITree<TElement>, TAggregation, TAncestor, TAncestorsAggregation> _aggregator3D;
@@ -23,38 +21,6 @@ public class TreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggrega
         _aggregator3D = aggregator3D;
         _ancestorConverter = ancestorConverter;
     }
-
-    public TreeAggregator
-    (
-        IAggregator<TAncestor, TAncestorsAggregation> ancestorAggregator,
-        IContextualAggregator2D<ITree<TElement>, TAggregation, TAncestorsAggregation> elementAggregator,
-        IAncestorConverter<ITree<TElement>, TAncestor> ancestorConverter
-    ) :
-        this
-        (
-            new Aggregator3D<ITree<TElement>, TAggregation, TAncestor, TAncestorsAggregation>
-            (
-                ancestorAggregator, elementAggregator
-            ),
-            ancestorConverter
-        )
-    { }
-
-    public TreeAggregator
-    (
-        Func<TAncestorsAggregation> initialAncestorsAggregationImplementation,
-        Func<TAncestorsAggregation, TAncestor, TAncestorsAggregation> aggregateAncestorImplementation,
-        Func<TAggregation> initialAggregationImplementation,
-        Func<TAncestorsAggregation, TAggregation, TAggregation, ITree<TElement>, TAggregation> aggregateImplementation,
-        Func<ITree<TElement>, int?, TAncestor> convertToAncestorImplementation
-    ) :
-        this
-        (
-            new AdHocAggregator<TAncestor, TAncestorsAggregation>(initialAncestorsAggregationImplementation, aggregateAncestorImplementation),
-            new AdHocContextualAggregator2D<ITree<TElement>, TAggregation, TAncestorsAggregation>(initialAggregationImplementation, aggregateImplementation),
-            new AdHocAncestorConverter<ITree<TElement>, TAncestor>(convertToAncestorImplementation)
-        )
-    { }
 
     public TAncestorsAggregation InitialAncestorsAggregation => _aggregator3D.InitialAncestorsAggregation;
 

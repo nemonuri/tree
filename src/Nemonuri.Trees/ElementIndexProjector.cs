@@ -1,4 +1,3 @@
-#if false
 
 namespace Nemonuri.Trees;
 
@@ -10,5 +9,3 @@ public readonly struct ElementIndexProjector<TElement> : IAncestorConverter<TEle
 
     public int? ConvertToAncestor(TElement element, int? elementIndex) => elementIndex;
 }
-
-#endif

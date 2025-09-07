@@ -1,16 +1,19 @@
-namespace Nemonuri.Trees;
+using Nemonuri.Trees.Abstractions;
+using static Nemonuri.Trees.FunctionTheory;
 
-using Abstractions;
+namespace Nemonuri.Trees;
 
 public static partial class TreeTheory
 {
     public static TResult[] ToArray<TSource, TResult>
     (
         this ITree<TSource> tree,
-        Func<TSource, TResult> selector
+        Func<TResult, bool> predicate,
+        Func<ITree<TSource>, TResult> selector
     )
     {
         Guard.IsNotNull(tree);
+        Guard.IsNotNull(predicate);
         Guard.IsNotNull(selector);
 
         ArrayBuilder<TResult> arrayBuilder = default;
@@ -20,7 +23,11 @@ public static partial class TreeTheory
             initialAggregationImplementation: static () => default,
             aggregateImplementation: (s, c, e) =>
             {
-                arrayBuilder.Add(selector(e));
+                TResult r = selector(e);
+                if (predicate(r))
+                { 
+                    arrayBuilder.Add(selector(e));
+                }
                 return default;
             }
         );
@@ -32,16 +39,33 @@ public static partial class TreeTheory
 
     public static TResult[] ToArray<TSource, TResult>
     (
-        this IRoseNode<TSource> roseNode,
+        this ITree<TSource> tree,
+        Func<TResult, bool> predicate,
         Func<TSource, TResult> selector
     )
     {
-        Guard.IsNotNull(roseNode);
+        return tree.ToArray(predicate, WarpParameterInTree(selector));
+    }
+
+    public static TResult[] ToArray<TSource, TResult>
+    (
+        this ITree<TSource> tree,
+        Func<ITree<TSource>, TResult> selector
+    )
+    {
+        return tree.ToArray(Tautology, selector);
+    }
+
+    public static TResult[] ToArray<TSource, TResult>
+    (
+        this ITree<TSource> tree,
+        Func<TSource, TResult> selector
+    )
+    {
+        Guard.IsNotNull(tree);
         Guard.IsNotNull(selector);
 
-        return roseNode.ToTree().ToArray(SelectorImpl);
-
-        TResult SelectorImpl(IRoseNode<TSource> roseNode) => selector(roseNode.Value);
+        return tree.ToArray(WarpParameterInTree(selector));
     }
 
     public static TElement[] ToArray<TElement>
@@ -49,15 +73,7 @@ public static partial class TreeTheory
         this ITree<TElement> tree
     )
     {
-        return tree.ToArray(Identity);
-    }
-
-    public static TElement[] ToArray<TElement>
-    (
-        this IRoseNode<TElement> roseNode
-    )
-    {
-        return roseNode.ToArray(Identity);
+        return tree.ToArray((Func<TElement, TElement>)Identity);
     }
 
     public static int Count<TElement>
@@ -82,13 +98,5 @@ public static partial class TreeTheory
         _ = tree.Aggregate(treeAggregator);
 
         return count;
-    }
-
-    public static int Count<TElement>
-    (
-        this IRoseNode<TElement> roseNode
-    )
-    {
-        return roseNode.ToTree().Count();
     }
 }

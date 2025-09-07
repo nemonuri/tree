@@ -1,32 +1,79 @@
-using IndexPathFromRoot = System.Collections.Immutable.ImmutableList<int>;
+using Nemonuri.Trees.Abstractions;
 
 namespace Nemonuri.Trees;
 
-using Abstractions;
-
 public static class TreeAggregatorTheory
 {
-    public static TreeAggregator<TElement, TAggregation, NullAggregation, NullAggregation>
+    public static ITreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggregation>
+    Create<TElement, TAggregation, TAncestor, TAncestorsAggregation>
+    (
+        IAggregator3D<ITree<TElement>, TAggregation, TAncestor, TAncestorsAggregation> aggregator3D,
+        IAncestorConverter<ITree<TElement>, TAncestor> ancestorConverter
+    )
+    {
+        return new TreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggregation>
+        (
+            aggregator3D, ancestorConverter
+        );
+    }
+
+    public static ITreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggregation>
+    Create<TElement, TAggregation, TAncestor, TAncestorsAggregation>
+    (
+        IAggregator<TAncestor, TAncestorsAggregation> ancestorAggregator,
+        IContextualAggregator2D<ITree<TElement>, TAggregation, TAncestorsAggregation> elementAggregator,
+        IAncestorConverter<ITree<TElement>, TAncestor> ancestorConverter
+    )
+    {
+        return Create
+        (
+            new Aggregator3D<ITree<TElement>, TAggregation, TAncestor, TAncestorsAggregation>
+            (
+                ancestorAggregator, elementAggregator
+            ),
+            ancestorConverter
+        );
+    }
+
+    public static ITreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggregation>
+    Create<TElement, TAggregation, TAncestor, TAncestorsAggregation>
+    (
+        Func<TAncestorsAggregation> initialAncestorsAggregationImplementation,
+        Func<TAncestorsAggregation, TAncestor, TAncestorsAggregation> aggregateAncestorImplementation,
+        Func<TAggregation> initialAggregationImplementation,
+        Func<TAncestorsAggregation, TAggregation, TAggregation, ITree<TElement>, TAggregation> aggregateImplementation,
+        Func<ITree<TElement>, int?, TAncestor> convertToAncestorImplementation
+    )
+    {
+        return Create
+        (
+            new AdHocAggregator<TAncestor, TAncestorsAggregation>(initialAncestorsAggregationImplementation, aggregateAncestorImplementation),
+            new AdHocContextualAggregator2D<ITree<TElement>, TAggregation, TAncestorsAggregation>(initialAggregationImplementation, aggregateImplementation),
+            new AdHocAncestorConverter<ITree<TElement>, TAncestor>(convertToAncestorImplementation)
+        );
+    }
+
+    public static ITreeAggregator<TElement, TAggregation, NullAggregation, NullAggregation>
     Create<TElement, TAggregation>
     (
-        IAggregator2D<TElement, TAggregation> aggregator2D
+        IAggregator2D<ITree<TElement>, TAggregation> aggregator2D
     )
     {
         Guard.IsNotNull(aggregator2D);
 
-        return new TreeAggregator<TElement, TAggregation, NullAggregation, NullAggregation>
+        return Create
         (
             NullAggregator.BoxedInstance,
-            new NullContextualAggregator2D<TElement, TAggregation>(aggregator2D),
-            NullAncestorConverter<TElement>.BoxedInstance
+            new NullContextualAggregator2D<ITree<TElement>, TAggregation>(aggregator2D),
+            NullAncestorConverter<ITree<TElement>>.BoxedInstance
         );
     }
 
-    public static TreeAggregator<TElement, TAggregation, NullAggregation, NullAggregation>
+    public static ITreeAggregator<TElement, TAggregation, NullAggregation, NullAggregation>
     Create<TElement, TAggregation>
     (
         Func<TAggregation> initialAggregationImplementation,
-        Func<TAggregation, TAggregation, TElement, TAggregation> aggregateImplementation
+        Func<TAggregation, TAggregation, ITree<TElement>, TAggregation> aggregateImplementation
     )
     {
         Guard.IsNotNull(initialAggregationImplementation);
@@ -34,45 +81,49 @@ public static class TreeAggregatorTheory
 
         return Create
         (
-            new AdHocAggregator2D<TElement, TAggregation>(initialAggregationImplementation, aggregateImplementation)
+            new AdHocAggregator2D<ITree<TElement>, TAggregation>(initialAggregationImplementation, aggregateImplementation)
         );
     }
 
-#if false
-    public static TreeAggregator<TElement, TAggregation, int?, IndexPathFromRoot>
+    public static ITreeAggregator<TElement, TAggregation, int?, IIndexPath>
     Create<TElement, TAggregation>
     (
-        IContextualAggregator2D<TElement, TAggregation, IndexPathFromRoot> contextualAggregator2D
+        IContextualAggregator2D<ITree<TElement>, TAggregation, IIndexPath> contextualAggregator2D,
+        IIndexPathFactory indexPathFactory
     )
     {
         Guard.IsNotNull(contextualAggregator2D);
+        Guard.IsNotNull(indexPathFactory);
 
-        return new TreeAggregator<TElement, TAggregation, int?, IndexPathFromRoot>
+        return Create
         (
-            ElementIndexAggregator.BoxedInstance,
+            new ElementIndexAggregator(indexPathFactory),
             contextualAggregator2D,
-            ElementIndexProjector<TElement>.BoxedInstance
+            ElementIndexProjector<ITree<TElement>>.BoxedInstance
         );
     }
 
-    public static TreeAggregator<TElement, TAggregation, int?, IndexPathFromRoot>
+    public static ITreeAggregator<TElement, TAggregation, int?, IIndexPath>
     Create<TElement, TAggregation>
     (
         Func<TAggregation> initialAggregationImplementation,
-        Func<IndexPathFromRoot, TAggregation, TAggregation, TElement, TAggregation> aggregateImplementation
+        Func<IIndexPath, TAggregation, TAggregation, ITree<TElement>, TAggregation> aggregateImplementation,
+        IIndexPathFactory indexPathFactory
     )
     { 
         Guard.IsNotNull(initialAggregationImplementation);
         Guard.IsNotNull(aggregateImplementation);
+        Guard.IsNotNull(indexPathFactory);
         
         return Create
         (
-            new AdHocContextualAggregator2D<TElement, TAggregation, IndexPathFromRoot>
+            new AdHocContextualAggregator2D<ITree<TElement>, TAggregation, IIndexPath>
             (
                 initialAggregationImplementation,
                 aggregateImplementation
-            )
+            ),
+            indexPathFactory
         );
     }
-#endif
+
 }

@@ -1,18 +1,20 @@
+using static Nemonuri.Trees.FunctionTheory;
+
 namespace Nemonuri.Trees;
 
 public static partial class TreeTheory
 {
-    public static ImmutableList<IRoseNode<TResult>> Where<TSource, TResult>
+    public static ImmutableList<ITree<TResult>> Where<TSource, TResult>
     (
         this ITree<TSource> tree,
         Func<TResult, bool> predicate,
-        Func<TSource, TResult> selector
+        Func<ITree<TSource>, TResult> selector
     )
     {
         Guard.IsNotNull(tree);
         Guard.IsNotNull(predicate);
 
-        var treeAggregator = TreeAggregatorTheory.Create<TSource, ImmutableList<IRoseNode<TResult>>>
+        var treeAggregator = TreeAggregatorTheory.Create<TSource, ImmutableList<ITree<TResult>>>
         (
             initialAggregationImplementation: static () => [],
             aggregateImplementation: (s, c, e) =>
@@ -20,8 +22,8 @@ public static partial class TreeTheory
                 TResult r = selector(e);
                 if (predicate(r))
                 {
-                    IRoseNode<TResult> roseNode = new RoseNode<TResult>(r, c);
-                    return s.Add(roseNode);
+                    ITree<TResult> newTree = CreateBottomUp(r, c);
+                    return s.Add(newTree);
                 }
                 else
                 {
@@ -33,7 +35,7 @@ public static partial class TreeTheory
         return tree.Aggregate(treeAggregator);
     }
 
-    public static ImmutableList<IRoseNode<TElement>> Where<TElement>
+    public static ImmutableList<ITree<TElement>> Where<TElement>
     (
         this ITree<TElement> tree,
         Func<TElement, bool> predicate
@@ -42,24 +44,13 @@ public static partial class TreeTheory
         return tree.Where(predicate, Identity);
     }
 
-    public static ImmutableList<IRoseNode<TResult>> Where<TSource, TResult>
+    public static ImmutableList<ITree<TResult>> Where<TSource, TResult>
     (
-        this IRoseNode<TSource> roseNode,
+        this ITree<TSource> tree,
         Func<TResult, bool> predicate,
         Func<TSource, TResult> selector
     )
     {
-        return roseNode.ToTree().Where(predicate, SelectorImpl);
-
-        TResult SelectorImpl(IRoseNode<TSource> roseNode) => selector(roseNode.Value);
-    }
-
-    public static ImmutableList<IRoseNode<TElement>> Where<TElement>
-    (
-        this IRoseNode<TElement> roseNode,
-        Func<TElement, bool> predicate
-    )
-    {
-        return roseNode.Where(predicate, Identity);
+        return tree.Where(predicate, WarpParameterInTree(selector));
     }
 }
