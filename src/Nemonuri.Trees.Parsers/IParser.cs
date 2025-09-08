@@ -1,8 +1,6 @@
-﻿using Nemonuri.Trees.Abstractions;
+﻿namespace Nemonuri.Trees.Parsers;
 
-namespace Nemonuri.Trees.Parsers;
-
-public interface IParser<TChar> : ITree<NullAggregation, IParser<TChar>>
+public interface IParser<TChar> : ITree<IParser<TChar>, IParser<TChar>>, IParentTreeBindable<IParser<TChar>, IParser<TChar>>
 {
     ISyntaxForest<TChar> Parse(IString<TChar> @string, int offset);
 }

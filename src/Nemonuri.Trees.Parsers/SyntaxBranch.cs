@@ -1,5 +1,4 @@
 
-
 namespace Nemonuri.Trees.Parsers;
 
 internal class SyntaxBranch<TChar> : ISyntaxTree<TChar>
@@ -21,7 +20,8 @@ internal class SyntaxBranch<TChar> : ISyntaxTree<TChar>
 
     public bool TryGetParent([NotNullWhen(true)] out ISyntaxTree<TChar>? parent)
     {
-        throw new NotImplementedException();
+        parent = _parent;
+        return _parent is not null;
     }
 
     public ISyntaxTree<TChar> BindParent(ISyntaxTree<TChar>? settingParent)

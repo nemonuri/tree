@@ -1,54 +1,46 @@
 
+
 namespace Nemonuri.Trees.Parsers;
 
-public class ProductParser<TChar, TInfo> : IParser<TChar, TInfo>
+internal class ProductParser<TChar> : IParser<TChar>
 {
-    private readonly IEnumerable<IParser<TChar, TInfo>> _parserSequence;
+    private readonly IEnumerable<IParser<TChar>> _parserSequence;
+    private readonly ILazyTreeValueEvaluator<SyntaxTreeInfo<TChar>, ISyntaxTree<TChar>> _lazyTreeValueEvaluator;
+    private readonly IParser<TChar>? _parent;
+    private IEnumerable<IParser<TChar>>? _children;
 
-    public ProductParser(IEnumerable<IParser<TChar, TInfo>> parserSequence)
-    {
-        Guard.IsNotNull(parserSequence);
-        _parserSequence = parserSequence;
-    }
-
-    public IEnumerable<ITree<IInformedString<TChar, TInfo>>> Parse(IString<TChar> @string, int offset)
-    {
-        if (_parserSequence.FirstOrDefault() is not { } parser) { yield break; }
-        if (!(0 <= offset && offset < @string.Count)) { yield break; }
-
-        var forest = parser.Parse(@string, offset);
-        foreach (var tree in forest)
-        {
-            int advancedCount = tree.Value.String.Count;
-        }
-
-    }
-}
-
-#if false
-public static class ParserTheory
-{
-    public static IEnumerable<IEnumerable<ITree<IInformedString<TChar, TInfo>>>>
-    ProductParse<TChar, TInfo>
+    public ProductParser
     (
-        IEnumerable<IParser<TChar, TInfo>> parserSequence, IString<TChar> @string, int offset
+        IEnumerable<IParser<TChar>> parserSequence,
+        ILazyTreeValueEvaluator<SyntaxTreeInfo<TChar>, ISyntaxTree<TChar>> lazyTreeValueEvaluator,
+        IParser<TChar>? parent = null
     )
     {
-        if (parserSequence.FirstOrDefault() is not { } parser) { yield break; }
-        if (!(0 <= offset && offset < @string.Count)) { yield break; }
+        Guard.IsNotNull(parserSequence);
+        Guard.IsNotNull(lazyTreeValueEvaluator);
 
-        var forest = parser.Parse(@string, offset);
-        foreach (var tree in forest)
-        {
-            var nextParserSequence = parserSequence.Skip(1);
-            int advancedCount = tree.Value.String.Count;
+        _parserSequence = parserSequence;
+        _lazyTreeValueEvaluator = lazyTreeValueEvaluator;
+        _parent = parent;
+    }
 
-            var forestSequence = ProductParse(nextParserSequence, @string, offset + advancedCount);
-            foreach (var treeSequence in forestSequence)
-            {
-                yield return treeSequence.Prepend(tree);
-            }
-        }
+    public ISyntaxForest<TChar> Parse(IString<TChar> @string, int offset)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IParser<TChar> Value => this;
+
+    public IEnumerable<IParser<TChar>> Children => _children ??= _parserSequence.Select(child => child.BindParent(this));
+
+    public bool TryGetParent([NotNullWhen(true)] out IParser<TChar>? parent)
+    {
+        parent = _parent;
+        return parent is not null;
+    }
+
+    public IParser<TChar> BindParent(IParser<TChar>? settingParent)
+    {
+        return new ProductParser<TChar>(_parserSequence, _lazyTreeValueEvaluator, settingParent);
     }
 }
-#endif
