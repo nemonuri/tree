@@ -66,4 +66,14 @@ public static partial class TreeTheory
 
         return new ParentBoundTree<TElement>(ensuredSource, parent);
     }
+
+    public static ITree<TElement> CreateLazyBottomUp<TElement>
+    (
+        ILazyTreeValueEvaluator<TElement> lazyValue,
+        IEnumerable<ITree<TElement>>? children,
+        IParentTreeBinder<TElement> parentTreeBinder
+    )
+    {
+        return new LazyBottomUpTree<TElement>(lazyValue, children, parentTreeBinder);
+    }
 }
