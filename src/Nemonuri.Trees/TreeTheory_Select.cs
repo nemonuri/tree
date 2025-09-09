@@ -4,41 +4,43 @@ namespace Nemonuri.Trees;
 
 public static partial class TreeTheory
 {
-    public static ITree<TResult> Select<TSource, TResult>
+    public static IGeneralBinderRoseTree<TResultValue> Select<TSourceTree, TResultValue>
     (
-        this ITree<TSource> tree,
-        Func<ITree<TSource>, TResult> selector
+        this ITree<TSourceTree> tree,
+        Func<TSourceTree, TResultValue> selector
     )
+        where TSourceTree : ITree<TSourceTree>
     {
         Guard.IsNotNull(tree);
         Guard.IsNotNull(selector);
 
-        var treeAggregator = TreeAggregatorTheory.Create<TSource, ImmutableList<ITree<TResult>>>
+        var treeAggregator = TreeAggregatorTheory.Create<TSourceTree, ImmutableList<IGeneralBottomUpRoseTree<TResultValue>>>
         (
             initialAggregationImplementation: static () => [],
             aggregateImplementation: (s, c, e) =>
             {
-                TResult r = selector(e);
-                ITree<TResult> newTree = CreateBottomUp(r, c);
+                TResultValue r = selector(e);
+                IGeneralBottomUpRoseTree<TResultValue> newTree = CreateBranch(r, c);
                 return s.Add(newTree);
             }
         );
 
-        ImmutableList<ITree<TResult>> aggregation = tree.Aggregate(treeAggregator);
+        var aggregation = tree.Aggregate(treeAggregator);
 
         Guard.IsEqualTo(aggregation.Count, 1);
         return aggregation[0];
     }
 
-    public static ITree<TResult> Select<TSource, TResult>
+    public static IGeneralBinderRoseTree<TResultValue> Select<TSourceValue, TSourceTree, TResultValue>
     (
-        this ITree<TSource> tree,
-        Func<TSource, TResult> selector
+        this IRoseTree<TSourceValue, TSourceTree> tree,
+        Func<TSourceValue, TResultValue> selector
     )
+        where TSourceTree : IRoseTree<TSourceValue, TSourceTree>
     {
         Guard.IsNotNull(selector);
 
-        return tree.Select(WarpParameterInTree(selector));
+        return tree.Select(WarpParameterInTree<TSourceTree, TSourceValue, TResultValue>(selector));
     }
 
 #if false

@@ -7,18 +7,18 @@ namespace Nemonuri.Trees.Abstractions;
 /// Represents the aggregated value which is null.
 /// </summary>
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public readonly struct NullAggregation : IEquatable<NullAggregation>
+public readonly struct NullValue : IEquatable<NullValue>
 {
     /// <inheritdoc cref="System.Object.Equals(object?)" path="/summary"/>
     /// <returns>
-    /// <see langword="true"/> if the specified object is <see cref="NullAggregation"/>;
+    /// <see langword="true"/> if the specified object is <see cref="NullValue"/>;
     /// otherwise, <see langword="false"/>.
     /// </returns>
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is NullAggregation;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is NullValue;
 
-    /// <inheritdoc cref="NullAggregation.Equals(object?)" path="/summary"/>
+    /// <inheritdoc cref="NullValue.Equals(object?)" path="/summary"/>
     /// <returns><see langword="true"/></returns>
-    public bool Equals(NullAggregation other) => true;
+    public bool Equals(NullValue other) => true;
 
     
     /// <inheritdoc cref="System.Object.GetHashCode()" path="/summary"/>

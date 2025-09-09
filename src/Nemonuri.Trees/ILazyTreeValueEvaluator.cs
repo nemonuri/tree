@@ -1,13 +1,8 @@
 
 namespace Nemonuri.Trees;
 
-public interface ILazyTreeValueEvaluator<TElement, TTree>
-    where TTree : ITree<TElement, TTree>
+public interface ILazyTreeValueEvaluator<out TValue, TTree>
+    where TTree : IRoseTree<TValue, TTree>
 {
-    TElement Evaluate(IEnumerable<TTree> children);
+    TValue Evaluate(IEnumerable<TTree> children);
 }
-
-public interface ILazyTreeValueEvaluator<TElement> : ILazyTreeValueEvaluator<TElement, ITree<TElement>>
-{
-}
-

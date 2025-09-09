@@ -1,22 +1,22 @@
-
+#if false
 
 namespace Nemonuri.Trees;
 
-internal class LazyBottomUpTree<TElement> : ITree<TElement>
+internal class LazyBottomUpTree<TElement> : IBinderRoseTree<TElement>
 {
     private bool _hasValue;
     private TElement? _value;
 
     private readonly ILazyTreeValueEvaluator<TElement> _lazyTreeValueEvaluator;
-    private readonly IEnumerable<ITree<TElement>> _originalChildren;
+    private readonly IEnumerable<IBinderRoseTree<TElement>> _originalChildren;
     private readonly IParentTreeBinder<TElement> _parentTreeBinder;
 
-    private IEnumerable<ITree<TElement>>? _children;
+    private IEnumerable<IBinderRoseTree<TElement>>? _children;
 
     public LazyBottomUpTree
     (
         ILazyTreeValueEvaluator<TElement> lazyTreeValueEvaluator,
-        IEnumerable<ITree<TElement>>? children,
+        IEnumerable<IBinderRoseTree<TElement>>? children,
         IParentTreeBinder<TElement> parentTreeBinder
     )
     {
@@ -40,12 +40,14 @@ internal class LazyBottomUpTree<TElement> : ITree<TElement>
         }
     }
 
-    public IEnumerable<ITree<TElement>> Children =>
+    public IEnumerable<IBinderRoseTree<TElement>> Children =>
         _children ??= _originalChildren.Select(child => _parentTreeBinder.BindParent(child, this));
 
-    public bool TryGetParent([NotNullWhen(true)] out ITree<TElement>? parent)
+    public bool TryGetBoundParent([NotNullWhen(true)] out IBinderRoseTree<TElement>? parent)
     {
         parent = default;
         return false;
     }
 }
+
+#endif

@@ -1,29 +1,49 @@
-
 namespace Nemonuri.Trees.Implicit;
 
-public class ImplicitBottomUpTree<TElement> : ITree<TElement>
+public class ImplicitBottomUpRoseTree<TValue> :
+    IBottomUpRoseTree<TValue, ImplicitBottomUpRoseTree<TValue>>
 {
-    private readonly IEnumerable<ITree<TElement>> _originalChildren;
-    private IEnumerable<ITree<TElement>>? _children;
+    public TValue Value { get; }
+    private readonly IEnumerable<ImplicitBottomUpRoseTree<TValue>> _unboundChildren;
+    private IEnumerable<ImplicitBottomUpRoseTree<TValue>>? _childrenCache;
+    private readonly ImplicitBottomUpRoseTree<TValue>? _parent;
 
-    public ImplicitBottomUpTree(TElement value, IEnumerable<ITree<TElement>> children)
+    public ImplicitBottomUpRoseTree
+    (
+        TValue value,
+        IEnumerable<ImplicitBottomUpRoseTree<TValue>> unboundChildren,
+        IEnumerable<ImplicitBottomUpRoseTree<TValue>>? childrenCache,
+        ImplicitBottomUpRoseTree<TValue>? parent
+    )
     {
         Value = value;
-        _originalChildren = children;
+        _unboundChildren = unboundChildren;
+        _childrenCache = childrenCache;
+        _parent = parent;
     }
 
-    public TElement Value { get; }
+    public ImplicitBottomUpRoseTree
+    (
+        TValue value,
+        IEnumerable<ImplicitBottomUpRoseTree<TValue>> unboundChildren
+    ) :
+    this(value, unboundChildren, null, null)
+    { }
 
-    public IEnumerable<ITree<TElement>> Children =>
-        _children ??= _originalChildren.Select(child => ParentTreeBinder<TElement>.Instance.BindParent(child, this));
+    public IEnumerable<ImplicitBottomUpRoseTree<TValue>> UnboundChildren => _unboundChildren;
 
-    public bool TryGetParent([NotNullWhen(true)] out ITree<TElement>? parent)
+    public ImplicitBottomUpRoseTree<TValue> BindParent(ImplicitBottomUpRoseTree<TValue> parent)
     {
-        parent = default;
-        return false;
+        return new ImplicitBottomUpRoseTree<TValue>(Value, _unboundChildren, _childrenCache, parent);
     }
 
-    public static implicit operator ImplicitBottomUpTree<TElement>(TElement v) => new(v, []);
-    public static implicit operator ImplicitBottomUpTree<TElement>((TElement Value, ImplicitBottomUpTree<TElement>[] Children) v) =>
+    public IEnumerable<ImplicitBottomUpRoseTree<TValue>> Children => _childrenCache ??=
+        _unboundChildren.Select(child => child.BindParent(this));
+
+    public bool HasParent => _parent is not null;
+    public ImplicitBottomUpRoseTree<TValue> GetParent() => _parent ?? ThrowHelper.ThrowArgumentNullException<ImplicitBottomUpRoseTree<TValue>>();
+    
+    public static implicit operator ImplicitBottomUpRoseTree<TValue>(TValue v) => new(v, []);
+    public static implicit operator ImplicitBottomUpRoseTree<TValue>((TValue Value, ImplicitBottomUpRoseTree<TValue>[] Children) v) =>
         new(v.Value, v.Children);
 }

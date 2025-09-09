@@ -4,16 +4,17 @@ namespace Nemonuri.Trees;
 
 public static partial class TreeTheory
 {
+    /// <inheritdoc 
+    ///     cref="AggregatingTheory.Aggregate{_,_,_,_,_,_,_}(_,_,_,_)" 
+    ///     path="/*[not(self::param)]"/>
     public static TAggregation Aggregate
-    <TTree, TElement, TAggregation, TAncestor, TAncestorsAggregation>
+    <TTree, TAggregation, TAncestor, TAncestorsAggregation>
     (
-        TTree tree,
-        ITreeAggregator<TTree, TElement, TAggregation, TAncestor, TAncestorsAggregation> treeWalker
+        this ITree<TTree> tree,
+        ITreeAggregator<TTree, TAggregation, TAncestor, TAncestorsAggregation> treeAggregator
     )
-        where TTree : ITree<TElement, TTree>
+        where TTree : ITree<TTree>
 #if NET9_0_OR_GREATER
-        , allows ref struct
-        where TElement : allows ref struct
         where TAggregation : allows ref struct
         where TAncestor : allows ref struct
         where TAncestorsAggregation : allows ref struct
@@ -21,26 +22,7 @@ public static partial class TreeTheory
     {
         Debug.Assert(tree is not null);
 
-        return AggregatingTheory.Aggregate(treeWalker, TrivialChildrenProvider<TTree>.BoxedInstance, treeWalker, tree);
-    }
-
-    /// <inheritdoc 
-    ///     cref="AggregatingTheory.Aggregate{_,_,_,_,_,_,_}(_,_,_,_)" 
-    ///     path="/*[not(self::param)]"/>
-    public static TAggregation Aggregate
-    <TElement, TAggregation, TAncestor, TAncestorsAggregation>
-    (
-        this ITree<TElement> tree,
-        ITreeAggregator<TElement, TAggregation, TAncestor, TAncestorsAggregation> treeWalker
-    )
-#if NET9_0_OR_GREATER
-        where TElement : allows ref struct
-        where TAggregation : allows ref struct
-        where TAncestor : allows ref struct
-        where TAncestorsAggregation : allows ref struct
-#endif
-    {
-        return Aggregate(tree, treeWalker);
+        return AggregatingTheory.Aggregate(treeAggregator, TrivialChildrenProvider<TTree>.BoxedInstance, treeAggregator, (TTree)tree);
     }
 
 }

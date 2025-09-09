@@ -15,7 +15,7 @@ internal class SyntaxLeaf<TChar> : ISyntaxTree<TChar>
 
     public IEnumerable<ISyntaxTree<TChar>> Children => [];
 
-    public bool TryGetParent([NotNullWhen(true)] out ISyntaxTree<TChar>? parent)
+    public bool TryGetBoundParent([NotNullWhen(true)] out ISyntaxTree<TChar>? parent)
     {
         parent = _parent;
         return parent is not null;

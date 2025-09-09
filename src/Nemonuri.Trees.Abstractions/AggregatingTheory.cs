@@ -284,7 +284,7 @@ public static class AggregatingTheory
         <
             NullAncestorAggregator3D<TAggregator2D, TElement, TAggregation>,
             TChildrenProvider, NullAncestorConverter<TElement>,
-            TElement, TAggregation, NullAggregation, NullAggregation
+            TElement, TAggregation, NullValue, NullValue
         >
         (
             new(aggregator2D),
@@ -345,7 +345,7 @@ public static class AggregatingTheory
         <
             NullAncestorAggregator3D<TAggregator2D, TElement, TAggregation>,
             TChildrenProvider, NullAncestorConverter<TElement>,
-            TElement, TAggregation, NullAggregation, NullAggregation
+            TElement, TAggregation, NullValue, NullValue
         >
         (
             new(aggregator2D),

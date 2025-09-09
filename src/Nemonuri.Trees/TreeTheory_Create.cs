@@ -2,78 +2,36 @@ namespace Nemonuri.Trees;
 
 public static partial class TreeTheory
 {
-    public static ITree<TElement> CreateTopDown<TElement>
+    public static IGeneralBinderRoseTree<TValue> CreateTopDown<TValue>
     (
-        TElement value,
-        IChildrenProvider<TElement> childrenProvider,
-        ITopDownTreeFactory<TElement> childToTreeFactory,
-        ITree<TElement>? parent
+        TValue value,
+        IChildrenProvider<TValue> childrenProvider
     )
     {
-        return new TopDownTree<TElement>(value, childrenProvider, childToTreeFactory, parent);
+        return new TopDownBinderRoseTree<TValue>(value, childrenProvider, null);
     }
 
-    public static ITree<TElement> CreateTopDown<TElement>
+
+    public static IGeneralBottomUpRoseTree<TValue> CreateBranch<TValue>
     (
-        TElement value,
-        IChildrenProvider<TElement> childrenProvider,
-        ITree<TElement>? parent
-    ) =>
-    CreateTopDown(value, childrenProvider, TopDownTreeFactory<TElement>.Instance, parent);
-
-    public static ITree<TElement> CreateLeaf<TElement>(TElement value)
+        TValue value,
+        IEnumerable<IGeneralBottomUpRoseTree<TValue>> children
+    )
     {
-        return new LeafTree<TElement>(value);
+        return new GeneralBottomUpRoseTree<TValue>(value, children, null, null);
     }
 
-    public static IEnumerable<ITree<TElement>> CreateLeafs<TElement>(IEnumerable<TElement>? values)
+    public static IGeneralBottomUpRoseTree<TValue> CreateLeaf<TValue>(TValue value)
+    {
+        return new GeneralBottomUpRoseTree<TValue>(value, [], null, null);
+    }
+
+    public static IEnumerable<IGeneralBottomUpRoseTree<TValue>> CreateLeafs<TValue>(IEnumerable<TValue>? values)
     {
         if (values is null) { yield break; }
         foreach (var value in values)
         {
             yield return CreateLeaf(value);
         }
-    }
-
-    public static ITree<TElement> CreateBottomUp<TElement>
-    (
-        TElement value,
-        IEnumerable<ITree<TElement>>? children,
-        IParentTreeBinder<TElement> parentTreeBinder
-    )
-    {
-        return new BottomUpTree<TElement>(value, children, parentTreeBinder);
-    }
-
-    public static ITree<TElement> CreateBottomUp<TElement>
-    (
-        TElement value,
-        IEnumerable<ITree<TElement>>? children
-    ) =>
-    CreateBottomUp(value, children, ParentTreeBinder<TElement>.Instance);
-
-    public static ITree<TElement> BindParent<TElement>
-    (
-        ITree<TElement> source,
-        ITree<TElement>? parent
-    )
-    {
-        ITree<TElement> ensuredSource =
-        (
-            source is ISupportInternalSource<ITree<TElement>> supportInternalSource &&
-            supportInternalSource.GetInternalSource() is { } internalSource
-        ) ? internalSource : source;
-
-        return new ParentBoundTree<TElement>(ensuredSource, parent);
-    }
-
-    public static ITree<TElement> CreateLazyBottomUp<TElement>
-    (
-        ILazyTreeValueEvaluator<TElement> lazyValue,
-        IEnumerable<ITree<TElement>>? children,
-        IParentTreeBinder<TElement> parentTreeBinder
-    )
-    {
-        return new LazyBottomUpTree<TElement>(lazyValue, children, parentTreeBinder);
     }
 }

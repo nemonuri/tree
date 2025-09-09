@@ -4,17 +4,17 @@ namespace Nemonuri.Trees;
 
 public static partial class TreeTheory
 {
-    public static ImmutableList<ITree<TResult>> Where<TSource, TResult>
+    public static ImmutableList<IBinderRoseTree<TResult>> Where<TSource, TResult>
     (
-        this ITree<TSource> tree,
+        this IBinderRoseTree<TSource> tree,
         Func<TResult, bool> predicate,
-        Func<ITree<TSource>, TResult> selector
+        Func<IBinderRoseTree<TSource>, TResult> selector
     )
     {
         Guard.IsNotNull(tree);
         Guard.IsNotNull(predicate);
 
-        var treeAggregator = TreeAggregatorTheory.Create<TSource, ImmutableList<ITree<TResult>>>
+        var treeAggregator = TreeAggregatorTheory.Create<TSource, ImmutableList<IBinderRoseTree<TResult>>>
         (
             initialAggregationImplementation: static () => [],
             aggregateImplementation: (s, c, e) =>
@@ -22,7 +22,7 @@ public static partial class TreeTheory
                 TResult r = selector(e);
                 if (predicate(r))
                 {
-                    ITree<TResult> newTree = CreateBottomUp(r, c);
+                    IBinderRoseTree<TResult> newTree = CreateBranch(r, c);
                     return s.Add(newTree);
                 }
                 else
@@ -35,18 +35,18 @@ public static partial class TreeTheory
         return tree.Aggregate(treeAggregator);
     }
 
-    public static ImmutableList<ITree<TElement>> Where<TElement>
+    public static ImmutableList<IBinderRoseTree<TElement>> Where<TElement>
     (
-        this ITree<TElement> tree,
+        this IBinderRoseTree<TElement> tree,
         Func<TElement, bool> predicate
     )
     {
         return tree.Where(predicate, Identity);
     }
 
-    public static ImmutableList<ITree<TResult>> Where<TSource, TResult>
+    public static ImmutableList<IBinderRoseTree<TResult>> Where<TSource, TResult>
     (
-        this ITree<TSource> tree,
+        this IBinderRoseTree<TSource> tree,
         Func<TResult, bool> predicate,
         Func<TSource, TResult> selector
     )

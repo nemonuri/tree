@@ -33,7 +33,7 @@ internal class ProductParser<TChar> : IParser<TChar>
 
     public IEnumerable<IParser<TChar>> Children => _children ??= _parserSequence.Select(child => child.BindParent(this));
 
-    public bool TryGetParent([NotNullWhen(true)] out IParser<TChar>? parent)
+    public bool TryGetBoundParent([NotNullWhen(true)] out IParser<TChar>? parent)
     {
         parent = _parent;
         return parent is not null;

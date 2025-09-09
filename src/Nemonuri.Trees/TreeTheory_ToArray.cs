@@ -5,12 +5,13 @@ namespace Nemonuri.Trees;
 
 public static partial class TreeTheory
 {
-    public static TResult[] ToArray<TSource, TResult>
+    public static TResult[] ToArray<TSourceTree, TResult>
     (
-        this ITree<TSource> tree,
+        this ITree<TSourceTree> tree,
         Func<TResult, bool> predicate,
-        Func<ITree<TSource>, TResult> selector
+        Func<TSourceTree, TResult> selector
     )
+        where TSourceTree : ITree<TSourceTree>
     {
         Guard.IsNotNull(tree);
         Guard.IsNotNull(predicate);
@@ -18,7 +19,7 @@ public static partial class TreeTheory
 
         ArrayBuilder<TResult> arrayBuilder = default;
 
-        var treeAggregator = TreeAggregatorTheory.Create<TSource, NullAggregation>
+        var treeAggregator = TreeAggregatorTheory.Create<TSourceTree, NullValue>
         (
             initialAggregationImplementation: static () => default,
             aggregateImplementation: (s, c, e) =>
@@ -37,55 +38,64 @@ public static partial class TreeTheory
         return arrayBuilder.ToArray();
     }
 
-    public static TResult[] ToArray<TSource, TResult>
+    public static TResult[] ToArray<TSourceValue, TSourceTree, TResult>
     (
-        this ITree<TSource> tree,
+        this IRoseTree<TSourceValue, TSourceTree> tree,
         Func<TResult, bool> predicate,
-        Func<TSource, TResult> selector
+        Func<TSourceValue, TResult> selector
     )
+        where TSourceTree : IRoseTree<TSourceValue, TSourceTree>
     {
-        return tree.ToArray(predicate, WarpParameterInTree(selector));
+        return tree.ToArray
+        (
+            predicate,
+            WarpParameterInTree<TSourceTree, TSourceValue, TResult>(selector)
+        );
     }
 
-    public static TResult[] ToArray<TSource, TResult>
+    public static TResult[] ToArray<TSourceTree, TResult>
     (
-        this ITree<TSource> tree,
-        Func<ITree<TSource>, TResult> selector
+        this ITree<TSourceTree> tree,
+        Func<TSourceTree, TResult> selector
     )
+        where TSourceTree : ITree<TSourceTree>
     {
         return tree.ToArray(Tautology, selector);
     }
 
-    public static TResult[] ToArray<TSource, TResult>
+    public static TResult[] ToArray<TSourceValue, TSourceTree, TResult>
     (
-        this ITree<TSource> tree,
-        Func<TSource, TResult> selector
+        this IRoseTree<TSourceValue, TSourceTree> tree,
+        Func<TSourceValue, TResult> selector
     )
+        where TSourceTree : IRoseTree<TSourceValue, TSourceTree>
     {
         Guard.IsNotNull(tree);
         Guard.IsNotNull(selector);
 
-        return tree.ToArray(WarpParameterInTree(selector));
+        return tree.ToArray(WarpParameterInTree<TSourceTree, TSourceValue, TResult>(selector));
     }
 
-    public static TElement[] ToArray<TElement>
+    public static TValue[] ToArray<TValue, TTree>
     (
-        this ITree<TElement> tree
+        this IRoseTree<TValue, TTree> tree
     )
+        where TTree : IRoseTree<TValue, TTree>
     {
-        return tree.ToArray((Func<TElement, TElement>)Identity);
+        return tree.ToArray(Identity);
     }
 
-    public static int Count<TElement>
+    public static int Count<TTree>
     (
-        this ITree<TElement> tree
+        this ITree<TTree> tree
     )
+        where TTree : ITree<TTree>
     {
         Guard.IsNotNull(tree);
 
         int count = 0;
 
-        var treeAggregator = TreeAggregatorTheory.Create<TElement, NullAggregation>
+        var treeAggregator = TreeAggregatorTheory.Create<TTree, NullValue>
         (
             initialAggregationImplementation: static () => default,
             aggregateImplementation: (s, c, e) =>

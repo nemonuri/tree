@@ -1,21 +1,20 @@
+#if false
 
 namespace Nemonuri.Trees;
 
-internal class LeafTree<TElement> : ITree<TElement>
+internal class LeafTree<TValue> : IGeneralRoseTree<TValue>
 {
-    public TElement Value { get; }
+    public TValue Value { get; }
 
-    public LeafTree(TElement value)
+    public LeafTree(TValue value)
     {
         Guard.IsNotNull(value);
         Value = value;
     }
 
-    public IEnumerable<ITree<TElement>> Children => [];
+    public IEnumerable<IGeneralRoseTree<TValue>> Children => [];
 
-    public bool TryGetParent([NotNullWhen(true)] out ITree<TElement>? parent)
-    {
-        parent = default;
-        return false;
-    }
+    IEnumerable<IGeneralTree> ITree<IGeneralTree>.Children => Children;
 }
+
+#endif

@@ -4,16 +4,17 @@ namespace Nemonuri.Trees;
 
 public static partial class TreeTheory
 { 
-    public static bool All<TElement>
+    public static bool All<TTree>
     (
-        this ITree<TElement> tree,
-        Func<ITree<TElement>, bool> predicate
+        this ITree<TTree> tree,
+        Func<TTree, bool> predicate
     )
+        where TTree : ITree<TTree>
     {
         Guard.IsNotNull(tree);
         Guard.IsNotNull(predicate);
 
-        var treeAggregator = TreeAggregatorTheory.Create<TElement, bool>
+        var treeAggregator = TreeAggregatorTheory.Create<TTree, bool>
         (
             initialAggregationImplementation: static () => true,
             aggregateImplementation: (s, c, e) =>
@@ -26,25 +27,27 @@ public static partial class TreeTheory
         return tree.Aggregate(treeAggregator);
     }
 
-    public static bool All<TElement>
+    public static bool All<TValue, TTree>
     (
-        this ITree<TElement> tree,
-        Func<TElement, bool> predicate
+        this IRoseTree<TValue, TTree> tree,
+        Func<TValue, bool> predicate
     )
+        where TTree : IRoseTree<TValue, TTree>
     {
-        return tree.All(WarpParameterInTree(predicate));
+        return tree.All(WarpParameterInTree<TTree, TValue, bool>(predicate));
     }
 
-    public static bool Any<TElement>
+    public static bool Any<TTree>
     (
-        this ITree<TElement> tree,
-        Func<ITree<TElement>, bool> predicate
+        this ITree<TTree> tree,
+        Func<TTree, bool> predicate
     )
+        where TTree : ITree<TTree>
     {
         Guard.IsNotNull(tree);
         Guard.IsNotNull(predicate);
 
-        var treeAggregator = TreeAggregatorTheory.Create<TElement, bool>
+        var treeAggregator = TreeAggregatorTheory.Create<TTree, bool>
         (
             initialAggregationImplementation: static () => false,
             aggregateImplementation: (s, c, e) =>
@@ -57,12 +60,13 @@ public static partial class TreeTheory
         return tree.Aggregate(treeAggregator);
     }
 
-    public static bool Any<TElement>
+    public static bool Any<TValue, TTree>
     (
-        this ITree<TElement> tree,
-        Func<TElement, bool> predicate
+        this IRoseTree<TValue, TTree> tree,
+        Func<TValue, bool> predicate
     )
+        where TTree : IRoseTree<TValue, TTree>
     {
-        return tree.Any(WarpParameterInTree(predicate));
+        return tree.Any(WarpParameterInTree<TTree, TValue, bool>(predicate));
     }
 }

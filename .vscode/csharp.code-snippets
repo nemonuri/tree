@@ -65,5 +65,14 @@
 			"// Act", "",
 			"// Assert", ""
 		]
+	},
+
+	"Return is not null": {
+		"scope": "csharp",
+		"prefix": "rinn",
+		"body": [
+			"${1:result} = _${1};",
+			"return ${1} is not null;"
+		]
 	}
 }

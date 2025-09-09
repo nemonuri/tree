@@ -1,3 +1,4 @@
+#if false
 
 namespace Nemonuri.Trees;
 
@@ -7,8 +8,10 @@ internal class ParentTreeBinder<TElement> : IParentTreeBinder<TElement>
 
     public ParentTreeBinder() { }
 
-    public ITree<TElement> BindParent(ITree<TElement> source, ITree<TElement>? settingParent)
+    public IBinderRoseTree<TElement> BindParent(IBinderRoseTree<TElement> source, IBinderRoseTree<TElement>? settingParent)
     {
         return TreeTheory.BindParent(source, settingParent);
     }
 }
+
+#endif

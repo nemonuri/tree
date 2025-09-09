@@ -7,7 +7,7 @@ internal class ProductParserBasedSyntaxTree<TChar> : ISyntaxTree<TChar>
 
     public IEnumerable<ISyntaxTree<TChar>> Children => throw new NotImplementedException();
 
-    public bool TryGetParent([NotNullWhen(true)] out ISyntaxTree<TChar>? parent)
+    public bool TryGetBoundParent([NotNullWhen(true)] out ISyntaxTree<TChar>? parent)
     {
         throw new NotImplementedException();
     }

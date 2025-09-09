@@ -2,7 +2,7 @@
 namespace Nemonuri.Trees.Abstractions;
 
 public readonly struct NullContextualAggregator2D<TElement, TAggregation> :
-    IContextualAggregator2D<TElement, TAggregation, NullAggregation>
+    IContextualAggregator2D<TElement, TAggregation, NullValue>
 #if NET9_0_OR_GREATER
     where TElement : allows ref struct
     where TAggregation : allows ref struct
@@ -19,6 +19,6 @@ public readonly struct NullContextualAggregator2D<TElement, TAggregation> :
 
     public TAggregation InitialAggregation => _internalAggregator2D.InitialAggregation;
 
-    public TAggregation Aggregate(NullAggregation context, TAggregation siblingsAggregation, TAggregation childrenAggregation, TElement element) =>
+    public TAggregation Aggregate(NullValue context, TAggregation siblingsAggregation, TAggregation childrenAggregation, TElement element) =>
         _internalAggregator2D.Aggregate(siblingsAggregation, childrenAggregation, element);
 }

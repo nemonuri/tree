@@ -25,7 +25,7 @@ internal class AdHocParser<TChar> : IParser<TChar>
 
     public IEnumerable<IParser<TChar>> Children => [];
 
-    public bool TryGetParent([NotNullWhen(true)] out IParser<TChar>? parent)
+    public bool TryGetBoundParent([NotNullWhen(true)] out IParser<TChar>? parent)
     {
         parent = _parent;
         return parent is not null;

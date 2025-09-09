@@ -12,7 +12,7 @@ namespace Nemonuri.Trees.Abstractions;
 /// This type wraps an instance of <see cref="IAggregator2D{_,_}"/> to provide implementation of <see cref="IAggregator3D{_,_,_,_}"/>
 /// </remarks>
 public readonly struct NullAncestorAggregator3D<TAggregator2D, TElement, TAggregation> :
-    IAggregator3D<TElement, TAggregation, NullAggregation, NullAggregation>
+    IAggregator3D<TElement, TAggregation, NullValue, NullValue>
     where TAggregator2D : IAggregator2D<TElement, TAggregation>
 #if NET9_0_OR_GREATER
     where TElement : allows ref struct
@@ -33,13 +33,13 @@ public readonly struct NullAncestorAggregator3D<TAggregator2D, TElement, TAggreg
 
     /// <inheritdoc cref="IAggregator3D{_,_,_,_}.InitialAncestorsAggregation"/>
     /// <inheritdoc cref="NullAggregator.InitialAggregation" path="/value"/>
-    public NullAggregation InitialAncestorsAggregation => default;
+    public NullValue InitialAncestorsAggregation => default;
 
     /// <inheritdoc cref="IAggregator3D{_,_,_,_}.InitialAncestorsAggregation"/>
     /// <returns>
     /// <inheritdoc cref="NullAncestorAggregator3D{_,_,_}.InitialAggregation" path="/value"/>
     /// </returns>
-    public NullAggregation AggregateAncestor(NullAggregation ancestorsAggregation, NullAggregation ancestor) =>
+    public NullValue AggregateAncestor(NullValue ancestorsAggregation, NullValue ancestor) =>
         default;
 
     /// <inheritdoc cref="IAggregator3D{_,_,_,_}.InitialAggregation"/>
@@ -48,7 +48,7 @@ public readonly struct NullAncestorAggregator3D<TAggregator2D, TElement, TAggreg
     /// <inheritdoc cref="IAggregator3D{_,_,_,_}.Aggregate(_,_,_,_)"/>
     public TAggregation Aggregate
     (
-        NullAggregation ancestorsAggregation, TAggregation siblingsAggregation,
+        NullValue ancestorsAggregation, TAggregation siblingsAggregation,
         TAggregation childrenAggregation, TElement element
     ) =>
     _aggregator2D.Aggregate(siblingsAggregation, childrenAggregation, element);

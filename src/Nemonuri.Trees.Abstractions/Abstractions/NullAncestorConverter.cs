@@ -6,7 +6,7 @@ namespace Nemonuri.Trees.Abstractions;
 /// </summary>
 /// <inheritdoc cref="IAggregator3D{_,_,_,_}" path="/typeparam[@name='TElement']" />
 public readonly struct NullAncestorConverter<TElement> :
-    IAncestorConverter<TElement, NullAggregation>
+    IAncestorConverter<TElement, NullValue>
 #if NET9_0_OR_GREATER
     where TElement : allows ref struct
 #endif
@@ -14,14 +14,14 @@ public readonly struct NullAncestorConverter<TElement> :
     /// <summary>
     /// The boxed instance of <see langword="default"/> <see cref="NullAncestorConverter{_}"/>
     /// </summary>
-    public readonly static IAncestorConverter<TElement, NullAggregation> BoxedInstance =
+    public readonly static IAncestorConverter<TElement, NullValue> BoxedInstance =
         (NullAncestorConverter<TElement>)default;
 
     /// <inheritdoc 
     ///     cref="IAncestorConverter{_,_}.ConvertToAncestor(_, int?)"
     ///     path="//*[not(self::returns)]"/>
     /// <returns><inheritdoc cref="NullAggregator.InitialAggregation" path="/value"/></returns>
-    public NullAggregation ConvertToAncestor(TElement element, int? elementIndex) =>
+    public NullValue ConvertToAncestor(TElement element, int? elementIndex) =>
         default;
 }
 

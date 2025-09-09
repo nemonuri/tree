@@ -14,7 +14,7 @@ public class RepeatParser<TChar, TInfo> : IParser<TChar, TInfo>
         _internalParser = internalParser;
     }
 
-    public IEnumerable<ITree<IInformedString<TChar, TInfo>>> Parse(IString<TChar> @string, int offset)
+    public IEnumerable<IBinderRoseTree<IInformedString<TChar, TInfo>>> Parse(IString<TChar> @string, int offset)
     {
         int repeatCount = 0;
         int positionInString = 0;

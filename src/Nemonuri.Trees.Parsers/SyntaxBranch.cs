@@ -18,7 +18,7 @@ internal class SyntaxBranch<TChar> : ISyntaxTree<TChar>
 
     public IEnumerable<ISyntaxTree<TChar>> Children => _children ??= _originalChildren.Select(child => child.BindParent(this));
 
-    public bool TryGetParent([NotNullWhen(true)] out ISyntaxTree<TChar>? parent)
+    public bool TryGetBoundParent([NotNullWhen(true)] out ISyntaxTree<TChar>? parent)
     {
         parent = _parent;
         return _parent is not null;

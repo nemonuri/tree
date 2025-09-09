@@ -1,31 +1,64 @@
-
+#if false
 
 namespace Nemonuri.Trees;
 
-internal class ParentBoundTree<TElement> :
-    ITree<TElement>, ISupportInternalSource<ITree<TElement>>
+internal class ParentBoundTree<TTree, TParent> :
+    IBinderTree,
+    ISupportUnboundChildren<TTree>,
+    ISupportUnbound<TTree>,
+    ISupportUnboundParent<TParent>
+    where TTree : ITree<TTree>
+    where TParent : class, ITree<TParent>
 {
-    private readonly ITree<TElement>? _parent;
-    private readonly ITree<TElement> _source;
+    private readonly TParent? _parent;
+    private readonly TTree _unbound;
 
-    public ParentBoundTree(ITree<TElement> source, ITree<TElement>? parent)
+    private IEnumerable<IBinderTree>? _children;
+
+    public ParentBoundTree(TTree unbound, TParent? parent)
     {
-        Guard.IsNotNull(source);
+        Guard.IsNotNull(unbound);
 
         _parent = parent;
-        _source = source;
+        _unbound = unbound;
     }
 
-    public TElement Value => _source.Value;
+    public bool TryGetBoundParent([NotNullWhen(true)] out IBinderTree? parent)
+    {
+        if (!TryGetUnboundParent(out var unboundParent))
+        {
+            parent = default; return false;
+        }
 
-    public IEnumerable<ITree<TElement>> Children => _source.Children;
+        if (unboundParent is IBinderTree binderTree)
+        {
+            parent = binderTree; return true;
+        }
 
-    public bool TryGetParent([NotNullWhen(true)] out ITree<TElement>? parent)
+
+    }
+
+    public bool TryGetUnboundParent([NotNullWhen(true)] out TParent? parent)
     {
         parent = _parent;
         return parent is not null;
     }
 
-    ITree<TElement>? ISupportInternalSource<ITree<TElement>>.GetInternalSource() =>
-        _source;
+    public TTree Unbound => _unbound;
+
+    public IEnumerable<TTree> UnboundChildren => _unbound.Children;
+
+    public IEnumerable<IBinderTree> Children => _children ??=
+        UnboundChildren.Select
+        (
+            child =>
+            {
+                var unbound = child is ISupportUnbound<TTree> supportUnbound ?
+                    supportUnbound.Unbound : child;
+                return new ParentBoundTree<TTree>(child, this);
+            }
+        );
+
 }
+
+#endif

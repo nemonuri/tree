@@ -1,12 +1,12 @@
 
 namespace Nemonuri.Trees;
 
-public class ElementIndexAggregator : IAggregator<int?, IIndexPath>
+public class TreeIndexAggregator : IAggregator<int?, IIndexPath>
 {
     private readonly IIndexPathFactory _indexPathFactory;
     private readonly IIndexPath _initialAggregation;
 
-    public ElementIndexAggregator(IIndexPathFactory indexPathFactory)
+    public TreeIndexAggregator(IIndexPathFactory indexPathFactory)
     {
         Guard.IsNotNull(indexPathFactory);
         _indexPathFactory = indexPathFactory;
