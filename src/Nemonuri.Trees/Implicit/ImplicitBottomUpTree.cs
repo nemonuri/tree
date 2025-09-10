@@ -1,23 +1,23 @@
+
 namespace Nemonuri.Trees.Implicit;
 
-public class ImplicitBottomUpRoseTree<TValue> :
-    IBottomUpRoseTree<TValue, ImplicitBottomUpRoseTree<TValue>>
+public class ImplicitBottomUpRoseTree<TValue> : IGeneralBottomUpRoseTree<TValue>
 {
     public TValue Value { get; }
-    private readonly IEnumerable<ImplicitBottomUpRoseTree<TValue>> _unboundChildren;
-    private IEnumerable<ImplicitBottomUpRoseTree<TValue>>? _childrenCache;
-    private readonly ImplicitBottomUpRoseTree<TValue>? _parent;
+    private readonly IEnumerable<IGeneralBottomUpRoseTree<TValue>> _unboundChildren;
+    private IEnumerable<IGeneralBottomUpRoseTree<TValue>>? _childrenCache;
+    private readonly IGeneralBottomUpRoseTree<TValue>? _parent;
 
     public ImplicitBottomUpRoseTree
     (
         TValue value,
-        IEnumerable<ImplicitBottomUpRoseTree<TValue>> unboundChildren,
-        IEnumerable<ImplicitBottomUpRoseTree<TValue>>? childrenCache,
-        ImplicitBottomUpRoseTree<TValue>? parent
+        IEnumerable<IGeneralBottomUpRoseTree<TValue>>? unboundChildren,
+        IEnumerable<IGeneralBottomUpRoseTree<TValue>>? childrenCache,
+        IGeneralBottomUpRoseTree<TValue>? parent
     )
     {
         Value = value;
-        _unboundChildren = unboundChildren;
+        _unboundChildren = unboundChildren ?? [];
         _childrenCache = childrenCache;
         _parent = parent;
     }
@@ -25,25 +25,37 @@ public class ImplicitBottomUpRoseTree<TValue> :
     public ImplicitBottomUpRoseTree
     (
         TValue value,
-        IEnumerable<ImplicitBottomUpRoseTree<TValue>> unboundChildren
+        IEnumerable<IGeneralBottomUpRoseTree<TValue>> unboundChildren
     ) :
     this(value, unboundChildren, null, null)
     { }
 
-    public IEnumerable<ImplicitBottomUpRoseTree<TValue>> UnboundChildren => _unboundChildren;
+    public IEnumerable<IGeneralBottomUpRoseTree<TValue>> UnboundChildren => _unboundChildren;
 
-    public ImplicitBottomUpRoseTree<TValue> BindParent(ImplicitBottomUpRoseTree<TValue> parent)
+    public IGeneralBottomUpRoseTree<TValue> BindParent(IGeneralBottomUpRoseTree<TValue> parent)
     {
         return new ImplicitBottomUpRoseTree<TValue>(Value, _unboundChildren, _childrenCache, parent);
     }
 
-    public IEnumerable<ImplicitBottomUpRoseTree<TValue>> Children => _childrenCache ??=
+    public IEnumerable<IGeneralBottomUpRoseTree<TValue>> Children => _childrenCache ??=
         _unboundChildren.Select(child => child.BindParent(this));
 
     public bool HasParent => _parent is not null;
-    public ImplicitBottomUpRoseTree<TValue> GetParent() => _parent ?? ThrowHelper.ThrowArgumentNullException<ImplicitBottomUpRoseTree<TValue>>();
-    
+
+    public IGeneralBottomUpRoseTree<TValue> GetParent()
+    {
+        Guard.IsNotNull(_parent);
+        return _parent;
+    }
+
     public static implicit operator ImplicitBottomUpRoseTree<TValue>(TValue v) => new(v, []);
     public static implicit operator ImplicitBottomUpRoseTree<TValue>((TValue Value, ImplicitBottomUpRoseTree<TValue>[] Children) v) =>
         new(v.Value, v.Children);
+
+    IEnumerable<IGeneralBinderRoseTree<TValue>> ISupportChildren<IGeneralBinderRoseTree<TValue>>.Children => Children;
+    IGeneralBinderRoseTree<TValue> ISupportParent<IGeneralBinderRoseTree<TValue>>.GetParent() => GetParent();
+    IEnumerable<IGeneralRoseTree<TValue>> ISupportChildren<IGeneralRoseTree<TValue>>.Children => Children;
+    IEnumerable<IGeneralBinderTree> ISupportChildren<IGeneralBinderTree>.Children => Children;
+    IGeneralBinderTree ISupportParent<IGeneralBinderTree>.GetParent() => GetParent();
+    IEnumerable<IGeneralTree> ISupportChildren<IGeneralTree>.Children => Children;
 }

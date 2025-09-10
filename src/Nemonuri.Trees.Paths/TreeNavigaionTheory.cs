@@ -34,7 +34,7 @@ public static class TreeNavigaionTheory
     public static bool TryGetItem<TTree>
     (
         this ITree<TTree> tree,
-        IEnumerable<int> indexPath,
+        IIndexPath indexPath,
         [NotNullWhen(true)] out TTree? result
     )
         where TTree : ITree<TTree>

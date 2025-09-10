@@ -1,6 +1,6 @@
 ﻿namespace Nemonuri.Trees.Parsers;
 
-public interface IParserTree<out TChar, in TString, out TSyntax, out TParser> :
+public interface IParserTree<out TChar, in TString, out TSyntax, TParser> :
     IParser<TChar, TString, TSyntax, TParser>,
     IBinderTree<TParser>
     where TString : IString<TChar, TString>

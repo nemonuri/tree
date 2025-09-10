@@ -1,6 +1,9 @@
+using Nemonuri.Trees.Paths;
+
 namespace Nemonuri.Trees.Parsers;
 
-public interface IParser<out TChar, in TString, out TSyntax, out TParser>
+public interface IParser<out TChar, in TString, out TSyntax, TParser> :
+    ISupportTryGetItemFromIndexPath<TParser>
     where TString : IString<TChar, TString>
     where TParser : IParser<TChar, TString, TSyntax, TParser>
 {
@@ -15,5 +18,5 @@ public interface ISyntaxForestBuilder<out TChar, out TString, out TSyntax, out T
     TString SourceString { get; }
     Range SourceRange { get; }
     TParser Parser { get; }
-    IEnumerable<int> MatchLengths { get; }
+    IEnumerable<MatchInfo> MatchInfos { get; }
 }

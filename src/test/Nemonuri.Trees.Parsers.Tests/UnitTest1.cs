@@ -13,7 +13,7 @@ public class UnitTest1
 
         // Act
         SampleSyntaxForestBuilder parsed = parser.Parse(sourceString, Range.All);
-        var actual = parsed.MatchLengths.Select(parsedLength => parsed.SourceString[0..parsedLength].InternalString);
+        var actual = parsed.MatchInfos.Select(parsedLength => parsed.SourceString[0..parsedLength.MatchLength].InternalString);
 
         // Assert
         string[] expected = ["a1b2"];
@@ -29,7 +29,7 @@ public class UnitTest1
 
         // Act
         SampleSyntaxForestBuilder parsed = parser.Parse(sourceString, Range.All);
-        var actual = parsed.MatchLengths.Select(parsedLength => parsed.SourceString[0..parsedLength].InternalString).ToHashSet();
+        var actual = parsed.MatchInfos.Select(parsedLength => parsed.SourceString[0..parsedLength.MatchLength].InternalString).ToHashSet();
 
         // Assert
         HashSet<string> expected = ["a1b2c3d", "a1b2"];

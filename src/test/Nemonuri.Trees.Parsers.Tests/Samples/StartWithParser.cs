@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using Nemonuri.Trees.Paths;
 
 namespace Nemonuri.Trees.Parsers.Tests.Samples;
 
@@ -17,6 +19,12 @@ public class StartWithParser :
     public SampleSyntaxForestBuilder Parse(SourceString sourceString, Range sourceRange)
     {
         bool matched = sourceString[sourceRange].InternalString.StartsWith(_startWithSource);
-        return new SampleSyntaxForestBuilder(sourceString, sourceRange, this, matched ? [_startWithSource.Length] : []);
+        return new SampleSyntaxForestBuilder(sourceString, sourceRange, this, matched ? [(null, _startWithSource.Length)] : []);
     }
+
+    public bool TryGetItemFromIndexPath(IIndexPath indexPath, [NotNullWhen(true)] out StartWithParser? result) =>
+        (result = indexPath.Any() ? default : this) is not null;
+
+    bool ISupportTryGetItemFromIndexPath<IGeneralStartWithParser>.TryGetItemFromIndexPath(IIndexPath indexPath, [NotNullWhen(true)] out IGeneralStartWithParser? result) =>
+        (result = TryGetItemFromIndexPath(indexPath, out var v) ? v : default) is not null;
 }

@@ -1,7 +1,9 @@
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace Nemonuri.Trees.Indexes;
 
+[CollectionBuilder(typeof(IndexPathTheory), nameof(IndexPathTheory.Create))]
 public class IndexPath : IIndexPath
 {
     private readonly ImmutableList<int> _indexes;

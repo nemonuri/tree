@@ -3,8 +3,7 @@ namespace Nemonuri.Trees.Indexes;
 
 public static class IndexPathTheory
 {
-    //public static IIndexPath Create(ReadOnlySpan<int> indexes) => new IndexPath(ImmutableList.Create(indexes));
-    //public static IIndexPath Create(ImmutableList<int> indexes) => new IndexPath(indexes);
+    public static IndexPath Create(ReadOnlySpan<int> indexes) => new IndexPath(ImmutableList.Create(indexes));
 
     public static IIndexPath SetItem(this IIndexPath indexPath, Index index, int value)
     {
