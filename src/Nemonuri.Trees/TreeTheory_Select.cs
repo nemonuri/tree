@@ -4,7 +4,7 @@ namespace Nemonuri.Trees;
 
 public static partial class TreeTheory
 {
-    public static IGeneralBinderRoseTree<TResultValue> Select<TSourceTree, TResultValue>
+    public static IGeneralBottomUpRoseTree<TResultValue> Select<TSourceTree, TResultValue>
     (
         this ITree<TSourceTree> tree,
         Func<TSourceTree, TResultValue> selector
@@ -31,7 +31,7 @@ public static partial class TreeTheory
         return aggregation[0];
     }
 
-    public static IGeneralBinderRoseTree<TResultValue> Select<TSourceValue, TSourceTree, TResultValue>
+    public static IGeneralBottomUpRoseTree<TResultValue> Select<TSourceValue, TSourceTree, TResultValue>
     (
         this IRoseTree<TSourceValue, TSourceTree> tree,
         Func<TSourceValue, TResultValue> selector

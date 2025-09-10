@@ -4,25 +4,26 @@ namespace Nemonuri.Trees;
 
 public static partial class TreeTheory
 {
-    public static ImmutableList<IBinderRoseTree<TResult>> Where<TSource, TResult>
+    public static ImmutableList<IGeneralBottomUpRoseTree<TResultValue>> Where<TSourceTree, TResultValue>
     (
-        this IBinderRoseTree<TSource> tree,
-        Func<TResult, bool> predicate,
-        Func<IBinderRoseTree<TSource>, TResult> selector
+        this ITree<TSourceTree> tree,
+        Func<TResultValue, bool> predicate,
+        Func<TSourceTree, TResultValue> selector
     )
+        where TSourceTree : ITree<TSourceTree>
     {
         Guard.IsNotNull(tree);
         Guard.IsNotNull(predicate);
 
-        var treeAggregator = TreeAggregatorTheory.Create<TSource, ImmutableList<IBinderRoseTree<TResult>>>
+        var treeAggregator = TreeAggregatorTheory.Create<TSourceTree, ImmutableList<IGeneralBottomUpRoseTree<TResultValue>>>
         (
             initialAggregationImplementation: static () => [],
             aggregateImplementation: (s, c, e) =>
             {
-                TResult r = selector(e);
+                TResultValue r = selector(e);
                 if (predicate(r))
                 {
-                    IBinderRoseTree<TResult> newTree = CreateBranch(r, c);
+                    var newTree = CreateBranch(r, c);
                     return s.Add(newTree);
                 }
                 else
@@ -35,22 +36,24 @@ public static partial class TreeTheory
         return tree.Aggregate(treeAggregator);
     }
 
-    public static ImmutableList<IBinderRoseTree<TElement>> Where<TElement>
+    public static ImmutableList<IGeneralBottomUpRoseTree<TValue>> Where<TValue, TTree>
     (
-        this IBinderRoseTree<TElement> tree,
-        Func<TElement, bool> predicate
+        this IRoseTree<TValue, TTree> tree,
+        Func<TValue, bool> predicate
     )
+        where TTree : IRoseTree<TValue, TTree>
     {
-        return tree.Where(predicate, Identity);
+        return tree.Where<TTree, TValue>(predicate, static t => t.Value);
     }
 
-    public static ImmutableList<IBinderRoseTree<TResult>> Where<TSource, TResult>
+    public static ImmutableList<IGeneralBottomUpRoseTree<TResultValue>> Where<TSourceValue, TSourceTree, TResultValue>
     (
-        this IBinderRoseTree<TSource> tree,
-        Func<TResult, bool> predicate,
-        Func<TSource, TResult> selector
+        this IRoseTree<TSourceValue, TSourceTree> tree,
+        Func<TResultValue, bool> predicate,
+        Func<TSourceValue, TResultValue> selector
     )
+        where TSourceTree : IRoseTree<TSourceValue, TSourceTree>
     {
-        return tree.Where(predicate, WarpParameterInTree(selector));
+        return tree.Where(predicate, WarpParameterInTree<TSourceTree, TSourceValue, TResultValue>(selector));
     }
 }
