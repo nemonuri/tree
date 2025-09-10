@@ -1,8 +1,20 @@
 ﻿namespace Nemonuri.Trees.Parsers;
 
-public interface IParser<TChar> : IBinderRoseTree<IParser<TChar>, IParser<TChar>>, IParentTreeBindable<IParser<TChar>, IParser<TChar>>
+public interface IParser<TChar> : ITree<IParser<TChar>>
 {
-    ISyntaxForest<TChar> Parse(IString<TChar> @string, int offset);
+    ISyntaxNode<TChar> Parse(IString<TChar> @string, int offset);
+}
+
+public interface IParserTree<TChar> : 
+    IParser<TChar>,
+    IBinderTree<IParserTree<TChar>>,
+    ISupportUnboundChildren<IParser<TChar>>
+{ }
+
+public interface IBottomUpParser<TChar> :
+    IParserTree<TChar>,
+    IBoundableTree<IBottomUpParser<TChar>, IParserTree<TChar>>
+{
 }
 
 #if false

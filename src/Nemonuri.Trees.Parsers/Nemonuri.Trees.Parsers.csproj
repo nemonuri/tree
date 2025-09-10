@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Nemonuri.Trees.Paths\Nemonuri.Trees.Paths.csproj" />
+    <PackageReference Include="SumSharp" />
   </ItemGroup>
 
 </Project>
