@@ -7,9 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Nemonuri.Trees.Forests\Nemonuri.Trees.Forests.csproj" />
-    <ProjectReference Include="..\Nemonuri.Trees.Paths\Nemonuri.Trees.Paths.csproj" />
-    <PackageReference Include="SumSharp" />
+    <ProjectReference Include="..\Nemonuri.Trees\Nemonuri.Trees.csproj" />
   </ItemGroup>
 
 </Project>
