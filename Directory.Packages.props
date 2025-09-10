@@ -16,5 +16,6 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageVersion Include="PolySharp" Version="1.15.0" />
     <PackageVersion Include="System.Collections.Immutable" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Bcl.Memory" Version="9.0.0" />
   </ItemGroup>
 </Project>

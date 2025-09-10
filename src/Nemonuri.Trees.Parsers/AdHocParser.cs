@@ -1,14 +1,14 @@
 namespace Nemonuri.Trees.Parsers;
 
-internal class AdHocParser<TChar> : IParser<TChar>
+internal class AdHocParser<TChar> : IParserNode<TChar>
 {
-    private readonly Func<IString<TChar>, int, IParser<TChar>, IEnumerable<ISyntaxTree<TChar>>> _parseImplementation;
-    private readonly IParser<TChar>? _parent;
+    private readonly Func<IString<TChar>, int, IParserNode<TChar>, IEnumerable<IBinderSyntaxTree<TChar>>> _parseImplementation;
+    private readonly IParserNode<TChar>? _parent;
 
     public AdHocParser
     (
-        Func<IString<TChar>, int, IParser<TChar>, IEnumerable<ISyntaxTree<TChar>>> parseImplementation,
-        IParser<TChar>? parent = null
+        Func<IString<TChar>, int, IParserNode<TChar>, IEnumerable<IBinderSyntaxTree<TChar>>> parseImplementation,
+        IParserNode<TChar>? parent = null
     )
     {
         Guard.IsNotNull(parseImplementation);
@@ -21,17 +21,17 @@ internal class AdHocParser<TChar> : IParser<TChar>
         return _parseImplementation(@string, offset, this).ToSyntaxTree();
     }
 
-    public IParser<TChar> Value => this;
+    public IParserNode<TChar> Value => this;
 
-    public IEnumerable<IParser<TChar>> Children => [];
+    public IEnumerable<IParserNode<TChar>> Children => [];
 
-    public bool TryGetBoundParent([NotNullWhen(true)] out IParser<TChar>? parent)
+    public bool TryGetBoundParent([NotNullWhen(true)] out IParserNode<TChar>? parent)
     {
         parent = _parent;
         return parent is not null;
     }
 
-    public IParser<TChar> BindParent(IParser<TChar>? settingParent)
+    public IParserNode<TChar> BindParent(IParserNode<TChar>? settingParent)
     {
         return new AdHocParser<TChar>(_parseImplementation, this);
     }

@@ -4,7 +4,7 @@ public static class SyntaxForestTheory
 {
     public static ISyntaxForest<TChar> ToSyntaxTree<TChar>
     (
-        this IEnumerable<ISyntaxTree<TChar>> syntaxTrees
+        this IEnumerable<IBinderSyntaxTree<TChar>> syntaxTrees
     )
     {
         return new SyntaxForest<TChar>(syntaxTrees);

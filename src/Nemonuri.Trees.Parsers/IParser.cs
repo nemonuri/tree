@@ -1,26 +1,19 @@
-﻿namespace Nemonuri.Trees.Parsers;
+namespace Nemonuri.Trees.Parsers;
 
-public interface IParser<TChar> : ITree<IParser<TChar>>
+public interface IParser<out TChar, in TString, out TSyntax, out TParser>
+    where TString : IString<TChar, TString>
+    where TParser : IParser<TChar, TString, TSyntax, TParser>
 {
-    ISyntaxNode<TChar> Parse(IString<TChar> @string, int offset);
+    TSyntax Parse(TString sourceString, Range sourceRange);
 }
 
-public interface IParserTree<TChar> : 
-    IParser<TChar>,
-    IBinderTree<IParserTree<TChar>>,
-    ISupportUnboundChildren<IParser<TChar>>
-{ }
-
-public interface IBottomUpParser<TChar> :
-    IParserTree<TChar>,
-    IBoundableTree<IBottomUpParser<TChar>, IParserTree<TChar>>
+public interface ISyntaxForestBuilder<out TChar, out TString, out TSyntax, out TParser>
+    where TString : IString<TChar, TString>
+    where TParser : IParser<TChar, TString, TSyntax, TParser>
+    where TSyntax : ISyntaxForestBuilder<TChar, TString, TSyntax, TParser>
 {
+    TString SourceString { get; }
+    Range SourceRange { get; }
+    TParser Parser { get; }
+    IEnumerable<int> MatchLengths { get; }
 }
-
-#if false
-public class SumParser<TChar, TInfo> : IParser<TChar, TInfo>
-{
-
-}
-
-#endif

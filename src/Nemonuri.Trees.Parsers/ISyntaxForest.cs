@@ -1,7 +1,7 @@
 namespace Nemonuri.Trees.Parsers;
 
 public interface ISyntaxForest<TChar> : 
-    IBinderRoseTree<ISyntaxTree<TChar>, ISyntaxForest<TChar>>,
+    IBinderRoseTree<IBinderSyntaxTree<TChar>, ISyntaxForest<TChar>>,
     ISupportUnboundChildren<ISyntaxForest<TChar>>
 {
 }
