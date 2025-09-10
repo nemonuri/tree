@@ -2,44 +2,47 @@
 
 public static class TreeNavigaionTheory
 {
-    public static IEnumerable<TElement> ToEnumerable<TElement>
+    public static IEnumerable<TTree> ToEnumerable<TTree>
     (
-        ITree<TElement> root
+        TTree root
     )
+        where TTree : ITree<TTree>
     {
         return ToEnumerable(root, Identity);
     }
 
-    public static IEnumerable<TResult> ToEnumerable<TSource, TResult>
+    public static IEnumerable<TResultValue> ToEnumerable<TSourceTree, TResultValue>
     (
-        ITree<TSource> root,
-        Func<TSource, IReadOnlyList<int>, TResult> selector
+        TSourceTree root,
+        Func<TSourceTree, IIndexPath, TResultValue> selector
     )
+        where TSourceTree : ITree<TSourceTree>
     {
         Guard.IsNotNull(root);
         Guard.IsNotNull(selector);
 
-        var e = new TreeEnumerator<TSource>(root);
+        var e = new TreeEnumerator<TSourceTree>(root);
         while (e.MoveNext())
         {
-            yield return selector(e.Current.Value, e.CurrentIndexPath!);
+            yield return selector(e.Current, e.CurrentIndexPath!);
         }
     }
 
     private static T Identity<T>(T t, IReadOnlyList<int> indexes) => t;
     //private static T IdentityForRoseNode<T>(IRoseNode<T> t, IReadOnlyList<int> indexes) => t.Value;
 
-    public static bool TryGetItem<TElement>
+    public static bool TryGetItem<TTree>
     (
-        this ITree<TElement> tree,
+        this ITree<TTree> tree,
         IEnumerable<int> indexPath,
-        [NotNullWhen(true)] out ITree<TElement>? result
+        [NotNullWhen(true)] out TTree? result
     )
+        where TTree : ITree<TTree>
     {
         Guard.IsNotNull(tree);
         Guard.IsNotNull(indexPath);
 
-        ITree<TElement> currentTree = tree;
+        TTree currentTree = (TTree)tree;
         foreach (var index in indexPath)
         {
             if (currentTree.Children.ElementAtOrDefault(index) is not { } nextTree)
@@ -53,11 +56,12 @@ public static class TreeNavigaionTheory
         return result is not null;
     }
 
-    private static IndexPath GetFirstIndexPathAsDepthFirstPostOrder<TElement>(this ITree<TElement> root, out ITree<TElement> treeAtIndexPath)
+    private static IndexPath GetFirstIndexPathAsDepthFirstPostOrder<TTree>(TTree root, [NotNull] out TTree? treeAtIndexPath)
+        where TTree : ITree<TTree>
     {
         Guard.IsNotNull(root);
 
-        ITree<TElement> currentTree = root;
+        TTree currentTree = root;
         int depth = 0;
 
         while
@@ -76,19 +80,21 @@ public static class TreeNavigaionTheory
         return new IndexPath(ImmutableList.Create<int>(indexes));
     }
 
-    public static bool TryGetNextIndexPath<TElement>
+    public static bool TryGetNextIndexPath<TTree>
     (
-        this ITree<TElement> tree,
+        this ITree<TTree> tree,
         IIndexPath? oldIndexPath,
         [NotNullWhen(true)] out IIndexPath? nextIndexPath,
-        [NotNullWhen(true)] out ITree<TElement>? treeAtNextIndexPath
+        [NotNullWhen(true)] out TTree? treeAtNextIndexPath
     )
+        where TTree : ITree<TTree>
     {
         Guard.IsNotNull(tree);
+        TTree ensuredTree = (TTree)tree;
 
         if (oldIndexPath is null)
         {
-            nextIndexPath = tree.GetFirstIndexPathAsDepthFirstPostOrder(out treeAtNextIndexPath);
+            nextIndexPath = GetFirstIndexPathAsDepthFirstPostOrder(ensuredTree, out treeAtNextIndexPath);
             return true;
         }
         else if (oldIndexPath is [])
@@ -107,7 +113,7 @@ public static class TreeNavigaionTheory
             nextIndexPath = nextIndexPath.SetItem(^1, nextIndexPath[^1] + 1);
             if (tree.TryGetItem(nextIndexPath, out var tree1))
             {
-                var toConcat = tree1.GetFirstIndexPathAsDepthFirstPostOrder(out treeAtNextIndexPath);
+                var toConcat = GetFirstIndexPathAsDepthFirstPostOrder(tree1, out treeAtNextIndexPath);
                 if (toConcat.Count > 0)
                 {
                     nextIndexPath = nextIndexPath.Concat(toConcat);

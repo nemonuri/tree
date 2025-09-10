@@ -3,13 +3,14 @@ using System.Collections;
 
 namespace Nemonuri.Trees.Paths;
 
-public struct TreeEnumerator<TElement> : IEnumerator<ITree<TElement>>
+public struct TreeEnumerator<TTree> : IEnumerator<TTree>
+    where TTree : ITree<TTree>
 {
-    private ITree<TElement>? _current;
+    private TTree? _current;
     private IIndexPath? _currentIndexPath;
     private bool _isCompleted;
 
-    public TreeEnumerator(ITree<TElement> root)
+    public TreeEnumerator(TTree root)
     {
         Guard.IsNotNull(root);
 
@@ -17,17 +18,17 @@ public struct TreeEnumerator<TElement> : IEnumerator<ITree<TElement>>
         Reset();
     }
 
-    public ITree<TElement> Root { get; }
+    public TTree Root { get; }
     public IIndexPath? CurrentIndexPath => _currentIndexPath;
 
-    public ITree<TElement> Current => _current!;
+    public TTree Current => _current!;
 
     public bool MoveNext()
     {
         if (_isCompleted)
         {
-            _currentIndexPath = null;
-            _current = null;
+            _currentIndexPath = default;
+            _current = default;
             return false;
         }
 
@@ -44,8 +45,8 @@ public struct TreeEnumerator<TElement> : IEnumerator<ITree<TElement>>
 
     public void Reset()
     {
-        _currentIndexPath = null;
-        _current = null;
+        _currentIndexPath = default;
+        _current = default;
         _isCompleted = false;
     }
 

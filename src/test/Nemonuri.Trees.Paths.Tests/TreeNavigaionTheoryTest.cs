@@ -16,7 +16,7 @@ public class TreeNavigaionTheoryTest
         var tree = TestDataTheory.Int32TreeMap[treeLabel];
 
         // Act
-        var actual = TreeNavigaionTheory.ToEnumerable(tree);
+        var actual = TreeNavigaionTheory.ToEnumerable(tree, static (t, _) => t.Value);
 
         // Assert
         Assert.Equal(expected, actual);
