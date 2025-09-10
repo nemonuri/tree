@@ -112,7 +112,7 @@ public class TreeTheoryTest
         var selector = TestDataTheory.Int32SelectorMap[selectorLabel];
 
         // Act
-        var actual = roseNode.Select(selector).ToArray();
+        var actual = TreeTheory.ToArray<object, IGeneralBottomUpRoseTree<object>>(roseNode.Select(selector));
 
         // Assert
         Assert.Equal(expected, actual);

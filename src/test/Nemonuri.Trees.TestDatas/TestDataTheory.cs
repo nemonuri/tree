@@ -4,14 +4,14 @@ namespace Nemonuri.Trees.TestDatas;
 
 public static class TestDataTheory
 {
-    private readonly static Dictionary<Int32TreeLabel, ImplicitBottomUpTree<int>> _int32TreeMap = new()
+    private readonly static Dictionary<Int32TreeLabel, ImplicitBottomUpRoseTree<int>> _int32TreeMap = new()
     {
         { Int32TreeLabel.Single_0, 0 },
         { Int32TreeLabel.Height1_EvenNumbersIn2To10, (2, [6, 8, 10, 4]) },
         { Int32TreeLabel.Height1_3Pow1To3Pow4, (9, [3, 27, 81]) },
         { Int32TreeLabel.Height3_NumbersIn0To10, (0, [1, (2, [3, (4, [5]), 6]), 7, (8, [9, 10])]) }
     };
-    public static IReadOnlyDictionary<Int32TreeLabel, ImplicitBottomUpTree<int>> Int32TreeMap => _int32TreeMap;
+    public static IReadOnlyDictionary<Int32TreeLabel, ImplicitBottomUpRoseTree<int>> Int32TreeMap => _int32TreeMap;
 
     private readonly static Dictionary<Int32PredicateLabel, Func<int, bool>> _int32PredicateMap = new()
     {
