@@ -36,6 +36,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Nemonuri.Trees.Forests\Nemonuri.Trees.Forests.csproj" />
+    <ProjectReference Include="..\..\Nemonuri.Trees.Indexes\Nemonuri.Trees.Indexes.csproj" />
+    <ProjectReference Include="..\..\Nemonuri.Trees.Paths\Nemonuri.Trees.Paths.csproj" />
     <ProjectReference Include="..\..\Nemonuri.Trees\Nemonuri.Trees.csproj" />
   </ItemGroup>
 

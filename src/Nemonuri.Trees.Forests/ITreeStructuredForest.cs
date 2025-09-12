@@ -3,27 +3,41 @@
 public interface IAlterableTree
 <
     out TTree,
-    out TAlternateTreeMap, out TAlternateTreeKey
+    out TAlternateTreeKey,
+    out TAlternateTreeMap
 > :
     ITree<TTree>
     where TAlternateTreeMap : IReadOnlyDictionary<TAlternateTreeKey, TTree>
-    where TTree : IAlterableTree<TTree, TAlternateTreeMap, TAlternateTreeKey>
+    where TTree : IAlterableTree<TTree, TAlternateTreeKey, TAlternateTreeMap>
 {
     bool HasAlternateTreeMap { get; }
     TAlternateTreeMap GetAlternateTreeMap();
 }
 
-public interface ITreeStructuredSum<T, out TTree> :
-    ITree<TTree>,
-    IReadOnlyDictionary<IIndexPath, T>
-    where TTree : ITreeStructuredSum<T, TTree>
-{ 
-
+public interface ISupportLeafValue<out TLeafValue>
+{
+    bool IsLeaf { get; }
+    TLeafValue GetLeafValue();
 }
 
-public interface ITreeStructuredForest<TTree, out TSumTree> :
-    IAlterableTree<TTree, TSumTree, IIndexPath>
-    where TSumTree : ITreeStructuredSum<TTree, TSumTree>
-    where TTree : ITreeStructuredForest<TTree, TSumTree>
+public interface ITreeStructuredMap<TLeafValue, out TTree> :
+    ITree<TTree>,
+    IReadOnlyDictionary<IIndexPath, TLeafValue>,
+    ISupportLeafValue<TLeafValue>
+    where TTree : ITreeStructuredMap<TLeafValue, TTree>
+{
+}
+
+public interface ISupportUnitValue<out TUnitValue>
+{
+    bool IsUnit { get; }
+    TUnitValue GetUnitValue();
+}
+
+public interface ITreeStructuredForest<out TUnitValue, out TSum, TForest> :
+    IAlterableTree<TForest, IIndexPath, TSum>,
+    ISupportUnitValue<TUnitValue>
+    where TSum : ITreeStructuredMap<TForest, TSum>
+    where TForest : ITreeStructuredForest<TUnitValue, TSum, TForest>
 {
 }

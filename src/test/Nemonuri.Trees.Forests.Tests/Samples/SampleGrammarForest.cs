@@ -3,10 +3,13 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Diagnostics;
+using Nemonuri.Trees;
+using Nemonuri.Trees.Indexes;
+using Nemonuri.Trees.Paths;
 
 namespace Nemonuri.Trees.Forests.Tests.Samples;
 
-public class SampleUnitGrammar
+public class SampleUnitGrammar : IGrammarUnit<char, SampleUnitGrammar>
 {
     public SampleUnitGrammar(Regex regex)
     {
@@ -14,10 +17,19 @@ public class SampleUnitGrammar
     }
 
     public Regex Regex { get; }
+
+    public int Match(string text, int offset, int length)
+    {
+        var match = Regex.Match(text, offset, length);
+        if (!match.Success) { return -1; }
+        if (!text[offset..].StartsWith(match.Value)) { return -1; }
+
+        return match.ValueSpan.Length;
+    }
 }
 
 public class SampleGrammarForest :
-    IGrammarForest<char, SampleGrammarForest, SampleGrammarSum>
+    IGrammarForest<char, SampleUnitGrammar, SampleGrammarSum, SampleGrammarForest>
 {
     private readonly SampleUnitGrammar? _unitGrammar;
     private readonly SampleGrammarSum? _sum;
@@ -64,72 +76,93 @@ public class SampleGrammarForest :
         !Children.Any() && _unitGrammar is not null
         ;
 
-    public SampleUnitGrammar AsUnit
+    public SampleUnitGrammar GetUnitValue()
     {
-        get
-        {
-            Guard.IsNotNull(_unitGrammar);
-            return _unitGrammar;
-        }
+        Guard.IsNotNull(_unitGrammar);
+        return _unitGrammar;
+    }
+
+    public int Match(SampleGrammarForest[] text, int offset, int length)
+    {
+        throw new NotImplementedException();
     }
 }
 
 public class SampleGrammarSum :
-    IGrammarSum<char, SampleGrammarForest, SampleGrammarSum>
+    IGrammarMap<char, SampleUnitGrammar, SampleGrammarSum, SampleGrammarForest>
 {
     private readonly SampleGrammarForest? _leaf;
+    private Dictionary<IIndexPath, SampleGrammarForest>? _internalDictionaryCache;
     public IEnumerable<SampleGrammarSum> Children { get; }
 
-    public SampleGrammarSum(SampleGrammarForest leaf)
+    public SampleGrammarSum
+    (
+        SampleGrammarForest leaf
+    )
     {
         _leaf = leaf;
 
         Children = [];
     }
 
-    public SampleGrammarSum(IEnumerable<SampleGrammarSum> children)
+    public SampleGrammarSum
+    (
+        IEnumerable<SampleGrammarSum> children
+    )
     {
-        _leaf = null;
+        _leaf = default;
 
         Children = children;
     }
 
-    public bool ContainsKey(IIndexPath key)
+    private Dictionary<IIndexPath, SampleGrammarForest> InternalDictionary => _internalDictionaryCache ??=
+        EnumerateCore().ToDictionary(Constants.DefaultIndexPathEqualityComparer);
+
+    private IEnumerable<KeyValuePair<IIndexPath, SampleGrammarForest>> EnumerateCore()
     {
-        throw new NotImplementedException();
+        IIndexPath? indexPath = null;
+
+        while (TreeNavigaionTheory.TryGetNextIndexPath(this, indexPath, out indexPath, out SampleGrammarSum? tree))
+        {
+            if (!tree.IsLeaf) { continue; }
+            yield return new(indexPath, tree.GetLeafValue());
+        }
     }
 
-    public bool TryGetValue(IIndexPath key, [MaybeNullWhen(false)] out SampleGrammarForest value)
-    {
-        throw new NotImplementedException();
-    }
+    public bool ContainsKey(IIndexPath key) => InternalDictionary.ContainsKey(key);
 
-    public SampleGrammarForest this[IIndexPath key] => throw new NotImplementedException();
+    public bool TryGetValue(IIndexPath key, [MaybeNullWhen(false)] out SampleGrammarForest value) =>
+        InternalDictionary.TryGetValue(key, out value);
 
-    public IEnumerable<IIndexPath> Keys => throw new NotImplementedException();
+    public SampleGrammarForest this[IIndexPath key] => InternalDictionary[key];
 
-    public IEnumerable<SampleGrammarForest> Values => throw new NotImplementedException();
+    public IEnumerable<IIndexPath> Keys => InternalDictionary.Keys;
 
-    public int Count => throw new NotImplementedException();
+    public IEnumerable<SampleGrammarForest> Values => InternalDictionary.Values;
 
-    public IEnumerator<KeyValuePair<IIndexPath, SampleGrammarForest>> GetEnumerator()
-    {
-        throw new NotImplementedException();
-    }
+    public int Count => InternalDictionary.Count;
+
+    public IEnumerator<KeyValuePair<IIndexPath, SampleGrammarForest>> GetEnumerator() =>
+        InternalDictionary.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
     }
 
-    public bool IsLeaf => _leaf is not null;
+    public bool IsLeaf =>
+        _leaf is not null &&
+        !Children.Any()
+        ;
 
-    public SampleGrammarForest AsLeaf
+    public SampleGrammarForest GetLeafValue()
     {
-        get
-        {
-            Guard.IsNotNull(_leaf);
-            return _leaf;
-        }
+        Guard.IsNotNull(_leaf);
+        return _leaf;
     }
+}
+
+internal static class Constants
+{
+    public static readonly IndexPathEqualityComparer DefaultIndexPathEqualityComparer = new();
 }

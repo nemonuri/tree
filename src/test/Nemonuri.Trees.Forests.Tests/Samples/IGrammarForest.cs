@@ -1,15 +1,23 @@
 ﻿namespace Nemonuri.Trees.Forests.Tests.Samples;
 
-public interface IGrammarForest<TChar, TForest, out TSum> : 
-    ITreeStructuredForest<TForest, TSum>
-    where TForest : IGrammarForest<TChar, TForest, TSum>
-    where TSum : IGrammarSum<TChar, TForest, TSum>
-{
+public interface IGrammarUnit<TChar, TUnit>
+    where TUnit : IGrammarUnit<TChar, TUnit>
+{ }
 
+public interface IGrammarMap<TChar, TUnit, out TMap, TForest> :
+    ITreeStructuredMap<TForest, TMap>
+    where TUnit : IGrammarUnit<TChar, TUnit>
+    where TForest : IGrammarForest<TChar, TUnit, TMap, TForest>
+    where TMap : IGrammarMap<TChar, TUnit, TMap, TForest>
+{ }
+
+
+public interface IGrammarForest<TChar, TUnit, out TMap, TForest> :
+    ITreeStructuredForest<TUnit, TMap, TForest>
+    where TUnit : IGrammarUnit<TChar, TUnit>
+    where TForest : IGrammarForest<TChar, TUnit, TMap, TForest>
+    where TMap : IGrammarMap<TChar, TUnit, TMap, TForest>
+{
+    MinMax MinMax { get; }
 }
 
-public interface IGrammarSum<TChar, TForest, out TSum> :
-    ITreeStructuredSum<TForest, TSum>
-    where TForest : IGrammarForest<TChar, TForest, TSum>
-    where TSum : IGrammarSum<TChar, TForest, TSum>
-{ }
