@@ -20,6 +20,12 @@ public interface ISupportLeafValue<out TLeafValue>
     TLeafValue GetLeafValue();
 }
 
+public interface ISupportBranchValue<out TBranchValue>
+{
+    bool IsBranch { get; }
+    TBranchValue GetBranchValue();
+}
+
 public interface ITreeStructuredMap<TLeafValue, out TTree> :
     ITree<TTree>,
     IReadOnlyDictionary<IIndexPath, TLeafValue>,
