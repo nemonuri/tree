@@ -1,4 +1,4 @@
-namespace Nemonuri.Trees.Parsers;
+namespace Nemonuri.Trees;
 
 public readonly struct MinMax
 {
