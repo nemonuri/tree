@@ -25,4 +25,15 @@ public static partial class TreeTheory
         return AggregatingTheory.Aggregate(treeAggregator, TrivialChildrenProvider<TTree>.BoxedInstance, treeAggregator, (TTree)tree);
     }
 
+    public static IEnumerable<TTree> CreateBoundChildren<TTree, TBinder>
+    (
+        IEnumerable<TTree> unboundChildren,
+        TBinder binder
+    )
+        where TTree : IBoundableTree<TTree, TBinder>
+        where TBinder : ITree<TBinder>
+    {
+        return unboundChildren.Select(child => child.BindParent(binder));
+    }
+
 }
