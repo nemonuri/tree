@@ -22,3 +22,12 @@ public interface IAncestorConverter
     /// <returns>An ancestor element that is equivalent to the specified aggregating context.</returns>
     TAncestor ConvertToAncestor(TElement element, int? elementIndex);
 }
+
+public interface IMultiAxisAncestorConverter<TElement, TAncestor>
+#if NET9_0_OR_GREATER
+    where TElement : allows ref struct
+    where TAncestor : allows ref struct
+#endif
+{ 
+    TAncestor ConvertToAncestor(TElement element, int? axisIndex, int? elementIndex);
+}

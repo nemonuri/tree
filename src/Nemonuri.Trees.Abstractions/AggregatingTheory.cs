@@ -5,7 +5,7 @@ using Abstractions;
 /// <summary>
 /// General theory of aggregating tree structured objects.
 /// </summary>
-public static class AggregatingTheory
+public static partial class AggregatingTheory
 {
     /// <inheritdoc cref="Aggregate{_,_,_,_,_,_,_}(_,_,_,_)" />
     public static TAggregation Aggregate
