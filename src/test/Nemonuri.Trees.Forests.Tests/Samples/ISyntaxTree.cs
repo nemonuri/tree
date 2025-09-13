@@ -47,7 +47,46 @@ public interface ISyntaxTreeListGrammar : ILabeledGrammar
 public interface ISyntaxTree :
     IBottomUpRoseTree<GrammarTree, ISyntaxTree>
 {
-    GrammarTree GrammarTree { get; }
+}
+
+public class SyntaxTree : ISyntaxTree
+{
+    private readonly GrammarTree _grammarTree;
+    private readonly GrammarTree? _parent;
+    private readonly IEnumerable<GrammarTree> _unboundChildren;
+    private IEnumerable<GrammarTree>? _childrenCache;
+
+    public SyntaxTree
+    (
+        GrammarTree grammarTree,
+        GrammarTree? parent,
+        IEnumerable<GrammarTree> unboundChildren,
+        IEnumerable<GrammarTree>? childrenCache
+    )
+    {
+        _grammarTree = grammarTree;
+        _parent = parent;
+        _unboundChildren = unboundChildren;
+        _childrenCache = childrenCache;
+    }
+
+    public IEnumerable<ISyntaxTree> UnboundChildren => throw new NotImplementedException();
+
+    public ISyntaxTree BindParent(ISyntaxTree parent)
+    {
+        throw new NotImplementedException();
+    }
+
+    public GrammarTree Value => _grammarTree;
+
+    public IEnumerable<ISyntaxTree> Children => throw new NotImplementedException();
+
+    public bool HasParent => throw new NotImplementedException();
+
+    public ISyntaxTree GetParent()
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public class SyntaxForest :

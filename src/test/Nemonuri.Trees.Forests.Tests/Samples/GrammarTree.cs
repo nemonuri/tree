@@ -5,53 +5,28 @@ namespace Nemonuri.Trees.Forests.Tests.Samples;
 public class GrammarTree :
     IBottomUpRoseTree<StringOrSyntaxTreeListGrammar, GrammarTree>
 {
-    private readonly IStringGrammar? _leafValue;
-    private readonly ISyntaxTreeListGrammar? _branchValue;
+    private readonly StringOrSyntaxTreeListGrammar _grammarValue;
     private readonly GrammarTree? _parent;
     private readonly IEnumerable<GrammarTree> _unboundChildren;
     private IEnumerable<GrammarTree>? _childrenCache;
 
-    private GrammarTree
+    public GrammarTree
     (
-        IStringGrammar? leafValue,
-        ISyntaxTreeListGrammar? branchValue,
+        StringOrSyntaxTreeListGrammar grammarValue,
         GrammarTree? parent,
         IEnumerable<GrammarTree> unboundChildren,
         IEnumerable<GrammarTree>? childrenCache
     )
     {
-        Guard.IsTrue((leafValue is { } && branchValue is null) || (leafValue is null && branchValue is { }));
-        Guard.IsTrue(leafValue is null || !unboundChildren.Any());
-        Guard.IsTrue(branchValue is null || unboundChildren.Any());
-
-        _leafValue = leafValue;
-        _branchValue = branchValue;
+        _grammarValue = grammarValue;
         _parent = parent;
         _unboundChildren = unboundChildren;
         _childrenCache = childrenCache;
     }
 
-    public GrammarTree
-    (
-        IStringGrammar leafValue,
-        GrammarTree? parent
-    )
-    : this(leafValue, null, parent, [], null)
-    { }
-
-    public GrammarTree
-    (
-        ISyntaxTreeListGrammar branchValue,
-        GrammarTree? parent,
-        IEnumerable<GrammarTree> unboundChildren,
-        IEnumerable<GrammarTree>? childrenCache
-    )
-    : this(null, branchValue, parent, unboundChildren, childrenCache)
-    { }
-
     public GrammarTree BindParent(GrammarTree parent)
     {
-        return new(_leafValue, _branchValue, _parent, _unboundChildren, _childrenCache);
+        return new(_grammarValue, _parent, _unboundChildren, _childrenCache);
     }
 
     public IEnumerable<GrammarTree> Children => _childrenCache ??=
@@ -67,23 +42,17 @@ public class GrammarTree :
 
     public IEnumerable<GrammarTree> UnboundChildren => _unboundChildren;
 
-    public bool IsBranch => Children.Any();
+    public StringOrSyntaxTreeListGrammar Value => _grammarValue;
 
-    public ISyntaxTreeListGrammar GetBranchValue()
+    public SyntaxTree Match(string source, int offset, int length)
     {
-        Guard.IsNotNull(_branchValue);
-        return _branchValue;
+        throw new NotImplementedException();
     }
 
-    public bool IsLeaf => !Children.Any();
-
-    public IStringGrammar GetLeafValue()
-    {
-        Guard.IsNotNull(_leafValue);
-        return _leafValue;
+    public SyntaxTree Match(IReadOnlyList<ISyntaxTree> source, int offset, int length)
+    { 
+        throw new NotImplementedException();
     }
-
-    public StringOrSyntaxTreeListGrammar Value => throw new NotImplementedException();
 
 #if false
     public SyntaxForest Match(string source, int offset, int length)

@@ -39,7 +39,7 @@ public class GrammarForest :
     public IEnumerable<GrammarTree> Children => _firstAxisTree.Children;
 
     public SyntaxForest Match(string source, int offset, int length)
-    { 
-        
+    {
+        throw new NotImplementedException();
     }
 }
