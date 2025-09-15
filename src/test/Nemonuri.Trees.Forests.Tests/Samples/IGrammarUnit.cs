@@ -37,10 +37,10 @@ public interface IGrammarUnit
 
 public interface IStringGrammarUnit : IGrammarUnit
 {
-    int Match(string source, OffSetAndLength offSetAndLength);
+    int Match(string source, TextSpan textSpan);
 }
 
-public readonly record struct StringGrammarUnitMatchEntry(string Source, OffSetAndLength OffSetAndLength);
+public readonly record struct StringGrammarUnitMatchEntry(string Source, TextSpan TextSpan);
 public readonly record struct StringGrammarUnitMatchInfo(StringGrammarUnitMatchEntry Entry, int Result);
 
 public interface ISyntaxTreeListGrammarUnit : IGrammarUnit

@@ -6,12 +6,10 @@ public class SampleAggregator4D :
     IAggregator4D<GrammarForest, ImmutableList<SyntaxForest>, AxisKind?, AxisKind?>
 {
     private readonly string _sourceText;
-    private OffSetAndLength _currentOffSetAndLength;
 
-    public SampleAggregator4D(string sourceText, OffSetAndLength offSetAndLength)
+    public SampleAggregator4D(string sourceText)
     {
         _sourceText = sourceText;
-        _currentOffSetAndLength = offSetAndLength;
     }
 
     public AxisKind? InitialAncestorsAggregation => default;
@@ -33,6 +31,7 @@ public class SampleAggregator4D :
         {
             return siblingsAggregation;
         }
+        //if (ancestorsAggregation is AxisKind.)
 
         SyntaxForestValue? syntaxForestValue = childrenFromAxis0Aggregation switch
         {

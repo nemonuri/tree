@@ -62,7 +62,7 @@ public class GrammarForest :
 
 public static class GrammarMatchingTheory
 {
-    public static Optional<SyntaxForest> Match(GrammarForest grammarForest, string sourceText, OffSetAndLength offSetAndLength)
+    public static Optional<SyntaxForest> Match(GrammarForest grammarForest, string sourceText, TextSpan offSetAndLength)
     {
         var aggregation = AggregatingTheory.Aggregate
         <
@@ -91,5 +91,3 @@ public readonly struct AxisKindAncestorConverter() : IMultiAxisAncestorConverter
 {
     public AxisKind? ConvertToAncestor(GrammarForest element, int? axisIndex, int? elementIndex) => axisIndex is { } v ? (AxisKind)v : null;
 }
-
-public readonly record struct OffSetAndLength(int Offset, int Length);
