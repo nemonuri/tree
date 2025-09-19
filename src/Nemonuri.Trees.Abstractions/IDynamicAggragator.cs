@@ -1,44 +1,55 @@
 ﻿namespace Nemonuri.Trees;
 
 public interface IDynamicAggragator
-<TElement, TAggregation, TAncestor, TAncestorsAggregation, TAggregationCollection>
+<TPreElement, TPreAggregation, TPostElement, TPostAggregation, TPostAggregationCollection>
 #if NET9_0_OR_GREATER
-    where TElement : allows ref struct
-    where TAggregation : allows ref struct
-    where TAncestor : allows ref struct
-    where TAncestorsAggregation : allows ref struct
+    where TPreElement : allows ref struct
+    where TPostElement : allows ref struct
+    where TPostAggregation : allows ref struct
 #endif
-    where TAggregationCollection : IEnumerable<TAggregation>
+    where TPreAggregation : IEnumerable<TPostElement>
+#if NET9_0_OR_GREATER
+    , allows ref struct
+#endif
+    where TPostAggregationCollection : IEnumerable<TPostAggregation>
 #if NET9_0_OR_GREATER
     , allows ref struct
 #endif
 {
-    TAncestorsAggregation InitialAncestorsAggregation { get; }
+    TPreAggregation InitialPreAggregation { get; }
 
-    TAncestorsAggregation AggregateAncestor
+    TPreAggregation PreAggregate
     (
-        TAncestorsAggregation ancestorsAggregation,
-        TAncestor ancestor
+        TPostAggregationCollection postAggregationCollection,
+        TPostAggregation postAggregation,
+        int? postAggregationIndex,
+        TPreAggregation preAggregation,
+        TPreElement preElement,
+        int? preElementIndex
     );
 
     bool TryAggregate
     (
-        TAncestorsAggregation ancestorsAggregation,
-        TAggregation siblingsAggregation,
-        TAggregation childrenAggregation,
-        TElement element,
-        [NotNullWhen(true)] out TAggregation? aggregation
+        TPreAggregation preAggregation,
+        TPostAggregation siblingsAggregation,
+        int? siblingsAggregationIndex,
+        TPostAggregationCollection childrenAggregationCollection,
+        TPostAggregation childrenAggregation,
+        int? childrenAggregationIndex,
+        TPostElement postElement,
+        int postElementIndex,
+        [NotNullWhen(true)] out TPostAggregation? aggregation
     );
 
-    IEnumerable<TElement> GetAlternateElements(TAggregation siblingsAggregation, TElement element);
+    TPostAggregation DefaultPostAggregation { get; }
 
-    TAggregationCollection InitialAggregationCollection { get; }
+    TPostAggregationCollection InitialPostAggregationCollection { get; }
 
     bool TryAggregateAsCollection
     (
-        TAggregationCollection prevAggregationCollection,
-        TAggregation aggregation,
-        [NotNullWhen(true)] out TAggregationCollection? aggregationCollection
+        TPostAggregationCollection currentPostAggregationCollection,
+        TPostAggregation aggregation,
+        [NotNullWhen(true)] out TPostAggregationCollection? postAggregationCollection
     );
     
 }
