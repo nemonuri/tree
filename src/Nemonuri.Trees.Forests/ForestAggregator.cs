@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using CommunityToolkit.Diagnostics;
 
 namespace Nemonuri.Trees.Forests;
 
@@ -6,10 +6,11 @@ public class ForestAggregator
 <
     TElement, TAggregation,
     TElementFactory, TAggregationCollection,
+    TElementComplex,
     TAncestor, TAncestorsAggregation,
     TFlowContext
 > :
-    IAggregator3DWithFlowContext<TElementFactory, TAggregationCollection, TAncestor, TAncestorsAggregation, TFlowContext>
+    IAggregator3DWithFlowContext<TElementComplex, TAggregationCollection, TAncestor, TAncestorsAggregation, TFlowContext>
 #if NET9_0_OR_GREATER
     where TElement : allows ref struct
     where TAggregation : allows ref struct
@@ -23,82 +24,119 @@ public class ForestAggregator
         , allows ref struct
 #endif
 {
-    private readonly Func<TFlowContext> _initialFlowContextImplementation;
-    private readonly Func<TAncestorsAggregation> _initialAncestorsAggregationImplementation;
-    private readonly Func<TAncestorsAggregation, TAncestor, TAncestorsAggregation> _aggregateAncestorImplementation;
-    private readonly Func<TAggregationCollection> _emptyAggregationCollectionImplementation;
+    private readonly IForestAggregatorBase
+    <
+        TElement, TAggregation,
+        TElementFactory, TAggregationCollection,
+        TElementComplex,
+        TAncestor, TAncestorsAggregation,
+        TFlowContext
+    > _forestAggregatorBase;
 
-    public TFlowContext InitialFlowContext => _initialFlowContextImplementation.Invoke();
+    public ForestAggregator(IForestAggregatorBase<TElement, TAggregation, TElementFactory, TAggregationCollection, TElementComplex, TAncestor, TAncestorsAggregation, TFlowContext> forestAggregatorBase)
+    {
+        Guard.IsNotNull(forestAggregatorBase);
+        _forestAggregatorBase = forestAggregatorBase;
+    }
 
-    public TAncestorsAggregation InitialAncestorsAggregation => _initialAncestorsAggregationImplementation.Invoke();
+    public TFlowContext InitialFlowContext => _forestAggregatorBase.InitialFlowContext;
+
+    public TAncestorsAggregation InitialAncestorsAggregation => _forestAggregatorBase.InitialAncestorsAggregation;
 
     public TAncestorsAggregation AggregateAncestor(TAncestorsAggregation ancestorsAggregation, TAncestor ancestor) =>
-        _aggregateAncestorImplementation(ancestorsAggregation, ancestor);
+        _forestAggregatorBase.AggregateAncestor(ancestorsAggregation, ancestor);
 
-    public TAggregationCollection InitialAggregation => _emptyAggregationCollectionImplementation.Invoke();
+    public TAggregationCollection EmptyAggregationCollection => _forestAggregatorBase.EmptyAggregationCollection;
+
+    public TAggregationCollection InitialAggregation => _forestAggregatorBase.InitialAggregationCollection;
 
     public TAggregationCollection Aggregate
     (
         TAncestorsAggregation ancestorsAggregation,
         TAggregationCollection siblingsAggregationCollection,
         TAggregationCollection childrenAggregationCollection,
-        TElementFactory elementFactory,
+        TElementComplex elementComplex,
         scoped ref TFlowContext flowContext
     )
     {
+        int elementFactoryIndex = 0;
         int elementIndex = 0;
         int siblingsAggregationIndex = 0;
         int childrenAggregationIndex = 0;
-        TAggregationCollection aggregationCollection = InitialAggregation;
+        TAggregationCollection aggregationCollection = EmptyAggregationCollection;
 
 
-        foreach (var siblingsAggregation in siblingsAggregationCollection)
+        foreach (var elementFactory in GetElementFactories(ancestorsAggregation, elementComplex))
         {
-            foreach (var childrenAggregation in childrenAggregationCollection)
+            foreach (var siblingsAggregation in siblingsAggregationCollection)
             {
-                foreach (var element in GetElements(elementFactory, ref flowContext))
-                { 
-                    if
+                foreach (var childrenAggregation in childrenAggregationCollection)
+                {
+                    var elements = GetElements
                     (
-                        !TryAggregate
+                        ancestorsAggregation, siblingsAggregationCollection, childrenAggregationCollection,
+                        elementComplex, ref flowContext,
+
+                        elementFactory, elementFactoryIndex,
+                        siblingsAggregation, siblingsAggregationIndex,
+                        childrenAggregation, childrenAggregationIndex
+                    );
+                    foreach (var element in elements)
+                    {
+                        if
                         (
-                            ancestorsAggregation, siblingsAggregationCollection, childrenAggregationCollection,
-                            elementFactory, ref flowContext,
+                            !TryAggregate
+                            (
+                                ancestorsAggregation, siblingsAggregationCollection, childrenAggregationCollection,
+                                elementComplex, ref flowContext,
 
-                            siblingsAggregation, siblingsAggregationIndex,
-                            childrenAggregation, childrenAggregationIndex,
-                            element, elementIndex,
-                            out var aggregation
+                                elementFactory, elementFactoryIndex,
+                                siblingsAggregation, siblingsAggregationIndex,
+                                childrenAggregation, childrenAggregationIndex,
+                                element, elementIndex,
+                                out var aggregation
+                            )
                         )
-                    )
-                    { goto Continue; }
+                        { goto Continue; }
 
-                    if
-                    (
-                        !TryAggregateCollection
+                        if
                         (
-                            ancestorsAggregation, siblingsAggregationCollection, childrenAggregationCollection,
-                            elementFactory, ref flowContext,
+                            !TryAggregateCollection
+                            (
+                                ancestorsAggregation, siblingsAggregationCollection, childrenAggregationCollection,
+                                elementComplex, ref flowContext,
 
-                            aggregationCollection, aggregation,
-                            out var ac1
+                                aggregationCollection, aggregation,
+                                out var ac1
+                            )
                         )
-                    )
-                    { goto Continue; }
+                        { goto Continue; }
 
-                    aggregationCollection = ac1;
+                        aggregationCollection = ac1;
 
-                Continue:
-                    elementIndex++;
+                    Continue:
+                        elementIndex++;
+                    }
+
+                    childrenAggregationIndex++;
                 }
-                
-                childrenAggregationIndex++;
+
+                siblingsAggregationIndex++;
             }
 
-            siblingsAggregationIndex++;
+            elementFactoryIndex++;
         }
 
         return aggregationCollection;
+    }
+
+    private IEnumerable<TElementFactory> GetElementFactories
+    (
+        TAncestorsAggregation ancestorsAggregation,
+        TElementComplex elementComplex
+    )
+    {
+        return _forestAggregatorBase.GetElementFactories(ancestorsAggregation, elementComplex);
     }
 
     private IEnumerable<TElement> GetElements
@@ -106,16 +144,27 @@ public class ForestAggregator
         TAncestorsAggregation ancestorsAggregation,
         TAggregationCollection siblingsAggregationCollection,
         TAggregationCollection childrenAggregationCollection,
-        TElementFactory elementFactory,
+        TElementComplex elementComplex,
         scoped ref readonly TFlowContext flowContext,
 
+        TElementFactory elementFactory,
+        int elementFactoryIndex,
         TAggregation siblingsAggregation,
         int siblingsAggregationIndex,
         TAggregation childrenAggregation,
         int childrenAggregationIndex
     )
     {
-        throw new NotImplementedException();
+        return _forestAggregatorBase.GetElements
+        (
+            ancestorsAggregation,
+            siblingsAggregationCollection, childrenAggregationCollection,
+            elementComplex, in flowContext,
+
+            elementFactory, elementFactoryIndex,
+            siblingsAggregation, siblingsAggregationIndex,
+            childrenAggregation, childrenAggregationIndex
+        );
     }
 
     private bool TryAggregate
@@ -123,9 +172,11 @@ public class ForestAggregator
         TAncestorsAggregation ancestorsAggregation,
         TAggregationCollection siblingsAggregationCollection,
         TAggregationCollection childrenAggregationCollection,
-        TElementFactory elementFactory,
+        TElementComplex elementComplex,
         scoped ref TFlowContext flowContext,
 
+        TElementFactory elementFactory,
+        int elementFactoryIndex,
         TAggregation siblingsAggregation,
         int siblingsAggregationIndex,
         TAggregation childrenAggregation,
@@ -135,7 +186,18 @@ public class ForestAggregator
         [NotNullWhen(true)] out TAggregation? aggregation
     )
     {
-        throw new NotImplementedException();
+        return _forestAggregatorBase.TryAggregate
+        (
+            ancestorsAggregation,
+            siblingsAggregationCollection, childrenAggregationCollection,
+            elementComplex, ref flowContext,
+
+            elementFactory, elementFactoryIndex,
+            siblingsAggregation, siblingsAggregationIndex,
+            childrenAggregation, childrenAggregationIndex,
+            element, elementIndex,
+            out aggregation
+        );
     }
 
     private bool TryAggregateCollection
@@ -143,15 +205,23 @@ public class ForestAggregator
         TAncestorsAggregation ancestorsAggregation,
         TAggregationCollection siblingsAggregationCollection,
         TAggregationCollection childrenAggregationCollection,
-        TElementFactory elementFactory,
+        TElementComplex elementComplex,
         scoped ref readonly TFlowContext flowContext,
 
         TAggregationCollection aggregationCollection,
         TAggregation aggregation,
         [NotNullWhen(true)] out TAggregationCollection? nextAggregationCollection
     )
-    { 
-        throw new NotImplementedException();
+    {
+        return _forestAggregatorBase.TryAggregateCollection
+        (
+            ancestorsAggregation,
+            siblingsAggregationCollection, childrenAggregationCollection,
+            elementComplex, in flowContext,
+
+            aggregationCollection, aggregation,
+            out nextAggregationCollection
+        );
     }
 
     
