@@ -8,8 +8,11 @@ public interface IAggregator3DWithFlowContext
     where TAggregation : allows ref struct
     where TAncestor : allows ref struct
     where TAncestorsAggregation : allows ref struct
+    where TFlowContext : allows ref struct
 #endif
 {
+    TFlowContext InitialFlowContext { get; }
+
     TAncestorsAggregation InitialAncestorsAggregation { get; }
 
     TAncestorsAggregation AggregateAncestor
@@ -18,7 +21,6 @@ public interface IAggregator3DWithFlowContext
         TAncestor ancestor
     );
 
-    /// <inheritdoc cref="IAggregator{_,_}.InitialAggregation" />
     TAggregation InitialAggregation { get; }
 
     TAggregation Aggregate
@@ -27,6 +29,6 @@ public interface IAggregator3DWithFlowContext
         TAggregation siblingsAggregation,
         TAggregation childrenAggregation,
         TElement element,
-        ref TFlowContext flowContext
+        scoped ref TFlowContext flowContext
     );
 }

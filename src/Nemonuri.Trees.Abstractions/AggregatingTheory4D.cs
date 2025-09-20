@@ -1,6 +1,6 @@
 namespace Nemonuri.Trees;
 
-public static partial class AggregatingTheory
+public static class AggregatingTheory4D
 {
     public static TAggregation Aggregate
     <
