@@ -60,6 +60,7 @@ public class GrammarForest :
     public IReadOnlyList<IEnumerable<GrammarForest>> UnboundChildrenList => _unboundChildrenList;
 }
 
+#if false
 public static class GrammarMatchingTheory
 {
     public static Optional<SyntaxForest> Match(GrammarForest grammarForest, string sourceText, TextSpan offSetAndLength)
@@ -86,6 +87,7 @@ public static class GrammarMatchingTheory
 #pragma warning restore CS8509
     }
 }
+#endif
 
 public readonly struct AxisKindAncestorConverter() : IMultiAxisAncestorConverter<GrammarForest, AxisKind?>
 {

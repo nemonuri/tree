@@ -1,3 +1,5 @@
+#if false
+
 using System.Collections.Immutable;
 
 namespace Nemonuri.Trees.Forests.Tests.Samples;
@@ -82,3 +84,5 @@ public class SampleAggregator4D :
         return siblingsAggregation.Add(syntaxForest);
     }
 }
+
+#endif

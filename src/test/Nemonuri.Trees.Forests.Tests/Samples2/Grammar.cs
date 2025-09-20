@@ -78,7 +78,7 @@ public class RepeatGrammar : Grammar
             switch ((remainedRepeatCount > 0, es.MoveNext()))
             {
                 case (true, true):
-                    if (Predicate(es.Current)) { return false; }
+                    if (!Predicate(es.Current)) { return false; }
                     break;
                 case (false, false):
                     return true;
