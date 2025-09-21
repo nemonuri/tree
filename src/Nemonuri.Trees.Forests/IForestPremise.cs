@@ -2,7 +2,7 @@ namespace Nemonuri.Trees.Forests;
 
 public interface IForestPremise
 <TForest, TForestKey, TForestKeyCollection,
- TForestSequence, TForestUnion, TForestSequenceCollection, TForestUnionCollection, TForestMatrix>
+ TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix>
     where TForest : IForest<TForest, TForestKey, TForestKeyCollection>
 #if NET9_0_OR_GREATER
     , allows ref struct
@@ -22,26 +22,27 @@ public interface IForestPremise
 #if NET9_0_OR_GREATER
     , allows ref struct
 #endif
-    where TForestSequenceCollection : IEnumerable<TForestSequence>
+    where TForestSequenceUnion : IEnumerable<TForestSequence>
 #if NET9_0_OR_GREATER
     , allows ref struct
 #endif
-    where TForestUnionCollection : IEnumerable<TForestUnion>
+    where TForestUnionSequence : IEnumerable<TForestUnion>
 #if NET9_0_OR_GREATER
     , allows ref struct
 #endif
-    where TForestMatrix : IEnumerableMatrix<TForest, TForestSequence, TForestUnion, TForestSequenceCollection, TForestUnionCollection>
+    where TForestMatrix : IEnumerableMatrix<TForest, TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence>
 #if NET9_0_OR_GREATER
     , allows ref struct
 #endif
 {
     TForestMatrix CastChildren(TForest forest);
 
-    TForestMatrix FilterByKey(TForestMatrix forestMatrix, TForestKey forestKey);
-
     TForestMatrix CreateEmptyForestMatrix();
-    TForestMatrix AggregateForestMatrix(TForestMatrix l, TForestMatrix r);
+    TForestMatrix AggregateForestMatrixAsSequenceUnion(TForestMatrix l, TForestSequenceUnion r);
+    TForestMatrix AggregateForestMatrixAsUnionSequence(TForestMatrix l, TForestUnionSequence r);
 
     TForestKeyCollection CreateEmptyForestKeyCollection();
     TForestKeyCollection AggregateForestKeyCollection(TForestKeyCollection l, TForestKeyCollection r);
+
+    TForestMatrix FilterByKey(TForestMatrix forestMatrix, TForestKey forestKey);
 }

@@ -4,13 +4,17 @@ namespace Nemonuri.Trees.Forests;
 
 public class DynamicForest
 <TForest, TForestKey, TForestKeyCollection,
- TForestSequence, TForestUnion, TForestSequenceCollection, TForestUnionCollection, TForestMatrix, TForestPremise> :
-    IForest
+ TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix,
+ TForestPremise> :
+    IDynamicForest
     <
         DynamicForest
         <TForest, TForestKey, TForestKeyCollection,
-         TForestSequence, TForestUnion, TForestSequenceCollection, TForestUnionCollection, TForestMatrix, TForestPremise>,
-        TForestKey, TForestKeyCollection
+         TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix,
+         TForestPremise>,
+        TForest, TForestKey, TForestKeyCollection,
+        TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix,
+        TForestPremise
     >
     where TForest : IForest<TForest, TForestKey, TForestKeyCollection>
 #if NET9_0_OR_GREATER
@@ -25,66 +29,91 @@ public class DynamicForest
     , allows ref struct
 #endif
     where TForestUnion : IEnumerable<TForest>
-    where TForestSequenceCollection : IEnumerable<TForestSequence>
+    where TForestSequenceUnion : IEnumerable<TForestSequence>
 #if NET9_0_OR_GREATER
     , allows ref struct
 #endif
-    where TForestUnionCollection : IEnumerable<TForestUnion>
-#if NET9_0_OR_GREATER
-    , allows ref struct
-#endif
-    where TForestMatrix : IEnumerableMatrix<TForest, TForestSequence, TForestUnion, TForestSequenceCollection, TForestUnionCollection>
+    where TForestUnionSequence : IEnumerable<TForestUnion>
+    where TForestMatrix : IEnumerableMatrix<TForest, TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence>
     where TForestPremise : IForestPremise
     <TForest, TForestKey, TForestKeyCollection,
-     TForestSequence, TForestUnion, TForestSequenceCollection, TForestUnionCollection, TForestMatrix>
+     TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix>
 {
     private readonly TForestPremise _premise;
 
-    private TForestUnion _internalForestUnion;
-    private int _internalForestUnionVersion = 0;
+    private TForestUnion _forestUnion;
+    private int _forestUnionVersion = 0;
+
+    public IEnumerable
+    <
+        DynamicForest
+        <TForest, TForestKey, TForestKeyCollection,
+         TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix,
+         TForestPremise>
+    > _extraChildren;
+    private int _extraChildrenVersion = 0;
 
     private TForestKeyCollection? _value;
     private int _valueVersion = 0;
 
-    private TForestMatrix? _internalChildren;
-    private int _internalChildrenVersion = 0;
+    private TForestMatrix? _childrenFromForestUnion;
+    private int _childrenFromForestUnionVersion = 0;
 
     private IEnumerable
     <
         DynamicForest
         <TForest, TForestKey, TForestKeyCollection,
-         TForestSequence, TForestUnion, TForestSequenceCollection, TForestUnionCollection, TForestMatrix, TForestPremise>
+         TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix,
+         TForestPremise>
     >?
-    _castedChildren;
-    private int _castedChildrenVersion = 0;
+    _castedChildrenFromForestUnion;
+    private int _castedChildrenFromForestUnionVersion = 0;
 
-    public DynamicForest(TForestPremise premise, TForestUnion internalForestUnion)
+    private IEnumerable
+    <
+        DynamicForest
+        <TForest, TForestKey, TForestKeyCollection,
+         TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix,
+         TForestPremise>
+    >?
+    _aggregatedChildren;
+    private (int ForestUnion, int ExtraChildren) _aggregatedChildrenVersion = (0,0);
+
+
+    public DynamicForest
+    (
+        TForestPremise premise,
+        TForestUnion forestUnion,
+        IEnumerable
+        <
+            DynamicForest
+            <TForest, TForestKey, TForestKeyCollection,
+            TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix,
+            TForestPremise>
+        > extraChildren
+    )
     {
         Guard.IsNotNull(premise);
-        Guard.IsNotNull(internalForestUnion);
+
         _premise = premise;
-        _internalForestUnion = internalForestUnion;
-        _internalForestUnionVersion++;
+        ForestUnion = forestUnion;
+        ExtraChildren = extraChildren;
     }
 
-    public TForestKeyCollection Value
+    //public DynamicForest(TForestPremise premise, TForestUnion forestUnion)
+
+    public TForestPremise Premise => _premise;
+
+    public TForestUnion ForestUnion
     {
-        get
+        get => _forestUnion;
+
+        [MemberNotNull(nameof(_forestUnion))]
+        set
         {
-            //--- update `_value` if needed ---
-            if (_internalForestUnionVersion > _valueVersion)
-            {
-                TForestKeyCollection l = _premise.CreateEmptyForestKeyCollection();
-                foreach (var forest in _internalForestUnion)
-                {
-                    l = _premise.AggregateForestKeyCollection(l, forest.Value);
-                }
-                _value = l;
-                _valueVersion = _internalForestUnionVersion;
-            }
-            //---|
-            Guard.IsNotNull(_value);
-            return _value;
+            Guard.IsNotNull(value);
+            _forestUnion = value;
+            _forestUnionVersion++;
         }
     }
 
@@ -92,46 +121,99 @@ public class DynamicForest
     <
         DynamicForest
         <TForest, TForestKey, TForestKeyCollection,
-         TForestSequence, TForestUnion, TForestSequenceCollection, TForestUnionCollection, TForestMatrix, TForestPremise>
+         TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix,
+         TForestPremise>
+    > ExtraChildren
+    {
+        get => _extraChildren;
+
+        [MemberNotNull(nameof(_extraChildren))]
+        set
+        {
+            Guard.IsNotNull(value);
+            _extraChildren = value;
+            _extraChildrenVersion++;
+        }
+    }
+
+    public TForestKeyCollection Value
+    {
+        get
+        {
+            //--- update `_value` if needed ---
+            if (_forestUnionVersion > _valueVersion)
+            {
+                TForestKeyCollection l = _premise.CreateEmptyForestKeyCollection();
+                foreach (var forest in _forestUnion)
+                {
+                    l = _premise.AggregateForestKeyCollection(l, forest.Value);
+                }
+                _value = l;
+                _valueVersion = _forestUnionVersion;
+            }
+            //---|
+            Guard.IsNotNull(_value);
+            return _value;
+        }
+    }
+
+
+
+    public IEnumerable
+    <
+        DynamicForest
+        <TForest, TForestKey, TForestKeyCollection,
+         TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix, TForestPremise>
     >
     Children
     {
         get
         {
             //--- update `_internalChildren` if needed ---
-            if (_internalForestUnionVersion > _internalChildrenVersion)
+            if (_forestUnionVersion > _childrenFromForestUnionVersion)
             {
                 TForestMatrix l = _premise.CreateEmptyForestMatrix();
-                foreach (var forest in _internalForestUnion)
+                foreach (var forest in _forestUnion)
                 {
-                    l = _premise.AggregateForestMatrix(l, _premise.CastChildren(forest));
+                    l = _premise.AggregateForestMatrixAsSequenceUnion(l, _premise.CastChildren(forest).EnumerateRows());
                 }
-                _internalChildren = l;
-                _internalChildrenVersion = _internalForestUnionVersion;
+                _childrenFromForestUnion = l;
+                _childrenFromForestUnionVersion = _forestUnionVersion;
             }
             //---|
-            Guard.IsNotNull(_internalChildren);
+            Guard.IsNotNull(_childrenFromForestUnion);
 
             //--- update `_castedChildrenVersion` if needed ---
-            if (_internalChildrenVersion > _castedChildrenVersion)
+            if (_childrenFromForestUnionVersion > _castedChildrenFromForestUnionVersion)
             {
-                TForestUnion[] forestUnions = [.. _internalChildren.EnumerateColumns()];
-                _castedChildren = forestUnions.Select
+                _castedChildrenFromForestUnion = _childrenFromForestUnion.EnumerateColumns().Select
                 (
                     forestUnion => new
                     DynamicForest
                     <TForest, TForestKey, TForestKeyCollection,
-                     TForestSequence, TForestUnion, TForestSequenceCollection, TForestUnionCollection, TForestMatrix, TForestPremise>
+                     TForestSequence, TForestUnion, TForestSequenceUnion, TForestUnionSequence, TForestMatrix, TForestPremise>
                     (
-                        _premise, forestUnion
+                        _premise, forestUnion, []
                     )
                 );
-                _castedChildrenVersion = _internalChildrenVersion;
+                _castedChildrenFromForestUnionVersion = _childrenFromForestUnionVersion;
             }
             //---|
-            Guard.IsNotNull(_castedChildren);
+            Guard.IsNotNull(_castedChildrenFromForestUnion);
 
-            return _castedChildren;
+            //--- update `_aggregatedChildren` if needed ---
+            {
+                var version = (_castedChildrenFromForestUnionVersion, _extraChildrenVersion);
+                if (_aggregatedChildrenVersion != version)
+                {
+                    _aggregatedChildren = _castedChildrenFromForestUnion.Concat(_extraChildren);
+                    _aggregatedChildrenVersion = version;
+                }
+            }
+            //---|
+            Guard.IsNotNull(_aggregatedChildren);
+
+            return _aggregatedChildren;
         }
     }
 }
