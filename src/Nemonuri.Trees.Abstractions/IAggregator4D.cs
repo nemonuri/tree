@@ -1,35 +1,38 @@
 
 namespace Nemonuri.Trees;
 
-// Note:
-// - IAggregator4D 가 맞는 네이밍이야? 뭔가 이상한데?
-// - IAggregator3D 를, IAggregator2DWithAncestor 로 바꿔야 하는 거 아닌가...?
-
 public interface IAggregator4D
-<TElement, TAggregation, TAncestor, TAncestorsAggregation>
+<TElement, TAggregation, TFlow, TFlowAggregation>
 #if NET9_0_OR_GREATER
     where TElement : allows ref struct
     where TAggregation : allows ref struct
-    where TAncestor : allows ref struct
-    where TAncestorsAggregation : allows ref struct
+    where TFlow : allows ref struct
+    where TFlowAggregation : allows ref struct
 #endif
 {
-    TAncestorsAggregation InitialAncestorsAggregation { get; }
+    TFlowAggregation InitialFlowAggregation { get; }
 
-    TAncestorsAggregation AggregateAncestor
+    TFlowAggregation AggregateFlow
     (
-        TAncestorsAggregation ancestorsAggregation,
-        TAncestor ancestor
+        TFlowAggregation flowAggregation,
+        TFlow flow
     );
 
     TAggregation InitialAggregation { get; }
 
-    TAggregation Aggregate
+    TAggregation AggregateElement
     (
-        TAncestorsAggregation ancestorsAggregation,
-        TAggregation siblingsAggregation,
-        TAggregation childrenFromAxis0Aggregation,
-        TAggregation childrenFromAxis1Aggregation,
+        TFlowAggregation flowAggregation,
+        TAggregation siblingSequenceUnion,
+        TAggregation siblingSequence,
+        TAggregation childMatrix,
         TElement element
+    );
+
+    TAggregation AggregateSequence
+    (
+        TFlowAggregation flowAggregation,
+        TAggregation sequenceUnion,
+        TAggregation sequence
     );
 }
