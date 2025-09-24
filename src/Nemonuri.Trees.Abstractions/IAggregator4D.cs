@@ -31,7 +31,6 @@ public interface IAggregator4D
 
     TAggregation AggregateSequence
     (
-        TFlowAggregation flowAggregation,
         TAggregation sequenceUnion,
         TAggregation sequence
     );

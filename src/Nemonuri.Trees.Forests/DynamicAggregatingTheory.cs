@@ -17,9 +17,9 @@ public static class DynamicAggregatingTheory
     )
         where TAggregator : IAggregator4D<TNode, TAggregation, TFlow, TFlowAggregation>
         where TDynamicNavigator : IDynamicNavigator<TNode, TFlowAggregation, TAggregation>
-        where TFlowConverter : IFlowConverter<TNode, MatrixAggregatingFlowInfo<TAggregation>, TFlow>
+        where TFlowConverter : IFlowConverter<TNode, TFlow>
     {
-        var flow = flowConverter.ConvertToFlow(node, new(aggregator.InitialAggregation, aggregator.InitialAggregation));
+        var flow = flowConverter.ConvertToFlow(node);
         var flowAggregation = aggregator.AggregateFlow(aggregator.InitialFlowAggregation, flow);
 
         var childMatrix = AggregateChildMatrix
@@ -38,7 +38,7 @@ public static class DynamicAggregatingTheory
 
         var siblingSequenceUnion = aggregator.AggregateSequence
         (
-            flowAggregation, aggregator.InitialAggregation, siblingSequence
+            aggregator.InitialAggregation, siblingSequence
         );
 
         return siblingSequenceUnion;
@@ -58,7 +58,7 @@ public static class DynamicAggregatingTheory
     )
         where TAggregator : IAggregator4D<TNode, TAggregation, TFlow, TFlowAggregation>
         where TDynamicNavigator : IDynamicNavigator<TNode, TFlowAggregation, TAggregation>
-        where TFlowConverter : IFlowConverter<TNode, MatrixAggregatingFlowInfo<TAggregation>, TFlow>
+        where TFlowConverter : IFlowConverter<TNode, TFlow>
     {
         Debug.Assert(aggregator is not null);
         Debug.Assert(navigator is not null);
@@ -83,9 +83,7 @@ public static class DynamicAggregatingTheory
                 //--- get first child ---
                 if
                 (
-                    DoesNeedToGetFirstOfFirstChildren(ordinalInChildSiblingSequenceUnion) ?
-                        navigator.TryGetFirstOfFirstChildrenInUnion(node, flowAggregation, out childNode) :
-                        navigator.TryGetFirstOfNextChildrenInUnion(node, flowAggregation, childSiblingSequenceUnion, out childNode)
+                    navigator.TryGetFirstChildOfNextChildren(node, flowAggregation, childSiblingSequenceUnion, out childNode)
                 )
                 {
                     ordinalInChildSiblingSequenceUnion += 1;
@@ -104,8 +102,7 @@ public static class DynamicAggregatingTheory
                 //--- get next sibing ---
                 if
                 (
-                    navigator.TryGetAlternativeNextSibling(node, flowAggregation, childSiblingSequence, out childNode) ||
-                    navigator.TryGetDefaultNextSibling(node, flowAggregation, out childNode)
+                    navigator.TryGetNextSibling(node, flowAggregation, childSiblingSequence, out childNode)
                 )
                 {
                     ordinalInChildSiblingSequence += 1;
@@ -116,7 +113,7 @@ public static class DynamicAggregatingTheory
 
                     childSiblingSequenceUnion = aggregator.AggregateSequence
                     (
-                        flowAggregation, childSiblingSequenceUnion, childSiblingSequence
+                        childSiblingSequenceUnion, childSiblingSequence
                     );
 
                     continue;
@@ -129,7 +126,7 @@ public static class DynamicAggregatingTheory
 
             var flow = flowConverter.ConvertToFlow
             (
-                node, childNode, new(childSiblingSequenceUnion, childSiblingSequence),
+                node, childNode,
                 ordinalInChildSiblingSequenceUnion, ordinalInChildSiblingSequence
             );
             flowAggregation = aggregator.AggregateFlow(flowAggregation, flow);
@@ -152,7 +149,6 @@ public static class DynamicAggregatingTheory
 
 
         static bool DoesNeedToGetFirstChild(int ordinalInChildSiblingSequence) => ordinalInChildSiblingSequence < 0;
-        static bool DoesNeedToGetFirstOfFirstChildren(int ordinalInChildSiblingSequenceUnion) => ordinalInChildSiblingSequenceUnion < 0;
     }
 }
 
