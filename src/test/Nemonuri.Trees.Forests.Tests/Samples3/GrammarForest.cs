@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CommunityToolkit.Diagnostics;
 using Nemonuri.Trees.Abstractions;
 
 namespace Nemonuri.Trees.Forests.Tests.Samples3;
@@ -9,13 +8,15 @@ public class GrammarForest
     public ISyntaxForestGrammar Grammar { get; }
 }
 
+#if false
 public static class ParserTheory
 {
     public static SyntaxForest Consume(GrammarForest grammarForest, ConsumableSource source)
-    { 
+    {
         DynamicAggregatingTheory.Aggregate()
     }
 }
+#endif
 
 public class GrammarForestNavigator : IDynamicNavigator<GrammarForest, NullValue, SyntaxForestBuilder>
 {
@@ -30,6 +31,7 @@ public class GrammarForestNavigator : IDynamicNavigator<GrammarForest, NullValue
     }
 }
 
+#if false
 public class SyntaxForestAggregator : IAggregator4D<GrammarForest, SyntaxForestBuilder, NullValue, NullValue>
 {
     public SyntaxForestAggregator(ConsumableSourceInvarient consumableSourceInvarient)
@@ -107,6 +109,7 @@ public class SyntaxForestAggregator : IAggregator4D<GrammarForest, SyntaxForestB
         throw new NotImplementedException();
     }
 }
+#endif
 
 public class AAAA<T> : IFlowConverter<GrammarForest, T>
 {
