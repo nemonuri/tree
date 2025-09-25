@@ -21,31 +21,6 @@ public interface IArrowToRelativePathMap<TNode, TArrow, TRelativePath>
     TRelativePath GetRelativePath(TArrow arrow);
 }
 
-public interface ISuccessorGraph<TNode, TArrow, TArrowSet>
-    where TArrow : IArrow<TNode>
-    where TArrowSet : IEnumerable<TArrow>
-{
-    TArrowSet GetDirectSuccessorArrows(TNode node);
-}
-
-public interface IDynamicSuccessorGraph<TNode, TNodeSet, TEffect>
-    where TNodeSet : IEnumerable<TNode>
-{
-    TEffect AddDirectSuccessors(TNode node, TNodeSet successors);
-}
-
-public interface IPredecessorGraph<TNode, TArrow, TArrowSet>
-    where TArrow : IArrow<TNode>
-    where TArrowSet : IEnumerable<TArrow>
-{
-    TArrowSet GetDirectPredecessorArrows(TNode node);
-}
-
-public interface IDynamicPredecessorGraph<TNode, TNodeSet, TEffect>
-    where TNodeSet : IEnumerable<TNode>
-{
-    TEffect AddDirectPredecessors(TNode node);
-}
 
 public interface IDigraph<TNode, TArrow, TArrowSet> :
     ISuccessorGraph<TNode, TArrow, TArrowSet>,
