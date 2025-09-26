@@ -9,35 +9,27 @@ public interface IGraph<TNode, TNodeSet>
     TNodeSet GetAdjacentNodes(TNode node);
 }
 
-public interface IArrow<T>
-{
-    T Tail { get; }
-    T Head { get; }
-}
-
-public interface IArrowToRelativePathMap<TNode, TArrow, TRelativePath>
-    where TArrow : IArrow<TNode>
-{
-    TRelativePath GetRelativePath(TArrow arrow);
-}
-
-
-public interface IDigraph<TNode, TArrow, TArrowSet> :
-    ISuccessorGraph<TNode, TArrow, TArrowSet>,
-    IPredecessorGraph<TNode, TArrow, TArrowSet>
-    where TArrow : IArrow<TNode>
-    where TArrowSet : IEnumerable<TArrow>
+public interface IDigraph
+<
+    TNode, TTail, TInArrow, TInArrowSet, THead, TOutArrow, TOutArrowSet
+> :
+    IPredecessorGraph<TTail, TNode, TInArrow, TInArrowSet>,
+    ISuccessorGraph<TNode, THead, TOutArrow, TOutArrowSet>
+    where TInArrow : IArrow<TTail, TNode>
+    where TInArrowSet : IEnumerable<TInArrow>
+    where TOutArrow : IArrow<TNode, THead>
+    where TOutArrowSet : IEnumerable<TOutArrow>
 {
 }
 
-public interface IDynamicDigraph<TNode, TNodeSet, TArrow, TArrowSet, TEffect> :
-    ISuccessorGraph<TNode, TArrow, TArrowSet>,
-    IPredecessorGraph<TNode, TArrow, TArrowSet>,
-    IDynamicSuccessorGraph<TNode, TNodeSet, TEffect>,
-    IDynamicPredecessorGraph<TNode, TNodeSet, TEffect>
-    where TArrow : IArrow<TNode>
-    where TArrowSet : IEnumerable<TArrow>
-    where TNodeSet : IEnumerable<TNode>
+public interface IDynamicDigraph
+<
+    TContext, TNode, TTail, TTailSet, THead, THeadSet, TEffect
+> :
+    IDynamicPredecessorGraph<TTail, TNode, TTailSet, TEffect>,
+    IDynamicSuccessorGraph<TNode, THead, THeadSet, TEffect>
+    where TTailSet : IEnumerable<TTail>
+    where THeadSet : IEnumerable<THead>
 {
 }
 

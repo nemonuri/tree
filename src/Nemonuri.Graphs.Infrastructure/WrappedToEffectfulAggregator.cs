@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Nemonuri.Graphs.Infrastructure;
 
 public readonly struct WrappedToEffectfulAggregator<TAggregator, T, TValue> : IEffectfulAggregator<T, TValue, NullValue, T>
@@ -15,10 +13,5 @@ public readonly struct WrappedToEffectfulAggregator<TAggregator, T, TValue> : IE
     public T Aggregate(NullValue context, T source, TValue value)
     {
         return InternalAggregator.Aggregate(source, value);
-    }
-
-    public bool TryEmbed(T aggreation, [NotNullWhen(true)] out T embedded)
-    {
-        return (embedded = aggreation) is not null;
     }
 }

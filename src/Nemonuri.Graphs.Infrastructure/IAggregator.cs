@@ -4,11 +4,14 @@ namespace Nemonuri.Graphs.Infrastructure;
 
 public readonly record struct NullValue { }
 
+public interface IEmbedder<TSource, TTarget, TRemainder>
+{ 
+    bool TryEmbed(TSource source, [NotNullWhen(true)] out TTarget target, out TRemainder? remainder);
+}
+
 public interface IEffectfulAggregator<T, TValue, TContext, TResult>
 {
     TResult Aggregate(TContext context, T source, TValue value);
-
-    bool TryEmbed(TResult aggreation, [NotNullWhen(true)] out T embedded);
 }
 
 public interface IAggregator<T, TValue>
