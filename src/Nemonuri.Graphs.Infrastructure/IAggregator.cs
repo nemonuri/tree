@@ -9,9 +9,19 @@ public interface IEmbedder<TSource, TTarget, TRemainder>
     bool TryEmbed(TSource source, [NotNullWhen(true)] out TTarget target, out TRemainder? remainder);
 }
 
+public interface IEmbedder<TSource, TTarget>
+{
+    TTarget Embed(TSource source);
+}
+
 public interface IEffectfulAggregator<T, TValue, TContext, TResult>
 {
     TResult Aggregate(TContext context, T source, TValue value);
+}
+
+public interface IMutableContextedAggregator<TMutableContext, T, TValue>
+{
+    T Aggregate(scoped ref TMutableContext mutableContext, T source, TValue value);
 }
 
 public interface IAggregator<T, TValue>

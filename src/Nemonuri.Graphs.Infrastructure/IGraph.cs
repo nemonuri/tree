@@ -16,9 +16,9 @@ public interface IDigraph
     IPredecessorGraph<TTail, TNode, TInArrow, TInArrowSet>,
     ISuccessorGraph<TNode, THead, TOutArrow, TOutArrowSet>
     where TInArrow : IArrow<TTail, TNode>
-    where TInArrowSet : IEnumerable<TInArrow>
+    where TInArrowSet : IInArrowSet<TInArrow, TTail, TNode>
     where TOutArrow : IArrow<TNode, THead>
-    where TOutArrowSet : IEnumerable<TOutArrow>
+    where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, THead>
 {
 }
 
