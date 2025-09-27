@@ -1,5 +1,6 @@
 namespace Nemonuri.Graphs.Infrastructure;
 
+#if false
 public interface IBipartiteSuccessorGraph
 <
     TGraph1, TNode1, TArrow1, TArrowSet1,
@@ -24,3 +25,4 @@ public interface IBipartiteSuccessorGraph
 {
     TGraph2 GetNext();
 }
+#endif

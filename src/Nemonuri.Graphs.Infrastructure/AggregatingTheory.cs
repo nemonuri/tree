@@ -2,54 +2,85 @@ namespace Nemonuri.Graphs.Infrastructure;
 
 public static class AggregatingTheory
 {
-    public static TAggregation Aggregate
+
+    public static TPost AggregateHomogeneousSuccessors
     <
-        TMutableContext, TAggregation, TAggregationEmptyPremise, TSiblingsAggregation, TSuccessorsAggregation,
-        TNode,
-        TTail, TInArrow, TInArrowSet, TPredecessorGraph,
-        THead, TOutArrow, TOutArrowSet, TSuccessorGraph,
-        TAggregator, TSiblingsEmbedder, TSuccessorsEmbedder,
-        TSuccessorVisitingPremise, TSiblingVisitingPremise
+        TAggregator,
+        TMutableContext, TPrevious, TPost,
+        TNode, TInArrow, TOutArrow, TOutArrowSet
     >
     (
+        TAggregator premise,
         scoped ref TMutableContext mutableContext,
-        TAggregator aggregator,
-        TAggregationEmptyPremise aggregatorPremise,
-        InitialNodeOrInArrows<TTail, TNode, TInArrow, TInArrowSet> initialNodeOrInArrows
-        
-
+        InitialOrPreviousInfo<TNode, TNode, TInArrow, TPrevious> initialOrPreviousInfo
     )
-        where TAggregationEmptyPremise : IEmptyPremise<TAggregation>
-        where TPredecessorGraph : IPredecessorGraph<TTail, TNode, TInArrow, TInArrowSet>
-        where TSuccessorGraph : ISuccessorGraph<TNode, THead, TOutArrow, TOutArrowSet>
-        where TInArrow : IArrow<TTail, TNode>
-        where TInArrowSet : IInArrowSet<TInArrow, TTail, TNode>
-        where TOutArrow : IArrow<TNode, THead>
-        where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, THead>
-        where TAggregator : IMutableContextedAggregator<TMutableContext, TAggregation, AggregatingInput<TTail, TNode, TInArrow, TInArrowSet, TSiblingsAggregation, TSuccessorsAggregation>>
+        where TAggregator : IHomogeneousSuccessorAggregator
+        <
+            TMutableContext, TPrevious, TPost,
+            TNode, TInArrow, TOutArrow, TOutArrowSet
+        >
+        where TInArrow : IArrow<TNode, TNode>
+        where TOutArrow : IArrow<TNode, TNode>
+        where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, TNode>
     {
+        if (!initialOrPreviousInfo.TryGetNode(out TNode? node)) { return premise.EmptyPostAggregation; }
 
+        bool isInitial = initialOrPreviousInfo.IsInitialInfo;
+
+        TPrevious previousAggregation = initialOrPreviousInfo.TryGetPreviousAggregation(out var v1) ? v1 : premise.EmptyPreviousAggregation;
+        TPost postAggregation = premise.EmptyPostAggregation;
+
+        if (isInitial)
+        {
+            previousAggregation = premise.AggregatePreviousToInitialNode(ref mutableContext, previousAggregation, node);
+        }
+
+        foreach (TOutArrow outArrow in premise.GetDirectSuccessorArrows(node))
+        {
+            PhaseSnapshot<TNode, TInArrow, TOutArrow, TPrevious, TPost> snapshot =
+                new(initialOrPreviousInfo, outArrow, previousAggregation, postAggregation);
+
+            if (premise.CanRunPhase(snapshot, AggregatingPhase.Pre))
+            {
+                previousAggregation = premise.AggregatePrevious(ref mutableContext, previousAggregation, snapshot);
+                snapshot = snapshot with { PreviousAggregation = previousAggregation };
+            }
+
+            TPost childrenAggregation;
+            if (premise.CanRunPhase(snapshot, AggregatingPhase.Children))
+            {
+                childrenAggregation = AggregateHomogeneousSuccessors
+                <
+                    TAggregator,
+                    TMutableContext, TPrevious, TPost,
+                    TNode, TInArrow, TOutArrow, TOutArrowSet
+                >
+                (
+                    premise, ref mutableContext, (premise.EmbedToInArrow(outArrow), previousAggregation)
+                );
+            }
+            else
+            {
+                childrenAggregation = premise.EmptyPostAggregation;
+            }
+
+            if (premise.CanRunPhase(snapshot, AggregatingPhase.Post))
+            {
+                var v2 = premise.AggregatePost(ref mutableContext, postAggregation, snapshot);
+                snapshot = snapshot with { PostAggregation = v2 };
+            }
+
+            if (premise.CanRunPhase(snapshot, AggregatingPhase.Assign))
+            {
+                postAggregation = snapshot.PostAggregation;
+            }
+        }
+        
+        if (isInitial)
+        { 
+            postAggregation = premise.AggregatePostToInitialNode(ref mutableContext, postAggregation, node);
+        }
+
+        return postAggregation;
     }
-
-
-}
-
-public readonly record struct AggregatingInput<TTail, TNode, TInArrow, TInArrowSet, TSiblingsAggregation, TSuccessorsAggregation>
-(
-    InitialNodeOrInArrows<TTail, TNode, TInArrow, TInArrowSet> InitialNodeOrInArrows,
-    TSiblingsAggregation SiblingsAggregation,
-    TSuccessorsAggregation SuccessorsAggregation
-)
-    where TInArrow : IArrow<TTail, TNode>
-    where TInArrowSet : IInArrowSet<TInArrow, TTail, TNode>
-;
-
-public interface ISuccessorVisitingPremise<TContext>
-{
-    bool CanVisitSuccessor(TContext context);
-}
-
-public interface ISiblingVisitingPremise<TContext>
-{
-    bool CanVisitSibling(TContext context);
 }
