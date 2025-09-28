@@ -75,7 +75,7 @@ public static class AggregatingTheory
 
             if (premise.CanRunPhase(snapshot, AggregatingPhase.AggregatePost))
             {
-                var tempPostAggregation = premise.AggregatePost(ref mutableContext, postAggregation, snapshot);
+                var tempPostAggregation = premise.AggregatePost(ref mutableContext, childrenAggregation, snapshot);
                 snapshot = snapshot with { PostAggregation = tempPostAggregation };
 
                 if (premise.CanRunPhase(snapshot, AggregatingPhase.AssignPost))
