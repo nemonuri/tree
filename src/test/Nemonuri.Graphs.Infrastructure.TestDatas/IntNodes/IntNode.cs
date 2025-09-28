@@ -20,6 +20,9 @@ public class IntNodeOutArrowSet : IOutArrowSet<IntNodeArrow, IntNode, IntNode>
         Heads = heads;
     }
 
+    public IntNodeOutArrowSet(IntNode commonTail) : this(commonTail, [..commonTail.Children])
+    { }
+
     public IntNode CommonTail { get; }
 
     public ImmutableList<IntNode> Heads { get; }

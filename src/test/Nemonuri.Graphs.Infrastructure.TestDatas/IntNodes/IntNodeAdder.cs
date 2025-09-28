@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
 
-public class IntNodeAdder() : IHomogeneousSuccessorAggregator
+public readonly struct IntNodeAdder() : IHomogeneousSuccessorAggregator
 <
     NullValue, NullValue, int,
     IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet
@@ -24,13 +24,13 @@ public class IntNodeAdder() : IHomogeneousSuccessorAggregator
 
     public int AggregatePostToInitialNode(scoped ref NullValue mutableContext, int source, IntNode value)
     {
-        Trace.WriteLine($"AggregatePostToInitialNode {source} + {value.Value}");
+        Debug.WriteLine($"{nameof(AggregatePostToInitialNode)} {source} + {value.Value}");
         return source + value.Value;
     }
 
     public int AggregatePost(scoped ref NullValue mutableContext, int source, PhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, NullValue, int> value)
     {
-        Trace.WriteLine($"AggregatePost {source} + {value.PostAggregation} + {value.OutArrow.Head.Value}");
+        Debug.WriteLine($"{nameof(AggregatePost)} {source} + {value.PostAggregation} + {value.OutArrow.Head.Value}");
                //from_children  from_siblings   self
         return source + value.PostAggregation + value.OutArrow.Head.Value;
     }
@@ -57,6 +57,6 @@ public class IntNodeAdder() : IHomogeneousSuccessorAggregator
 
     public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node)
     {
-        return new(node, [.. node.Children]);
+        return new(node);
     }
 }
