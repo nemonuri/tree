@@ -31,7 +31,7 @@ public readonly struct IntNodeAdder() : IHomogeneousSuccessorAggregator
     public int AggregatePost(scoped ref NullValue mutableContext, int source, PhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, NullValue, int> value)
     {
         Debug.WriteLine($"{nameof(AggregatePost)} {source} + {value.PostAggregation} + {value.OutArrow.Head.Value}");
-               //from_children  from_siblings   self
+        //from_children  from_siblings   self
         return source + value.PostAggregation + value.OutArrow.Head.Value;
     }
 
