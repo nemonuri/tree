@@ -40,14 +40,23 @@ public static class AggregatingTheory
             PhaseSnapshot<TNode, TInArrow, TOutArrow, TPrevious, TPost> snapshot =
                 new(initialOrPreviousInfo, outArrow, previousAggregation, postAggregation);
 
-            if (premise.CanRunPhase(snapshot, AggregatingPhase.Pre))
+            if (premise.CanRunPhase(snapshot, AggregatingPhase.AggregatePrevious))
             {
-                previousAggregation = premise.AggregatePrevious(ref mutableContext, previousAggregation, snapshot);
-                snapshot = snapshot with { PreviousAggregation = previousAggregation };
+                var tempPreviousAggregation = premise.AggregatePrevious(ref mutableContext, previousAggregation, snapshot);
+                snapshot = snapshot with { PreviousAggregation = tempPreviousAggregation };
+
+                if (premise.CanRunPhase(snapshot, AggregatingPhase.AssignPrevious))
+                {
+                    previousAggregation = snapshot.PreviousAggregation;
+                }
+                else
+                { 
+                    snapshot = snapshot with { PreviousAggregation = previousAggregation };
+                }
             }
 
             TPost childrenAggregation;
-            if (premise.CanRunPhase(snapshot, AggregatingPhase.Children))
+            if (premise.CanRunPhase(snapshot, AggregatingPhase.AggregateAndAssignChildren))
             {
                 childrenAggregation = AggregateHomogeneousSuccessors
                 <
@@ -64,15 +73,15 @@ public static class AggregatingTheory
                 childrenAggregation = premise.EmptyPostAggregation;
             }
 
-            if (premise.CanRunPhase(snapshot, AggregatingPhase.Post))
+            if (premise.CanRunPhase(snapshot, AggregatingPhase.AggregatePost))
             {
-                var v2 = premise.AggregatePost(ref mutableContext, postAggregation, snapshot);
-                snapshot = snapshot with { PostAggregation = v2 };
-            }
+                var tempPostAggregation = premise.AggregatePost(ref mutableContext, postAggregation, snapshot);
+                snapshot = snapshot with { PostAggregation = tempPostAggregation };
 
-            if (premise.CanRunPhase(snapshot, AggregatingPhase.Assign))
-            {
-                postAggregation = snapshot.PostAggregation;
+                if (premise.CanRunPhase(snapshot, AggregatingPhase.AssignPost))
+                {
+                    postAggregation = snapshot.PostAggregation;
+                }
             }
         }
         

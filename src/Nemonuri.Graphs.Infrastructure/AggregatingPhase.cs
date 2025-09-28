@@ -3,8 +3,9 @@ namespace Nemonuri.Graphs.Infrastructure;
 public enum AggregatingPhase
 {
     Unknown = 0,
-    Pre = 1,
-    Children = 2,
-    Post = 3,
-    Assign = 4
+    AggregatePrevious = 1,
+    AssignPrevious = 2,
+    AggregateAndAssignChildren = 3,
+    AggregatePost = 4,
+    AssignPost = 5
 }

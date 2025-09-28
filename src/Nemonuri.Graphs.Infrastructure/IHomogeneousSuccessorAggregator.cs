@@ -12,8 +12,6 @@ public interface IHomogeneousSuccessorAggregator
 {
     TPrevious EmptyPreviousAggregation { get; }
 
-    bool IsEmptyPreviousAggregation(TPrevious value);
-
     TPrevious AggregatePreviousToInitialNode(scoped ref TMutableContext mutableContext, TPrevious source, TNode value);
 
     TPrevious AggregatePrevious(scoped ref TMutableContext mutableContext, TPrevious source,
@@ -21,8 +19,6 @@ public interface IHomogeneousSuccessorAggregator
 
 
     TPost EmptyPostAggregation { get; }
-
-    bool IsEmptyPostAggregation(TPost value);
 
     TPost AggregatePostToInitialNode(scoped ref TMutableContext mutableContext, TPost source, TNode value);
 
