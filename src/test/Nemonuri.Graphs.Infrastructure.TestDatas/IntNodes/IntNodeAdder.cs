@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
 
 public class IntNodeAdder() : IHomogeneousSuccessorAggregator
@@ -22,12 +24,15 @@ public class IntNodeAdder() : IHomogeneousSuccessorAggregator
 
     public int AggregatePostToInitialNode(scoped ref NullValue mutableContext, int source, IntNode value)
     {
+        Trace.WriteLine($"AggregatePostToInitialNode {source} + {value.Value}");
         return source + value.Value;
     }
 
     public int AggregatePost(scoped ref NullValue mutableContext, int source, PhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, NullValue, int> value)
     {
-        return source + value.OutArrow.Head.Value;
+        Trace.WriteLine($"AggregatePost {source} + {value.PostAggregation} + {value.OutArrow.Head.Value}");
+               //from_children  from_siblings   self
+        return source + value.PostAggregation + value.OutArrow.Head.Value;
     }
 
     public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow)
