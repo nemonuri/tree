@@ -58,6 +58,12 @@ public class IntNodeParenthesizedStringfier : IHomogeneousSuccessorAggregator
 
     public string AggregatePost(scoped ref NullValue mutableContext, string source, PhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, NullValue, string> value)
     {
+
+        if (value.OutArrow.Head.Children.Length > 0)
+        {
+            _sb.Append(')');
+        }
+
         if
         (
             value.OutArrow.Index ==
@@ -67,12 +73,6 @@ public class IntNodeParenthesizedStringfier : IHomogeneousSuccessorAggregator
             _sb.Append(')');
         }
 
-        if (value.OutArrow.Head.Children.Length > 0)
-        {
-            _sb.Append('(');
-        }
-
-        _sb.Append(')');
         return EmptyPostAggregation;
     }
 
@@ -82,7 +82,7 @@ public class IntNodeParenthesizedStringfier : IHomogeneousSuccessorAggregator
         {
             _sb.Append(')');
         }
-        
+
         return _sb.ToString();
     }
 
