@@ -12,7 +12,7 @@ public static class AggregatingTheory
     (
         TAggregator premise,
         scoped ref TMutableContext mutableContext,
-        InitialOrPreviousInfo<TNode, TNode, TInArrow, TPrevious> initialOrPreviousInfo
+        InitialOrRecursiveInfo<TNode, TNode, TInArrow, TPrevious> initialOrRecursiveInfo
     )
         where TAggregator : IHomogeneousSuccessorAggregator
         <
@@ -23,42 +23,48 @@ public static class AggregatingTheory
         where TOutArrow : IArrow<TNode, TNode>
         where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, TNode>
     {
-        if (!initialOrPreviousInfo.TryGetNode(out TNode? node)) { return premise.EmptyPostAggregation; }
+        if (!initialOrRecursiveInfo.TryGetNode(out TNode? node)) { return premise.EmptyPostAggregation; }
 
-        bool isInitial = initialOrPreviousInfo.IsInitialInfo;
+        bool isInitial = initialOrRecursiveInfo.IsInitialInfo;
 
-        TPrevious previousAggregation = initialOrPreviousInfo.TryGetPreviousAggregation(out var v1) ? v1 : premise.EmptyPreviousAggregation;
+        TPrevious previousAggregation = initialOrRecursiveInfo.TryGetPreviousAggregation(out var v1) ? v1 : premise.EmptyPreviousAggregation;
         TPost postAggregation = premise.EmptyPostAggregation;
 
-        if (isInitial)
+        OuterPhaseLabel outerLabel;
+        OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost> outerSnapshot = new(initialOrRecursiveInfo, previousAggregation, postAggregation);
+        LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> outerLabeledSnapshot;
+
+
+        outerLabel = isInitial ? OuterPhaseLabel.InitialOuterPrevious : OuterPhaseLabel.RecursiveOuterPrevious;
+        outerLabeledSnapshot = new(outerLabel, outerSnapshot);
+        if (premise.CanRunOuterPhase(outerLabeledSnapshot))
         {
-            previousAggregation = premise.AggregatePreviousToInitialNode(ref mutableContext, previousAggregation, node);
+            previousAggregation = premise.AggregateOuterPrevious(ref mutableContext, previousAggregation, outerLabeledSnapshot);
         }
 
-        foreach (TOutArrow outArrow in premise.GetDirectSuccessorArrows(node))
+        TOutArrowSet outArrowSet = premise.GetDirectSuccessorArrows(node);
+        foreach (TOutArrow outArrow in outArrowSet)
         {
-            PhaseSnapshot<TNode, TInArrow, TOutArrow, TPrevious, TPost> snapshot =
-                new(initialOrPreviousInfo, outArrow, previousAggregation, postAggregation);
+            InnerPhaseLabel innerLabel;
+            InnerPhaseSnapshotComplement<TNode, TOutArrow, TOutArrowSet> innerSnapshotComplement = new(outArrow, outArrowSet);
+            LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> innerLabeledSnapshot;
+            TPost succesorsAggregation;
 
-            if (premise.CanRunPhase(snapshot, AggregatingPhase.AggregatePrevious))
+
+            innerLabel = InnerPhaseLabel.InnerPrevious;
+            innerLabeledSnapshot = new(innerLabel, new(outerSnapshot, innerSnapshotComplement));
+            if (premise.CanRunInnerPhase(innerLabeledSnapshot))
             {
-                var tempPreviousAggregation = premise.AggregatePrevious(ref mutableContext, previousAggregation, snapshot);
-                snapshot = snapshot with { PreviousAggregation = tempPreviousAggregation };
-
-                if (premise.CanRunPhase(snapshot, AggregatingPhase.AssignPrevious))
-                {
-                    previousAggregation = snapshot.PreviousAggregation;
-                }
-                else
-                { 
-                    snapshot = snapshot with { PreviousAggregation = previousAggregation };
-                }
+                previousAggregation = premise.AggregateInnerPrevious(ref mutableContext, previousAggregation, innerLabeledSnapshot);
+                outerSnapshot = outerSnapshot with { PreviousAggregation = previousAggregation };
             }
 
-            TPost childrenAggregation;
-            if (premise.CanRunPhase(snapshot, AggregatingPhase.AggregateAndAssignChildren))
+
+            innerLabel = InnerPhaseLabel.InnerMoment;
+            innerLabeledSnapshot = new(innerLabel, new(outerSnapshot, innerSnapshotComplement));
+            if (premise.CanRunInnerPhase(innerLabeledSnapshot))
             {
-                childrenAggregation = AggregateHomogeneousSuccessors
+                succesorsAggregation = AggregateHomogeneousSuccessors
                 <
                     TAggregator,
                     TMutableContext, TPrevious, TPost,
@@ -70,24 +76,24 @@ public static class AggregatingTheory
             }
             else
             {
-                childrenAggregation = premise.EmptyPostAggregation;
+                succesorsAggregation = premise.EmptyPostAggregation;
             }
 
-            if (premise.CanRunPhase(snapshot, AggregatingPhase.AggregatePost))
-            {
-                var tempPostAggregation = premise.AggregatePost(ref mutableContext, childrenAggregation, snapshot);
-                snapshot = snapshot with { PostAggregation = tempPostAggregation };
 
-                if (premise.CanRunPhase(snapshot, AggregatingPhase.AssignPost))
-                {
-                    postAggregation = snapshot.PostAggregation;
-                }
+            innerLabel = InnerPhaseLabel.InnerPost;
+            innerLabeledSnapshot = new(innerLabel, new(outerSnapshot, innerSnapshotComplement));
+            if (premise.CanRunInnerPhase(innerLabeledSnapshot))
+            {
+                postAggregation = premise.AggregateInnerPost(ref mutableContext, succesorsAggregation, innerLabeledSnapshot);
+                outerSnapshot = outerSnapshot with { PostAggregation = postAggregation };
             }
         }
         
-        if (isInitial)
-        { 
-            postAggregation = premise.AggregatePostToInitialNode(ref mutableContext, postAggregation, node);
+        outerLabel = isInitial ? OuterPhaseLabel.InitialOuterPost : OuterPhaseLabel.RecursiveOuterPost;
+        outerLabeledSnapshot = new(outerLabel, outerSnapshot);
+        if (premise.CanRunOuterPhase(outerLabeledSnapshot))
+        {
+            postAggregation = premise.AggregateOuterPost(ref mutableContext, postAggregation, outerLabeledSnapshot);
         }
 
         return postAggregation;

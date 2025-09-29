@@ -12,21 +12,36 @@ public interface IHomogeneousSuccessorAggregator
 {
     TPrevious EmptyPreviousAggregation { get; }
 
-    TPrevious AggregatePreviousToInitialNode(scoped ref TMutableContext mutableContext, TPrevious source, TNode value);
+    TPrevious AggregateOuterPrevious
+    (
+        scoped ref TMutableContext mutableContext, TPrevious source,
+        LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value
+    );
 
-    TPrevious AggregatePrevious(scoped ref TMutableContext mutableContext, TPrevious source,
-                                PhaseSnapshot<TNode, TInArrow, TOutArrow, TPrevious, TPost> value);
+    TPrevious AggregateInnerPrevious
+    (
+        scoped ref TMutableContext mutableContext, TPrevious source,
+        LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value
+    );
 
 
     TPost EmptyPostAggregation { get; }
 
-    TPost AggregatePostToInitialNode(scoped ref TMutableContext mutableContext, TPost source, TNode value);
+    TPost AggregateInnerPost
+    (
+        scoped ref TMutableContext mutableContext, TPost source,
+        LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value
+    );
 
-    TPost AggregatePost(scoped ref TMutableContext mutableContext, TPost source,
-                        PhaseSnapshot<TNode, TInArrow, TOutArrow, TPrevious, TPost> value);
+    TPost AggregateOuterPost
+    (
+        scoped ref TMutableContext mutableContext, TPost source,
+        LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value
+    );
 
 
     TInArrow EmbedToInArrow(TOutArrow outArrow);
 
-    bool CanRunPhase(PhaseSnapshot<TNode, TInArrow, TOutArrow, TPrevious, TPost> snapshot, AggregatingPhase phase);
+    bool CanRunOuterPhase(LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> phaseSnapshot);
+    bool CanRunInnerPhase(LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> phaseSnapshot);
 }

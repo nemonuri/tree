@@ -4,16 +4,16 @@ using SumSharp;
 namespace Nemonuri.Graphs.Infrastructure;
 
 public readonly record struct InitialInfo<TNode>(TNode InitialNode);
-public readonly record struct PreviousInfo<TTail, TNode, TInArrow, TAggregation>(TInArrow InArrow, TAggregation PreviousAggregation)
+public readonly record struct RecursiveInfo<TTail, TNode, TInArrow, TAggregation>(TInArrow InArrow, TAggregation PreviousAggregation)
     where TInArrow : IArrow<TTail, TNode>;
 
 
 [UnionCase("Empty")]
 [UnionCase("InitialInfo", $"{nameof(InitialInfo<TNode>)}<{nameof(TNode)}>", UnionCaseStorage.Inline)]
-[UnionCase("PreviousInfo",
-    $"{nameof(PreviousInfo<TTail, TNode, TInArrow, TAggregation>)}<{nameof(TTail)},{nameof(TNode)},{nameof(TInArrow)},{nameof(TAggregation)}>",
+[UnionCase("RecursiveInfo",
+    $"{nameof(RecursiveInfo<TTail, TNode, TInArrow, TAggregation>)}<{nameof(TTail)},{nameof(TNode)},{nameof(TInArrow)},{nameof(TAggregation)}>",
     UnionCaseStorage.Inline)]
-public partial struct InitialOrPreviousInfo<TTail, TNode, TInArrow, TAggregation>
+public partial struct InitialOrRecursiveInfo<TTail, TNode, TInArrow, TAggregation>
     where TInArrow : IArrow<TTail, TNode>
 {
     public bool TryGetNode([NotNullWhen(true)] out TNode? node)
@@ -22,9 +22,9 @@ public partial struct InitialOrPreviousInfo<TTail, TNode, TInArrow, TAggregation
         {
             return (node = AsInitialInfo.InitialNode) is not null;
         }
-        else if (IsPreviousInfo)
+        else if (IsRecursiveInfo)
         {
-            return (node = AsPreviousInfo.InArrow.Head) is not null;
+            return (node = AsRecursiveInfo.InArrow.Head) is not null;
         }
         else
         {
@@ -37,13 +37,13 @@ public partial struct InitialOrPreviousInfo<TTail, TNode, TInArrow, TAggregation
     (
         previousAggregation = Match
         (
-            PreviousInfo: static pi => pi.PreviousAggregation,
+            RecursiveInfo: static pi => pi.PreviousAggregation,
             _: static () => default
         )
     ) is not null;
 
-    public static implicit operator InitialOrPreviousInfo<TTail, TNode, TInArrow, TAggregation>(TNode v) => InitialInfo(new(v));
-    public static implicit operator InitialOrPreviousInfo<TTail, TNode, TInArrow, TAggregation>((TInArrow InArrow, TAggregation PreviousAggregation) v) =>
-        PreviousInfo(new(v.InArrow, v.PreviousAggregation));
+    public static implicit operator InitialOrRecursiveInfo<TTail, TNode, TInArrow, TAggregation>(TNode v) => InitialInfo(new(v));
+    public static implicit operator InitialOrRecursiveInfo<TTail, TNode, TInArrow, TAggregation>((TInArrow InArrow, TAggregation PreviousAggregation) v) =>
+        RecursiveInfo(new(v.InArrow, v.PreviousAggregation));
 }
 
