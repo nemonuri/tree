@@ -10,53 +10,43 @@ public readonly struct IntNodeAdder() : IHomogeneousSuccessorAggregator
 {
     public NullValue EmptyPreviousAggregation => default;
 
-    public NullValue AggregatePreviousToInitialNode(scoped ref NullValue mutableContext, NullValue source, IntNode value)
+    public NullValue AggregateOuterPrevious(scoped ref NullValue mutableContext, NullValue source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, NullValue, int>> value)
     {
-        return default;
+        throw new InvalidOperationException();
+        //return default;
     }
 
-    public NullValue AggregatePrevious(scoped ref NullValue mutableContext, NullValue source, PhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, NullValue, int> value)
+    public NullValue AggregateInnerPrevious(scoped ref NullValue mutableContext, NullValue source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, NullValue, int>> value)
     {
-        return default;
+        throw new InvalidOperationException();
+        //return default;
     }
 
     public int EmptyPostAggregation => 0;
 
-    public int AggregatePostToInitialNode(scoped ref NullValue mutableContext, int source, IntNode value)
+    public int AggregateInnerPost(scoped ref NullValue mutableContext, int source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, NullValue, int>> value)
     {
-        Debug.WriteLine($"{nameof(AggregatePostToInitialNode)} {source} + {value.Value}");
-        return source + value.Value;
+        Debug.WriteLine($"{nameof(AggregateInnerPost)} {source} + {value.Snapshot.PostAggregation}");
+        return source + value.Snapshot.PostAggregation;
     }
 
-    public int AggregatePost(scoped ref NullValue mutableContext, int source, PhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, NullValue, int> value)
+    public int AggregateOuterPost(scoped ref NullValue mutableContext, int source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, NullValue, int>> value)
     {
-        Debug.WriteLine($"{nameof(AggregatePost)} {source} + {value.PostAggregation} + {value.OutArrow.Head.Value}");
-        //from_children  from_siblings   self
-        return source + value.PostAggregation + value.OutArrow.Head.Value;
+        Debug.WriteLine($"{nameof(AggregateInnerPost)} {source} + {value.Snapshot.OuterNode.Value}");
+        return source + value.Snapshot.OuterNode.Value;
     }
 
-    public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow)
+    public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow) => outArrow;
+
+    public bool CanRunOuterPhase(LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, NullValue, int>> phaseSnapshot)
     {
-        return outArrow;
+        return phaseSnapshot.PhaseLabel.IsPost();
     }
 
-    public bool CanRunPhase(PhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, NullValue, int> snapshot, AggregatingPhase phase)
+    public bool CanRunInnerPhase(LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, NullValue, int>> phaseSnapshot)
     {
-        return phase switch
-        {
-            AggregatingPhase.AggregatePrevious
-            or AggregatingPhase.AssignPrevious => false,
-
-            AggregatingPhase.AggregateAndAssignChildren
-            or AggregatingPhase.AggregatePost
-            or AggregatingPhase.AssignPost => true,
-
-            _ => false
-        };
+        return phaseSnapshot.PhaseLabel.IsPostOrMoment();
     }
 
-    public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node)
-    {
-        return new(node);
-    }
+    public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node) => new(node);
 }

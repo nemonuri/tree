@@ -3,6 +3,7 @@ namespace Nemonuri.Graphs.Infrastructure;
 public readonly record struct OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>
 (
     InitialOrRecursiveInfo<TNode, TNode, TInArrow, TPrevious> InitialOrRecursiveInfo,
+    TNode OuterNode,
     TPrevious PreviousAggregation,
     TPost PostAggregation
 )
@@ -28,6 +29,7 @@ public readonly record struct InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOu
     where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, TNode>
 {
     public InitialOrRecursiveInfo<TNode, TNode, TInArrow, TPrevious> InitialOrRecursiveInfo => OuterPhaseSnapshot.InitialOrRecursiveInfo;
+    public TNode OuterNode => OuterPhaseSnapshot.OuterNode;
     public TPrevious PreviousAggregation => OuterPhaseSnapshot.PreviousAggregation;
     public TPost PostAggregation => OuterPhaseSnapshot.PostAggregation;
     public TOutArrow OutArrow => InnerPhaseSnapshotComplement.OutArrow;
