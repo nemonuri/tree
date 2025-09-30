@@ -2,7 +2,7 @@
 
 public interface IHomogeneousSuccessorAggregator
 <
-    TMutableContext, TPrevious, TPost,
+    TMutableGraphContext, TMutableSiblingContext, TPrevious, TPost,
     TNode, TInArrow, TOutArrow, TOutArrowSet
 > :
     ISuccessorGraph<TNode, TNode, TOutArrow, TOutArrowSet>
@@ -10,17 +10,19 @@ public interface IHomogeneousSuccessorAggregator
     where TOutArrow : IArrow<TNode, TNode>
     where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, TNode>
 {
+    TMutableSiblingContext EmptyMutableSiblingContext { get; }
+
     TPrevious EmptyPreviousAggregation { get; }
 
     TPrevious AggregateOuterPrevious
     (
-        scoped ref TMutableContext mutableContext, TPrevious source,
+        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext> mutableContext, TPrevious source,
         LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value
     );
 
     TPrevious AggregateInnerPrevious
     (
-        scoped ref TMutableContext mutableContext, TPrevious source,
+        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext> mutableContext, TPrevious source,
         LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value
     );
 
@@ -29,13 +31,13 @@ public interface IHomogeneousSuccessorAggregator
 
     TPost AggregateInnerPost
     (
-        scoped ref TMutableContext mutableContext, TPost source,
+        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext> mutableContext, TPost source,
         LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value
     );
 
     TPost AggregateOuterPost
     (
-        scoped ref TMutableContext mutableContext, TPost source,
+        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext> mutableContext, TPost source,
         LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value
     );
 

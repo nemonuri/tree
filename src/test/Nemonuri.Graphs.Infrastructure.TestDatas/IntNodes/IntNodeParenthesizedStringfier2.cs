@@ -1,73 +1,107 @@
-﻿#if false
-
-using System.Text;
+﻿using System.Text;
 
 namespace Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
 
 public class IntNodeParenthesizedStringfier2 : IHomogeneousSuccessorAggregator
 <
-    ValueNull, ValueNull, string,
+    ValueNull, int /* Sibling index */, ValueNull, string,
     IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet
 >
 {
     private readonly StringBuilder _sb = new();
-    private bool _outerPreviousAggregated = false;
 
     public IntNodeParenthesizedStringfier2()
     {
     }
 
+    public int EmptyMutableSiblingContext => 0;
+
     public ValueNull EmptyPreviousAggregation => default;
 
-    public ValueNull AggregateOuterPrevious(scoped ref ValueNull mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
+    public ValueNull AggregateOuterPrevious(scoped ref MutableContextRecord<ValueNull, int> mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
     {
         var node = value.Snapshot.OuterNode;
 
-        //value.Snapshot.InitialOrRecursiveInfo.AsRecursiveInfo.
-
+        //--- graph open ---
         if (value.PhaseLabel.IsInitial())
         {
-            _sb.ToString();
-            _outerPreviousAggregated = false;
+            _sb.Clear();
         }
+        //---|
+
+        //--- outer node open ---
+        if (node.Children.Length > 0)
+        {
+            _sb.Append('(');
+        }
+
+        _sb.Append(node.Value);
+        //---|
+
+        return default;
     }
 
-    public ValueNull AggregateInnerPrevious(scoped ref ValueNull mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
+    public ValueNull AggregateInnerPrevious(scoped ref MutableContextRecord<ValueNull, int> mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
     {
-        throw new NotImplementedException();
+        ref int siblingIndex = ref mutableContext.MutableSiblingContext;
+
+        //--- inner list open ---
+        _sb.Append(' ');
+        if (siblingIndex == 0)
+        {
+            _sb.Append('(');
+        }
+        //---|
+        
+        siblingIndex++;
+
+        return default;
     }
 
     public string EmptyPostAggregation => string.Empty;
 
-    public string AggregateInnerPost(scoped ref ValueNull mutableContext, string source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
+    public string AggregateInnerPost(scoped ref MutableContextRecord<ValueNull, int> mutableContext, string source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
     {
-        throw new NotImplementedException();
+        throw new InvalidOperationException();
     }
 
-    public string AggregateOuterPost(scoped ref ValueNull mutableContext, string source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
+    public string AggregateOuterPost(scoped ref MutableContextRecord<ValueNull, int> mutableContext, string source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
     {
-        throw new NotImplementedException();
+        int siblingIndex = mutableContext.MutableSiblingContext;
+
+        //--- inner list close ---
+        if (siblingIndex > 0)
+        {
+            _sb.Append(')');
+        }
+        //---|
+
+        //--- outer node close ---
+        var node = value.Snapshot.OuterNode;
+        if (node.Children.Length > 0)
+        {
+            _sb.Append(')');
+        }
+        //---|
+
+        return
+        //--- graph close ---
+            value.PhaseLabel.IsInitial() ? _sb.ToString() 
+        //---|
+            : EmptyPostAggregation;
     }
 
-    public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow)
-    {
-        throw new NotImplementedException();
-    }
+    public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow) => outArrow;
 
     public bool CanRunOuterPhase(LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> phaseSnapshot)
     {
-        throw new NotImplementedException();
+        return true;
     }
 
     public bool CanRunInnerPhase(LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> phaseSnapshot)
     {
-        throw new NotImplementedException();
+        return phaseSnapshot.PhaseLabel != InnerPhaseLabel.InnerPost;
     }
 
-    public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node)
-    {
-        throw new NotImplementedException();
-    }
+    public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node) => new(node);
 }
-
-#endif

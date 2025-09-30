@@ -5,7 +5,7 @@ namespace Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
 
 public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
 <
-    ValueNull, ValueNull, string,
+    ValueNull, ValueNull, ValueNull, string,
     IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet
 >
 {
@@ -18,11 +18,13 @@ public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
 
     public IndexedIntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node) => new(node);
 
+    public ValueNull EmptyMutableSiblingContext => default;
+
     public ValueNull EmptyPreviousAggregation => default;
 
     public string EmptyPostAggregation => string.Empty;
 
-    public ValueNull AggregateOuterPrevious(scoped ref ValueNull mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> value)
+    public ValueNull AggregateOuterPrevious(scoped ref MutableContextRecord<ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> value)
     {
         _sb.Clear();
         if (value.Snapshot.OuterNode.Children.Length > 0)
@@ -35,7 +37,7 @@ public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
         return default;
     }
 
-    public ValueNull AggregateInnerPrevious(scoped ref ValueNull mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> value)
+    public ValueNull AggregateInnerPrevious(scoped ref MutableContextRecord<ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> value)
     {
         _sb.Append(' ');
 
@@ -55,7 +57,7 @@ public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
         return default;
     }
 
-    public string AggregateInnerPost(scoped ref ValueNull mutableContext, string source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> value)
+    public string AggregateInnerPost(scoped ref MutableContextRecord<ValueNull, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> value)
     {
         if (value.Snapshot.OutArrow.Head.Children.Length > 0)
         {
@@ -74,7 +76,7 @@ public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
         return EmptyPostAggregation;
     }
 
-    public string AggregateOuterPost(scoped ref ValueNull mutableContext, string source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> value)
+    public string AggregateOuterPost(scoped ref MutableContextRecord<ValueNull, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> value)
     {
         if (value.Snapshot.OuterNode.Children.Length > 0)
         {
@@ -82,7 +84,7 @@ public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
         }
 
         Debug.WriteLine($"{nameof(AggregateOuterPost)} {_sb.ToString()}");
-        return _sb.ToString();
+        return value.PhaseLabel.IsInitial() ? _sb.ToString() : EmptyPostAggregation;
     }
 
     public bool CanRunOuterPhase(LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> phaseSnapshot)

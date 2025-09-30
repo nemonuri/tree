@@ -23,7 +23,7 @@ public class AggregatingTheoryTest
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
             IntNodeAdder,
-            ValueNull, ValueNull, int,
+            ValueNull, ValueNull, ValueNull, int,
             IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet
         >
         (aggregator, ref context, node);
@@ -58,7 +58,7 @@ public class AggregatingTheoryTest
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
             IntNodeStringfier,
-            ValueNull, ValueNull, string,
+            ValueNull, ValueNull, ValueNull, string,
             IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet
         >
         (aggregator, ref context, node);
@@ -93,8 +93,34 @@ public class AggregatingTheoryTest
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
             IntNodeParenthesizedStringfier1,
-            ValueNull, ValueNull, string,
+            ValueNull, ValueNull, ValueNull, string,
             IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet
+        >
+        (aggregator, ref context, node);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [MemberData(nameof(Entry3))]
+    public void AggregateHomogeneousSuccessors_WhenAggeratorIsIntNodeParenthesizedStringfier2
+    (
+        NodeLabel nodeLabel,
+        string expected
+    )
+    {
+        // Arrange
+        IntNodeParenthesizedStringfier2 aggregator = new();
+        IntNode node = TestDataTheory.IntNodeMap[nodeLabel];
+        ValueNull context = default;
+
+        // Act
+        var actual = AggregatingTheory.AggregateHomogeneousSuccessors
+        <
+            IntNodeParenthesizedStringfier2,
+            ValueNull, int, ValueNull, string,
+            IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet
         >
         (aggregator, ref context, node);
 
