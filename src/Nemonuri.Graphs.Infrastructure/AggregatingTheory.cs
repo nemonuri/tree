@@ -27,11 +27,14 @@ public static class AggregatingTheory
 
         bool isInitial = initialOrRecursiveInfo.IsInitialInfo;
 
-        TPrevious previousAggregation = initialOrRecursiveInfo.TryGetPreviousAggregation(out var v1) ? v1 : premise.EmptyPreviousAggregation;
+        TPrevious previousAggregation;
+        { 
+            previousAggregation = initialOrRecursiveInfo.TryGetPreviousAggregation(out var v) ? v : premise.EmptyPreviousAggregation;
+        }
         TPost postAggregation = premise.EmptyPostAggregation;
 
         OuterPhaseLabel outerLabel;
-        OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost> outerSnapshot = new(initialOrRecursiveInfo, previousAggregation, postAggregation);
+        OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost> outerSnapshot = new(initialOrRecursiveInfo, node, previousAggregation, postAggregation);
         LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> outerLabeledSnapshot;
 
 

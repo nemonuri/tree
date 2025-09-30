@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Nemonuri.Graphs.Infrastructure;
 
-public readonly record struct NullValue { }
+public readonly record struct ValueNull { }
 
 public interface IEmbedder<TSource, TTarget, TRemainder>
 { 

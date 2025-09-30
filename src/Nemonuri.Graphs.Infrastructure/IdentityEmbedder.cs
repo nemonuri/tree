@@ -2,9 +2,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Nemonuri.Graphs.Infrastructure;
 
-public readonly struct IdentityEmbedder<T>() : IEmbedder<T, T, NullValue>
+public readonly struct IdentityEmbedder<T>() : IEmbedder<T, T, ValueNull>
 {
-    public bool TryEmbed(T source, [NotNullWhen(true)] out T target, out NullValue remainder)
+    public bool TryEmbed(T source, [NotNullWhen(true)] out T target, out ValueNull remainder)
     {
         return (target = source) is not null;
     }

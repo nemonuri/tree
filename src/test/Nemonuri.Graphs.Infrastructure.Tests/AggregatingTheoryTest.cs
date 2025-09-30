@@ -17,13 +17,13 @@ public class AggregatingTheoryTest
         // Arrange
         IntNodeAdder aggregator = new();
         IntNode node = TestDataTheory.IntNodeMap[nodeLabel];
-        NullValue context = default;
+        ValueNull context = default;
 
         // Act
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
             IntNodeAdder,
-            NullValue, NullValue, int,
+            ValueNull, ValueNull, int,
             IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet
         >
         (aggregator, ref context, node);
@@ -52,13 +52,13 @@ public class AggregatingTheoryTest
         // Arrange
         IntNodeStringfier aggregator = new();
         IntNode node = TestDataTheory.IntNodeMap[nodeLabel];
-        NullValue context = default;
+        ValueNull context = default;
 
         // Act
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
             IntNodeStringfier,
-            NullValue, NullValue, string,
+            ValueNull, ValueNull, string,
             IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet
         >
         (aggregator, ref context, node);
@@ -78,22 +78,22 @@ public class AggregatingTheoryTest
 
     [Theory]
     [MemberData(nameof(Entry3))]
-    public void AggregateHomogeneousSuccessors_WhenAggeratorIsIntNodeParenthesizedStringfier
+    public void AggregateHomogeneousSuccessors_WhenAggeratorIsIntNodeParenthesizedStringfier1
     (
         NodeLabel nodeLabel,
         string expected
     )
     {
         // Arrange
-        IntNodeParenthesizedStringfier aggregator = new();
+        IntNodeParenthesizedStringfier1 aggregator = new();
         IntNode node = TestDataTheory.IntNodeMap[nodeLabel];
-        NullValue context = default;
+        ValueNull context = default;
 
         // Act
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
-            IntNodeParenthesizedStringfier,
-            NullValue, NullValue, string,
+            IntNodeParenthesizedStringfier1,
+            ValueNull, ValueNull, string,
             IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet
         >
         (aggregator, ref context, node);

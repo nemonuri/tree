@@ -1,6 +1,6 @@
 namespace Nemonuri.Graphs.Infrastructure;
 
-public readonly struct WrappedToEffectfulAggregator<TAggregator, T, TValue> : IEffectfulAggregator<T, TValue, NullValue, T>
+public readonly struct WrappedToEffectfulAggregator<TAggregator, T, TValue> : IEffectfulAggregator<T, TValue, ValueNull, T>
     where TAggregator : IAggregator<T, TValue>
 {
     public WrappedToEffectfulAggregator(TAggregator internalAggregator)
@@ -10,7 +10,7 @@ public readonly struct WrappedToEffectfulAggregator<TAggregator, T, TValue> : IE
 
     public TAggregator InternalAggregator { get; }
 
-    public T Aggregate(NullValue context, T source, TValue value)
+    public T Aggregate(ValueNull context, T source, TValue value)
     {
         return InternalAggregator.Aggregate(source, value);
     }

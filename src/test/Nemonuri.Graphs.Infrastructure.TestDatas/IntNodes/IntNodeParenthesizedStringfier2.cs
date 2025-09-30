@@ -1,66 +1,73 @@
-﻿using System.Diagnostics;
+﻿#if false
+
 using System.Text;
 
 namespace Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
 
-public class IntNodeStringfier : IHomogeneousSuccessorAggregator
+public class IntNodeParenthesizedStringfier2 : IHomogeneousSuccessorAggregator
 <
     ValueNull, ValueNull, string,
     IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet
 >
 {
-    // [Note] 오직 '부작용' 만으로 동작한다.
-
     private readonly StringBuilder _sb = new();
-    public IntNodeStringfier() { }
+    private bool _outerPreviousAggregated = false;
 
-    public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow) => outArrow;
-
-
-    public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node) => new(node);
+    public IntNodeParenthesizedStringfier2()
+    {
+    }
 
     public ValueNull EmptyPreviousAggregation => default;
 
     public ValueNull AggregateOuterPrevious(scoped ref ValueNull mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
     {
+        var node = value.Snapshot.OuterNode;
+
+        //value.Snapshot.InitialOrRecursiveInfo.AsRecursiveInfo.
+
         if (value.PhaseLabel.IsInitial())
         {
-            _sb.Clear();
+            _sb.ToString();
+            _outerPreviousAggregated = false;
         }
-        else
-        {
-            _sb.Append(',');
-        }
-
-        _sb.Append(value.Snapshot.OuterNode.Value);
-        Debug.WriteLine($"{nameof(AggregateOuterPrevious)} {_sb.ToString()}");
-        return default;
     }
 
     public ValueNull AggregateInnerPrevious(scoped ref ValueNull mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
     {
-        throw new InvalidOperationException();
+        throw new NotImplementedException();
     }
 
     public string EmptyPostAggregation => string.Empty;
 
     public string AggregateInnerPost(scoped ref ValueNull mutableContext, string source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
     {
-        throw new InvalidOperationException();
+        throw new NotImplementedException();
     }
 
     public string AggregateOuterPost(scoped ref ValueNull mutableContext, string source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
     {
-        return _sb.ToString();
+        throw new NotImplementedException();
+    }
+
+    public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow)
+    {
+        throw new NotImplementedException();
     }
 
     public bool CanRunOuterPhase(LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> phaseSnapshot)
     {
-        return phaseSnapshot.PhaseLabel.IsPrevious() || phaseSnapshot.PhaseLabel == OuterPhaseLabel.InitialOuterPost;
+        throw new NotImplementedException();
     }
 
     public bool CanRunInnerPhase(LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> phaseSnapshot)
     {
-        return phaseSnapshot.PhaseLabel == InnerPhaseLabel.InnerMoment;
+        throw new NotImplementedException();
+    }
+
+    public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node)
+    {
+        throw new NotImplementedException();
     }
 }
+
+#endif
