@@ -1,7 +1,5 @@
 using Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
 
-[assembly: CaptureTrace]
-
 namespace Nemonuri.Graphs.Infrastructure.Tests;
 
 public class AggregatingTheoryTest

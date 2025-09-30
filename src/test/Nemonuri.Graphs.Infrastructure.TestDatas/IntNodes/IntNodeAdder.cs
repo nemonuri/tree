@@ -9,7 +9,7 @@ public readonly struct IntNodeAdder() : IHomogeneousSuccessorAggregator
 >
 {
     public ValueNull EmptyMutableSiblingContext => default;
-    
+
     public ValueNull EmptyPreviousAggregation => default;
 
     public ValueNull AggregateOuterPrevious(scoped ref MutableContextRecord<ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, int>> value)
