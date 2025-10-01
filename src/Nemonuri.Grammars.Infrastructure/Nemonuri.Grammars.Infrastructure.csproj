@@ -5,10 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="SumSharp" />
-    <PackageReference Include="CommunityToolkit.Diagnostics" />
+    <ProjectReference Include="..\Nemonuri.Graphs.Infrastructure\Nemonuri.Graphs.Infrastructure.csproj" />
   </ItemGroup>
-  
+
 </Project>
