@@ -1,4 +1,4 @@
-namespace Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
+namespace Nemonuri.Graphs.Infrastructure.TestDatas;
 
 public readonly struct AdHocSuccessorGraph<TNode, THead, TOutArrow, TOutArrowSet> :
     ISuccessorGraph<TNode, THead, TOutArrow, TOutArrowSet>
