@@ -24,10 +24,10 @@ public class AggregatingTheoryTest
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
             I::IntNodeAdder,
-            ValueNull, ValueNull, ValueNull, int,
+            ValueNull, ValueNull, ValueNull, ValueNull, int,
             I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet
         >
-        (aggregator, ref context, node);
+        (aggregator, ref context, default, node);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -59,10 +59,10 @@ public class AggregatingTheoryTest
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
             I::IntNodeStringfier,
-            ValueNull, ValueNull, ValueNull, string,
+            ValueNull, ValueNull, ValueNull, ValueNull, string,
             I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet
         >
-        (aggregator, ref context, node);
+        (aggregator, ref context, default, node);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -94,10 +94,10 @@ public class AggregatingTheoryTest
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
             I::IntNodeParenthesizedStringfier1,
-            ValueNull, ValueNull, ValueNull, string,
+            ValueNull, ValueNull, ValueNull, ValueNull, string,
             I::IntNode, I::IndexedIntNodeArrow, I::IndexedIntNodeArrow, I::IndexedIntNodeOutArrowSet
         >
-        (aggregator, ref context, node);
+        (aggregator, ref context, default, node);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -120,10 +120,10 @@ public class AggregatingTheoryTest
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
             I::IntNodeParenthesizedStringfier2,
-            ValueNull, int, ValueNull, string,
+            ValueNull, int, ValueNull, ValueNull, string,
             I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet
         >
-        (aggregator, ref context, node);
+        (aggregator, ref context, default, node);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -169,10 +169,10 @@ public class AggregatingTheoryTest
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
             S::IntNodeToStringNodeSelector,
-            ValueNull, ValueNull, ValueNull, ImmutableList<S::StringNode>,
+            ValueNull, ValueNull, ValueNull, ValueNull, ImmutableList<S::StringNode>,
             I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet
         >
-        (aggregator, ref context, node);
+        (aggregator, ref context, default, node);
 
         // Assert
         Assert.Single(actual);

@@ -5,7 +5,7 @@ namespace Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
 
 public class IntNodeStringfier : IHomogeneousSuccessorAggregator
 <
-    ValueNull, ValueNull, ValueNull, string,
+    ValueNull, ValueNull, ValueNull, ValueNull, string,
     IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet
 >
 {
@@ -23,7 +23,7 @@ public class IntNodeStringfier : IHomogeneousSuccessorAggregator
     
     public ValueNull EmptyPreviousAggregation => default;
 
-    public ValueNull AggregateOuterPrevious(scoped ref MutableContextRecord<ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
+    public ValueNull AggregateOuterPrevious(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
     {
         if (value.PhaseLabel.IsInitial())
         {
@@ -39,19 +39,19 @@ public class IntNodeStringfier : IHomogeneousSuccessorAggregator
         return default;
     }
 
-    public ValueNull AggregateInnerPrevious(scoped ref MutableContextRecord<ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
+    public ValueNull AggregateInnerPrevious(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
     {
         throw new InvalidOperationException();
     }
 
     public string EmptyPostAggregation => string.Empty;
 
-    public string AggregateInnerPost(scoped ref MutableContextRecord<ValueNull, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
+    public string AggregateInnerPost(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
     {
         throw new InvalidOperationException();
     }
 
-    public string AggregateOuterPost(scoped ref MutableContextRecord<ValueNull, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
+    public string AggregateOuterPost(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
     {
         return _sb.ToString();
     }
@@ -65,4 +65,6 @@ public class IntNodeStringfier : IHomogeneousSuccessorAggregator
     {
         return phaseSnapshot.PhaseLabel == InnerPhaseLabel.InnerMoment;
     }
+
+    public ValueNull CloneMutableDepthContext(ValueNull depthContext) => depthContext;
 }

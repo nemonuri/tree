@@ -2,7 +2,7 @@
 
 public interface IHomogeneousSuccessorAggregator
 <
-    TMutableGraphContext, TMutableSiblingContext, TPrevious, TPost,
+    TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TPrevious, TPost,
     TNode, TInArrow, TOutArrow, TOutArrowSet
 > :
     ISuccessorGraph<TNode, TNode, TOutArrow, TOutArrowSet>
@@ -12,17 +12,19 @@ public interface IHomogeneousSuccessorAggregator
 {
     TMutableSiblingContext EmptyMutableSiblingContext { get; }
 
+    TMutableDepthContext CloneMutableDepthContext(TMutableDepthContext depthContext);
+
     TPrevious EmptyPreviousAggregation { get; }
 
     TPrevious AggregateOuterPrevious
     (
-        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext> mutableContext, TPrevious source,
+        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> mutableContext, TPrevious source,
         LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value
     );
 
     TPrevious AggregateInnerPrevious
     (
-        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext> mutableContext, TPrevious source,
+        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> mutableContext, TPrevious source,
         LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value
     );
 
@@ -31,13 +33,13 @@ public interface IHomogeneousSuccessorAggregator
 
     TPost AggregateInnerPost
     (
-        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext> mutableContext, TPost source,
+        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> mutableContext, TPost source,
         LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value
     );
 
     TPost AggregateOuterPost
     (
-        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext> mutableContext, TPost source,
+        scoped ref MutableContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> mutableContext, TPost source,
         LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value
     );
 
