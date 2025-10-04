@@ -16,14 +16,14 @@ public interface INfaPremise
     >,
     IHomogeneousSuccessorAggregator
     <
-        TMutableGraphContext, TMutableSiblingContext, TIdeal, TPrevious, TPost,
+        TMutableGraphContext, TMutableSiblingContext, TIdealContext, TPrevious, TPost,
         TNode, TInArrow, TOutArrow, TOutArrowSet
     >
     where TIdeal : IIdeal<TBound>
     where TInArrow : IArrow<TNode, TNode>
     where TOutArrow : IArrow<TNode, TNode>
     where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, TNode>
-    where TIdealContext : IIdealContext<TBound, TIdeal, TNode>
+    where TIdealContext : IIdealContext<TNode, TBound, TIdeal>
 {
 
 }

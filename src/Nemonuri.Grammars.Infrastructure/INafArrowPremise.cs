@@ -12,6 +12,6 @@ public interface INafArrowPremise
     bool TryScan
     (
         TOutArrow arrow, TIdeal ideal,
-        [NotNullWhen(true)] out TIdeal? decreasedIdeal
+        [NotNullWhen(true)] out TBound? scannedUpperBound
     );
 }

@@ -6,7 +6,5 @@ public interface IMemoizer<TKey, TValue>
 
     void Memoize(TKey key, TValue value);
 
-    void RemoveMemoized(TKey key);
-
     void ClearMemoized();
 }
