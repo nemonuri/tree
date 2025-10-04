@@ -40,12 +40,12 @@ public readonly struct IntNodeAdder() : IHomogeneousSuccessorAggregator
 
     public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow) => outArrow;
 
-    public bool CanRunOuterPhase(LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, int>> phaseSnapshot)
+    public bool CanRunOuterPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, int>> phaseSnapshot)
     {
         return phaseSnapshot.PhaseLabel.IsPost();
     }
 
-    public bool CanRunInnerPhase(LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, int>> phaseSnapshot)
+    public bool CanRunInnerPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, int>> phaseSnapshot)
     {
         return phaseSnapshot.PhaseLabel.IsPostOrMoment();
     }

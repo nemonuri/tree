@@ -17,10 +17,10 @@ public readonly ref struct MutableContextRecord<TMutableGraphContext, TMutableSi
     public ref TMutableSiblingContext MutableSiblingContext => ref _mutableSiblingContext;
     public ref TMutableDepthContext MutableDepthContext => ref _mutableDepthContext;
 
-    public void DeconstructToRef(ref TMutableGraphContext mutableGraphContext, ref TMutableSiblingContext mutableSiblingContext, ref TMutableDepthContext mutableDepthContext)
+    public void Deconstruct(out TMutableGraphContext mutableGraphContext, out TMutableSiblingContext mutableSiblingContext, out TMutableDepthContext mutableDepthContext)
     {
-        mutableGraphContext = ref _mutableGraphContext;
-        mutableSiblingContext = ref _mutableSiblingContext;
-        mutableDepthContext = ref _mutableDepthContext;
+        mutableGraphContext = _mutableGraphContext;
+        mutableSiblingContext = _mutableSiblingContext;
+        mutableDepthContext = _mutableDepthContext;
     }
 }

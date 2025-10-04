@@ -46,6 +46,14 @@ public interface IHomogeneousSuccessorAggregator
 
     TInArrow EmbedToInArrow(TOutArrow outArrow);
 
-    bool CanRunOuterPhase(LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> phaseSnapshot);
-    bool CanRunInnerPhase(LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> phaseSnapshot);
+    bool CanRunOuterPhase
+    (
+        scoped ref readonly MutableContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> context,
+        LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> phaseSnapshot
+    );
+    bool CanRunInnerPhase
+    (
+        scoped ref readonly MutableContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> context,
+        LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> phaseSnapshot
+    );
 }

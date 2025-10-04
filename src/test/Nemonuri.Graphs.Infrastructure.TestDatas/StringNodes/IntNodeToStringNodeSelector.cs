@@ -58,17 +58,17 @@ public readonly struct IntNodeToStringNodeSelector : IHomogeneousSuccessorAggreg
 
     public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow) => outArrow;
 
-    public bool CanRunOuterPhase(LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, ImmutableList<StringNode>>> phaseSnapshot)
+    public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node) => new(node);
+
+    public ValueNull CloneMutableDepthContext(ValueNull depthContext) => depthContext;
+
+    public bool CanRunOuterPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, ImmutableList<StringNode>>> phaseSnapshot)
     {
         return phaseSnapshot.PhaseLabel == OuterPhaseLabel.InitialOuterPost;
     }
 
-    public bool CanRunInnerPhase(LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, ImmutableList<StringNode>>> phaseSnapshot)
+    public bool CanRunInnerPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, ImmutableList<StringNode>>> phaseSnapshot)
     {
         return phaseSnapshot.PhaseLabel is InnerPhaseLabel.InnerPost or InnerPhaseLabel.InnerMoment;
     }
-
-    public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node) => new(node);
-
-    public ValueNull CloneMutableDepthContext(ValueNull depthContext) => depthContext;
 } 

@@ -9,5 +9,9 @@ public interface INafArrowPremise
     where TIdeal : IIdeal<TBound>
     where TOutArrow : IArrow<TNode, TNode>
 {
-    bool CanEnter(TOutArrow arrow, TIdeal ideal);
+    bool TryScan
+    (
+        TOutArrow arrow, TIdeal ideal,
+        [NotNullWhen(true)] out TIdeal? decreasedIdeal
+    );
 }

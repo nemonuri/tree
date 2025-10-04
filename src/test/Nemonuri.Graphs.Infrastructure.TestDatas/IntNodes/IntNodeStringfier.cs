@@ -56,15 +56,15 @@ public class IntNodeStringfier : IHomogeneousSuccessorAggregator
         return _sb.ToString();
     }
 
-    public bool CanRunOuterPhase(LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> phaseSnapshot)
+    public ValueNull CloneMutableDepthContext(ValueNull depthContext) => depthContext;
+
+    public bool CanRunOuterPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> phaseSnapshot)
     {
         return phaseSnapshot.PhaseLabel.IsPrevious() || phaseSnapshot.PhaseLabel == OuterPhaseLabel.InitialOuterPost;
     }
 
-    public bool CanRunInnerPhase(LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> phaseSnapshot)
+    public bool CanRunInnerPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> phaseSnapshot)
     {
         return phaseSnapshot.PhaseLabel == InnerPhaseLabel.InnerMoment;
     }
-
-    public ValueNull CloneMutableDepthContext(ValueNull depthContext) => depthContext;
 }

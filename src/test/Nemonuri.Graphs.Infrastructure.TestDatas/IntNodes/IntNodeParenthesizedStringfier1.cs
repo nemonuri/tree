@@ -87,15 +87,15 @@ public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
         return value.PhaseLabel.IsInitial() ? _sb.ToString() : EmptyPostAggregation;
     }
 
-    public bool CanRunOuterPhase(LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> phaseSnapshot)
+    public ValueNull CloneMutableDepthContext(ValueNull depthContext) => depthContext;
+
+    public bool CanRunOuterPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> phaseSnapshot)
     {
         return phaseSnapshot.PhaseLabel.IsInitial();
     }
 
-    public bool CanRunInnerPhase(LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> phaseSnapshot)
+    public bool CanRunInnerPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> phaseSnapshot)
     {
         return true;
     }
-
-    public ValueNull CloneMutableDepthContext(ValueNull depthContext) => depthContext;
 }
