@@ -5,7 +5,7 @@ namespace Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
 
 public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
 <
-    ValueNull, ValueNull, ValueNull, ValueNull, string,
+    ValueNull, ValueNull, ValueNull, ValueNull, ValueNull, string,
     IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet
 >
 {
@@ -22,9 +22,11 @@ public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
 
     public ValueNull EmptyPreviousAggregation => default;
 
+    public ValueNull EmptyMutableInnerSiblingContext => default;
+
     public string EmptyPostAggregation => string.Empty;
 
-    public ValueNull AggregateOuterPrevious(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> value)
+    public ValueNull AggregateOuterPrevious(scoped ref MutableOuterContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> value)
     {
         _sb.Clear();
         if (value.Snapshot.OuterNode.Children.Length > 0)
@@ -37,7 +39,7 @@ public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
         return default;
     }
 
-    public ValueNull AggregateInnerPrevious(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> value)
+    public ValueNull AggregateInnerPrevious(scoped ref MutableInnerContextRecord<ValueNull, ValueNull, ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> value)
     {
         _sb.Append(' ');
 
@@ -57,7 +59,7 @@ public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
         return default;
     }
 
-    public string AggregateInnerPost(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> value)
+    public string AggregateInnerPost(scoped ref MutableInnerContextRecord<ValueNull, ValueNull, ValueNull, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> value)
     {
         if (value.Snapshot.OutArrow.Head.Children.Length > 0)
         {
@@ -76,7 +78,7 @@ public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
         return EmptyPostAggregation;
     }
 
-    public string AggregateOuterPost(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> value)
+    public string AggregateOuterPost(scoped ref MutableOuterContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> value)
     {
         if (value.Snapshot.OuterNode.Children.Length > 0)
         {
@@ -89,12 +91,12 @@ public class IntNodeParenthesizedStringfier1 : IHomogeneousSuccessorAggregator
 
     public ValueNull CloneMutableDepthContext(ValueNull depthContext) => depthContext;
 
-    public bool CanRunOuterPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> phaseSnapshot)
+    public bool CanRunOuterPhase(scoped ref readonly MutableOuterContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IndexedIntNodeArrow, ValueNull, string>> phaseSnapshot)
     {
         return phaseSnapshot.PhaseLabel.IsInitial();
     }
 
-    public bool CanRunInnerPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> phaseSnapshot)
+    public bool CanRunInnerPhase(scoped ref readonly MutableInnerContextRecord<ValueNull, ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IndexedIntNodeArrow, IndexedIntNodeArrow, IndexedIntNodeOutArrowSet, ValueNull, string>> phaseSnapshot)
     {
         return true;
     }

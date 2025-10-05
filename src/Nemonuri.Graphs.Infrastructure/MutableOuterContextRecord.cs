@@ -1,12 +1,12 @@
 namespace Nemonuri.Graphs.Infrastructure;
 
-public readonly ref struct MutableContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext>
+public readonly ref struct MutableOuterContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext>
 {
     private readonly ref TMutableGraphContext _mutableGraphContext;
     private readonly ref TMutableSiblingContext _mutableSiblingContext;
     private readonly ref TMutableDepthContext _mutableDepthContext;
 
-    public MutableContextRecord(ref TMutableGraphContext mutableGraphContext, ref TMutableSiblingContext mutableSiblingContext, ref TMutableDepthContext mutableDepthContext)
+    public MutableOuterContextRecord(ref TMutableGraphContext mutableGraphContext, ref TMutableSiblingContext mutableSiblingContext, ref TMutableDepthContext mutableDepthContext)
     {
         _mutableGraphContext = ref mutableGraphContext;
         _mutableSiblingContext = ref mutableSiblingContext;

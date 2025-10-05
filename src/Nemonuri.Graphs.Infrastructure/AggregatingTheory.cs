@@ -6,7 +6,7 @@ public static class AggregatingTheory
     public static TPost AggregateHomogeneousSuccessors
     <
         TAggregator,
-        TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TPrevious, TPost,
+        TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TMutableInnerSiblingContext, TPrevious, TPost,
         TNode, TInArrow, TOutArrow, TOutArrowSet
     >
     (
@@ -17,7 +17,7 @@ public static class AggregatingTheory
     )
         where TAggregator : IHomogeneousSuccessorAggregator
         <
-            TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TPrevious, TPost,
+            TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TMutableInnerSiblingContext, TPrevious, TPost,
             TNode, TInArrow, TOutArrow, TOutArrowSet
         >
         where TInArrow : IArrow<TNode, TNode>
@@ -35,7 +35,7 @@ public static class AggregatingTheory
         TPost postAggregation = premise.EmptyPostAggregation;
         TMutableSiblingContext mutableSiblingContext = premise.EmptyMutableSiblingContext;
         TMutableDepthContext mutableDepthContext1 = premise.CloneMutableDepthContext(depthContext);
-        scoped MutableContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> mutableContext = default;
+        scoped MutableOuterContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> mutableContext = default;
 
         OuterPhaseLabel outerLabel;
         OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost> outerSnapshot = new(initialOrRecursiveInfo, node, previousAggregation, postAggregation);
@@ -57,30 +57,31 @@ public static class AggregatingTheory
             InnerPhaseSnapshotComplement<TNode, TOutArrow, TOutArrowSet> innerSnapshotComplement = new(outArrow, outArrowSet);
             LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> innerLabeledSnapshot;
             TPost succesorsAggregation;
-            scoped MutableContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> mutableContext2 = default;
+            scoped MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TMutableInnerSiblingContext> mutableInnerContext = default;
             TMutableDepthContext mutableDepthContext2 = premise.CloneMutableDepthContext(depthContext);
+            TMutableInnerSiblingContext mutableInnerSiblingContext = premise.EmptyMutableInnerSiblingContext;
 
 
             innerLabel = InnerPhaseLabel.InnerPrevious;
             innerLabeledSnapshot = new(innerLabel, new(outerSnapshot, innerSnapshotComplement));
-            mutableContext2 = new(ref mutableGraphContext, ref mutableSiblingContext, ref mutableDepthContext2);
-            if (premise.CanRunInnerPhase(in mutableContext2, innerLabeledSnapshot))
+            mutableInnerContext = new(new(ref mutableGraphContext, ref mutableSiblingContext, ref mutableDepthContext2), ref mutableInnerSiblingContext);
+            if (premise.CanRunInnerPhase(in mutableInnerContext, innerLabeledSnapshot))
             {
-                previousAggregation = premise.AggregateInnerPrevious(ref mutableContext, previousAggregation, innerLabeledSnapshot);
-                mutableContext2.Deconstruct(out mutableGraphContext, out mutableSiblingContext, out mutableDepthContext2);
+                previousAggregation = premise.AggregateInnerPrevious(ref mutableInnerContext, previousAggregation, innerLabeledSnapshot);
+                mutableInnerContext.Deconstruct(out mutableGraphContext, out mutableSiblingContext, out mutableDepthContext2, out mutableInnerSiblingContext);
                 outerSnapshot = outerSnapshot with { PreviousAggregation = previousAggregation };
             }
 
 
             innerLabel = InnerPhaseLabel.InnerMoment;
             innerLabeledSnapshot = new(innerLabel, new(outerSnapshot, innerSnapshotComplement));
-            mutableContext2 = new(ref mutableGraphContext, ref mutableSiblingContext, ref mutableDepthContext2);
-            if (premise.CanRunInnerPhase(in mutableContext2, innerLabeledSnapshot))
+            mutableInnerContext = new(new(ref mutableGraphContext, ref mutableSiblingContext, ref mutableDepthContext2), ref mutableInnerSiblingContext);
+            if (premise.CanRunInnerPhase(in mutableInnerContext, innerLabeledSnapshot))
             {
                 succesorsAggregation = AggregateHomogeneousSuccessors
                 <
                     TAggregator,
-                    TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TPrevious, TPost,
+                    TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TMutableInnerSiblingContext, TPrevious, TPost,
                     TNode, TInArrow, TOutArrow, TOutArrowSet
                 >
                 (
@@ -95,11 +96,11 @@ public static class AggregatingTheory
 
             innerLabel = InnerPhaseLabel.InnerPost;
             innerLabeledSnapshot = new(innerLabel, new(outerSnapshot, innerSnapshotComplement));
-            mutableContext2 = new(ref mutableGraphContext, ref mutableSiblingContext, ref mutableDepthContext2);
-            if (premise.CanRunInnerPhase(in mutableContext2, innerLabeledSnapshot))
+            mutableInnerContext = new(new(ref mutableGraphContext, ref mutableSiblingContext, ref mutableDepthContext2), ref mutableInnerSiblingContext);
+            if (premise.CanRunInnerPhase(in mutableInnerContext, innerLabeledSnapshot))
             {
-                postAggregation = premise.AggregateInnerPost(ref mutableContext, succesorsAggregation, innerLabeledSnapshot);
-                mutableContext2.Deconstruct(out mutableGraphContext, out mutableSiblingContext, out mutableDepthContext2);
+                postAggregation = premise.AggregateInnerPost(ref mutableInnerContext, succesorsAggregation, innerLabeledSnapshot);
+                mutableInnerContext.Deconstruct(out mutableGraphContext, out mutableSiblingContext, out mutableDepthContext2, out mutableInnerSiblingContext);
                 outerSnapshot = outerSnapshot with { PostAggregation = postAggregation };
             }
         }

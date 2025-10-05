@@ -4,7 +4,7 @@ namespace Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
 
 public readonly struct IntNodeAdder() : IHomogeneousSuccessorAggregator
 <
-    ValueNull, ValueNull, ValueNull, ValueNull, int,
+    ValueNull, ValueNull, ValueNull, ValueNull, ValueNull, int,
     IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet
 >
 {
@@ -12,13 +12,15 @@ public readonly struct IntNodeAdder() : IHomogeneousSuccessorAggregator
 
     public ValueNull EmptyPreviousAggregation => default;
 
-    public ValueNull AggregateOuterPrevious(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, int>> value)
+    public ValueNull EmptyMutableInnerSiblingContext => default;
+
+    public ValueNull AggregateOuterPrevious(scoped ref MutableOuterContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, int>> value)
     {
         throw new InvalidOperationException();
         //return default;
     }
 
-    public ValueNull AggregateInnerPrevious(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, int>> value)
+    public ValueNull AggregateInnerPrevious(scoped ref MutableInnerContextRecord<ValueNull, ValueNull, ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, int>> value)
     {
         throw new InvalidOperationException();
         //return default;
@@ -26,13 +28,13 @@ public readonly struct IntNodeAdder() : IHomogeneousSuccessorAggregator
 
     public int EmptyPostAggregation => 0;
 
-    public int AggregateInnerPost(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, int source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, int>> value)
+    public int AggregateInnerPost(scoped ref MutableInnerContextRecord<ValueNull, ValueNull, ValueNull, ValueNull> mutableContext, int source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, int>> value)
     {
         Debug.WriteLine($"{nameof(AggregateInnerPost)} {source} + {value.Snapshot.PostAggregation}");
         return source + value.Snapshot.PostAggregation;
     }
 
-    public int AggregateOuterPost(scoped ref MutableContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, int source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, int>> value)
+    public int AggregateOuterPost(scoped ref MutableOuterContextRecord<ValueNull, ValueNull, ValueNull> mutableContext, int source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, int>> value)
     {
         Debug.WriteLine($"{nameof(AggregateInnerPost)} {source} + {value.Snapshot.OuterNode.Value}");
         return source + value.Snapshot.OuterNode.Value;
@@ -40,12 +42,12 @@ public readonly struct IntNodeAdder() : IHomogeneousSuccessorAggregator
 
     public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow) => outArrow;
 
-    public bool CanRunOuterPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, int>> phaseSnapshot)
+    public bool CanRunOuterPhase(scoped ref readonly MutableOuterContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, int>> phaseSnapshot)
     {
         return phaseSnapshot.PhaseLabel.IsPost();
     }
 
-    public bool CanRunInnerPhase(scoped ref readonly MutableContextRecord<ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, int>> phaseSnapshot)
+    public bool CanRunInnerPhase(scoped ref readonly MutableInnerContextRecord<ValueNull, ValueNull, ValueNull, ValueNull> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, int>> phaseSnapshot)
     {
         return phaseSnapshot.PhaseLabel.IsPostOrMoment();
     }
@@ -53,4 +55,5 @@ public readonly struct IntNodeAdder() : IHomogeneousSuccessorAggregator
     public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node) => new(node);
 
     public ValueNull CloneMutableDepthContext(ValueNull depthContext) => depthContext;
+
 }
