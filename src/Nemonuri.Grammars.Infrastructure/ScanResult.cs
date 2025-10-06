@@ -1,8 +1,15 @@
+
 namespace Nemonuri.Grammars.Infrastructure;
 
-public enum ScanResult : int
+public readonly record struct ScanResult<TBound, TIdeal, TExtraScanResult>
+(
+    ScanResultStatus Status,
+    TBound? UpperBound,
+    TExtraScanResult? Extra
+)
+    where TIdeal : IIdeal<TBound>
 {
-    Unknown = 0,
-    ScanSuccess = 1,
-    ScanFail = 2
+    [MemberNotNullWhen(true, [nameof(UpperBound), nameof(Extra)])]
+    public bool IsSuccess => Status == ScanResultStatus.ScanSuccess;
 }
+    

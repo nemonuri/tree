@@ -4,11 +4,11 @@ public interface INfaPremise
 <
     TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext, TPrevious, TPost,
     TNode, TInArrow, TOutArrow, TOutArrowSet,
-    TBound, TLogicalSet, TIdeal
+    TBound, TLogicalSet, TIdeal, TExtraScanResult
 > :
     INafArrowPremise
     <
-        TNode, TOutArrow, TBound, TIdeal
+        TNode, TOutArrow, TBound, TIdeal, TExtraScanResult
     >,
     IIdealPremise
     <
@@ -25,5 +25,7 @@ public interface INfaPremise
     where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, TNode>
     where TIdealContext : IIdealContext<TNode, TBound, TIdeal>
 {
+    void SetScanResultArgument(ScanResult<TBound, TIdeal, TExtraScanResult> scanResult);
 
+    ScanResult<TBound, TIdeal, TExtraScanResult> ScanResultArgument { get; }
 }
