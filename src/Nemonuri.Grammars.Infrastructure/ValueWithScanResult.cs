@@ -4,9 +4,9 @@ public struct ValueWithScanResult<T, TBound, TIdeal, TExtraScanResult>
     where TIdeal : IIdeal<TBound>
 {
     public T WrappedValue;
-    public ScanResult<TBound, TIdeal, TExtraScanResult> ScanResult;
+    public ScanResult<TBound, TExtraScanResult> ScanResult;
 
-    public ValueWithScanResult(T wrappedValue, ScanResult<TBound, TIdeal, TExtraScanResult> scanResult)
+    public ValueWithScanResult(T wrappedValue, ScanResult<TBound, TExtraScanResult> scanResult)
     {
         WrappedValue = wrappedValue;
         ScanResult = scanResult;

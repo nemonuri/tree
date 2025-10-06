@@ -9,5 +9,5 @@ public interface INafArrowPremise
     where TIdeal : IIdeal<TBound>
     where TOutArrow : IArrow<TNode, TNode>
 {
-    ScanResult<TBound, TIdeal, TExtraScanResult> Scan(TOutArrow arrow, TIdeal ideal);
+    ScanResult<TBound, TExtraScanResult> Scan(TOutArrow arrow, TIdeal ideal);
 }

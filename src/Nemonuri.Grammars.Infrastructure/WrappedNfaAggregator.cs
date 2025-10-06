@@ -123,7 +123,7 @@ internal readonly struct WrappedNfaAggregator
 
     public TOutArrowSet GetDirectSuccessorArrows(TNode node) => _nfa.GetDirectSuccessorArrows(node);
 
-    private ScanResult<TBound, TIdeal, TExtraScanResult> ScanAndCheckCanEnter
+    private ScanResult<TBound, TExtraScanResult> ScanAndCheckCanEnter
     (
         scoped ref readonly MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TIdealContext, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>> context,
         ref readonly LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> phaseSnapshot
@@ -132,7 +132,7 @@ internal readonly struct WrappedNfaAggregator
         ref readonly TIdealContext idealContext = ref context.MutableDepthContext;
         TIdeal currentIdeal = idealContext.CurrentIdeal;
 
-        ScanResult<TBound, TIdeal, TExtraScanResult> scanResult = _nfa.Scan(phaseSnapshot.Snapshot.OutArrow, currentIdeal);
+        ScanResult<TBound, TExtraScanResult> scanResult = _nfa.Scan(phaseSnapshot.Snapshot.OutArrow, currentIdeal);
         if (!scanResult.IsSuccess) { goto Fail; }
 
         if (!_nfa.IsMember(_nfa.CastToSet(currentIdeal), scanResult.UpperBound)) { goto Fail; }

@@ -25,7 +25,7 @@ public interface INfaPremise
     where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, TNode>
     where TIdealContext : IIdealContext<TNode, TBound, TIdeal>
 {
-    void SetScanResultArgument(ScanResult<TBound, TIdeal, TExtraScanResult> scanResult);
+    void SetScanResultArgument(ScanResult<TBound, TExtraScanResult> scanResult);
 
-    ScanResult<TBound, TIdeal, TExtraScanResult> ScanResultArgument { get; }
+    ScanResult<TBound, TExtraScanResult> ScanResultArgument { get; }
 }
