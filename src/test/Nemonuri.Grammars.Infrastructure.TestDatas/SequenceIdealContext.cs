@@ -3,18 +3,18 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Nemonuri.Grammars.Infrastructure.TestDatas;
 
-public class SequenceIdealContext<T, TNode> : IIdealContext<TNode, int, SequenceIdeal<T>>
+public class SequenceIdealContext<T, TNode> : IIdealContext<TNode, int, SequenceLattice<T>>
     where TNode : notnull
 {
     private ImmutableDictionary<TNode, int> _memo;
 
-    public SequenceIdealContext(ImmutableDictionary<TNode, int> memo, SequenceIdeal<T> ideal)
+    public SequenceIdealContext(ImmutableDictionary<TNode, int> memo, SequenceLattice<T> ideal)
     {
         _memo = memo;
         CurrentIdeal = ideal;
     }
 
-    public SequenceIdeal<T> CurrentIdeal { get; set; }
+    public SequenceLattice<T> CurrentIdeal { get; set; }
 
     public bool TryGetMemoized(TNode key, [NotNullWhen(true)] out int value)
     {

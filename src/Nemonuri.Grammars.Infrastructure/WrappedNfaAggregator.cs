@@ -135,11 +135,11 @@ internal readonly struct WrappedNfaAggregator
         ScanResult<TBound, TExtraScanResult> scanResult = _nfa.Scan(phaseSnapshot.Snapshot.OutArrow, currentIdeal);
         if (!scanResult.IsSuccess) { goto Fail; }
 
-        if (!_nfa.IsMember(_nfa.CastToSet(currentIdeal), scanResult.UpperBound)) { goto Fail; }
+        if (!_nfa.IsMember(_nfa.GetCanonicalSuperset(currentIdeal), scanResult.UpperBound)) { goto Fail; }
 
         if (idealContext.TryGetMemoized(phaseSnapshot.Snapshot.OutArrow.Head, out var memoizedUpperBound))
         {
-            if (!_nfa.IsLesserThan(scanResult.UpperBound, memoizedUpperBound))
+            if (!(_nfa.IsLesserOrEqualThan(scanResult.UpperBound, memoizedUpperBound) && !_nfa.AreEqual(scanResult.UpperBound, memoizedUpperBound)))
             {
                 goto Fail;
             }

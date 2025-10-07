@@ -2,14 +2,19 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Nemonuri.Grammars.Infrastructure.TestDatas;
 
-public readonly struct SequenceIdealPremise<T>() : IIdealPremise<int, IReadOnlyList<T>, SequenceIdeal<T>>
+public readonly struct SequenceLatticePremise<T>() : ILatticePremise<int, IReadOnlyList<T>, SequenceLattice<T>>
 {
-    public SequenceIdeal<T> CreateIdeal(IReadOnlyList<T> set, int upperBound)
+    public SequenceLattice<T> CreateIdeal(IReadOnlyList<T> set, int upperBound)
     {
         return new(set, upperBound);
     }
 
-    public IReadOnlyList<T> CastToSet(SequenceIdeal<T> ideal) => ideal.Sequence;
+    public SequenceLattice<T> CreateLattice(IReadOnlyList<T> set, int greatestLowerBound, int leastUpperBound)
+    {
+        return new(set, greatestLowerBound, leastUpperBound);
+    }
+
+    public IReadOnlyList<T> GetCanonicalSuperset(SequenceLattice<T> ideal) => ideal.Canon;
 
     public bool IsMinimalElement(IReadOnlyList<T> set, int item)
     {
@@ -26,7 +31,9 @@ public readonly struct SequenceIdealPremise<T>() : IIdealPremise<int, IReadOnlyL
         return (item >= 0) && (item <= set.Count);
     }
 
-    public bool IsLesserThan(int less, int greater) => less > greater;
+    public bool IsLesserOrEqualThan(int left, int right) => left >= right;
+
+    public bool AreEqual(int left, int right) => left == right;
 }
 
 

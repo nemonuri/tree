@@ -9,6 +9,6 @@ public class AdHocNafArrowPremise<T, TExtra> : IScanPremise<T, TExtra>
         _scanImpl = scanImpl;
     }
 
-    public ScanResult<int, TExtra> Scan(NodeArrowId arrow, SequenceIdeal<T> ideal) => _scanImpl(arrow, ideal);
+    public ScanResult<int, TExtra> Scan(NodeArrowId arrow, SequenceLattice<T> ideal) => _scanImpl(arrow, ideal);
 }
 

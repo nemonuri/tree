@@ -10,20 +10,24 @@ public static class WellFoundedRelationTheory
      * - https://github.com/FStarLang/FStar/blob/master/ulib/FStar.WellFounded.fst
      */
 
-    public static bool TryCreateLesserIdeal<TPremise, T, TSet, TIdeal>
+    public static bool TryCreateLesserIdeal<TIdealPremise, T, TSuperset, TIdeal>
     (
-        TPremise premise, TIdeal ideal, T lesserUpperBound, [NotNullWhen(true)] out TIdeal? lesserIdeal
+        TIdealPremise premise, TIdeal ideal, T lesserUpperBound,
+        [NotNullWhen(true)] out TIdeal? lesserIdeal
     )
-        where TPremise : IIdealPremise<T, TSet, TIdeal>
+        where TIdealPremise : IIdealPremise<T, TSuperset, TIdeal>
         where TIdeal : IIdeal<T>
     {
-        TSet set = premise.CastToSet(ideal);
+        TSuperset set = premise.GetCanonicalSuperset(ideal);
 
         if
         (
-            !(!premise.IsEmpty(set) &&
-            premise.IsMember(set, lesserUpperBound) &&
-            premise.IsLesserThan(lesserUpperBound, ideal.UpperBound))
+            !(
+                !premise.IsEmpty(set) &&
+                premise.IsMember(set, lesserUpperBound) &&
+                premise.IsLesserOrEqualThan(lesserUpperBound, ideal.LeastUpperBound) &&
+                !premise.AreEqual(lesserUpperBound, ideal.LeastUpperBound)
+            )
         )
         {
             lesserIdeal = default;
@@ -33,9 +37,4 @@ public static class WellFoundedRelationTheory
         lesserIdeal = premise.CreateIdeal(set, lesserUpperBound);
         return true;
     }
-
-
-
-
 }
-
