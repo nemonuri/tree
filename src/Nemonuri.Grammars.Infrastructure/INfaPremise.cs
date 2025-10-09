@@ -2,9 +2,9 @@ namespace Nemonuri.Grammars.Infrastructure;
 
 public interface INfaPremise
 <
-    TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext, TPrevious, TPost,
+    TMutableGraphContext, TMutableSiblingContext, TExtraMutableDepthContext, TMutableInnerSiblingContext, TPrevious, TPost,
     TNode, TInArrow, TOutArrow, TOutArrowSet,
-    TBound, TLogicalSet, TIdeal, TExtraScanResult
+    TBound, TLogicalSet, TIdeal, TIdealContext, TExtraScanResult
 > :
     INafArrowPremise
     <
@@ -16,7 +16,7 @@ public interface INfaPremise
     >,
     IHomogeneousSuccessorAggregator
     <
-        TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext, TPrevious, TPost,
+        TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>, TMutableInnerSiblingContext, TPrevious, TPost,
         TNode, TInArrow, TOutArrow, TOutArrowSet
     >
     where TIdeal : IIdeal<TBound>

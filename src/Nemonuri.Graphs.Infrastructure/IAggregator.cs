@@ -29,6 +29,11 @@ public interface IAggregator<T, TValue>
     T Aggregate(T source, TValue value);
 }
 
+public interface IInitialSourceGivenAggregator<T, TValue> : IAggregator<T, TValue>
+{ 
+    T InitialSource { get; }
+}
+
 public interface IResultRecord<TEntry, TResult>
 {
     TEntry Entry { get; }

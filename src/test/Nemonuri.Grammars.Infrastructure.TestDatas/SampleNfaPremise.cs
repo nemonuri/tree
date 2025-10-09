@@ -1,32 +1,49 @@
-using System.Collections.Immutable;
 using CommunityToolkit.Diagnostics;
 using Nemonuri.Graphs.Infrastructure;
 
 namespace Nemonuri.Grammars.Infrastructure.TestDatas;
 
-public class SampleNfaPremise<T, TExtra> : INfaPremise
+public class SampleNfaPremise<T, TExtra, TAggregationSequence, TAggregationSequenceUnion> : INfaPremise
 <
-    ValueNull, ValueNull, SequenceIdealContext<T, NodeId>, ValueNull, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>,
+    ValueNull, ValueNull, TAggregationSequence, ValueNull, ValueNull, TAggregationSequenceUnion,
     NodeId, NodeIdArrow, NodeIdArrow, NodeIdOutArrowSet,
-    int, IReadOnlyList<T>, SequenceLattice<T>, TExtra
+    int, IReadOnlyList<T>, SequenceLattice<T>, SequenceIdealContext<T, NodeId>, TExtra
 >
 {
     public IReadOnlyDictionary<NodeArrowId, NodeArrowIdToNodeIdMapItem> NodeMap { get; }
     public IReadOnlyDictionary<NodeArrowId, NodeArrowIdToScanPremiseMapItem<T, TExtra>> ScanMap { get; }
     private readonly SequenceLatticePremise<T> _idealPremise;
+    private readonly Dictionary<NodeId, NodeIdOutArrowSet> _nodeIdCache;
+    private readonly IInitialSourceGivenAggregator<TAggregationSequence, SequenceLatticeSnapshot<T, TExtra>> _sequenceAggregator;
+    private readonly IInitialSourceGivenAggregator<TAggregationSequenceUnion, TAggregationSequenceUnion> _sequenceUnionAggregator;
+    private readonly Func<TAggregationSequence, TAggregationSequence> _sequenceCloner;
+    private readonly Func<TAggregationSequence, TAggregationSequenceUnion> _sequenceToSequenceUnionCaster;
 
     public SampleNfaPremise
     (
         IReadOnlyDictionary<NodeArrowId, NodeArrowIdToNodeIdMapItem> nodeMap,
-        IReadOnlyDictionary<NodeArrowId, NodeArrowIdToScanPremiseMapItem<T, TExtra>> scanMap
+        IReadOnlyDictionary<NodeArrowId, NodeArrowIdToScanPremiseMapItem<T, TExtra>> scanMap,
+        IInitialSourceGivenAggregator<TAggregationSequence, SequenceLatticeSnapshot<T, TExtra>> sequenceAggregator,
+        IInitialSourceGivenAggregator<TAggregationSequenceUnion, TAggregationSequenceUnion> sequenceUnionAggregator,
+        Func<TAggregationSequence, TAggregationSequence> sequenceCloner,
+        Func<TAggregationSequence, TAggregationSequenceUnion> sequenceToSequenceUnionCaster
     )
     {
         Guard.IsNotNull(nodeMap);
         Guard.IsNotNull(scanMap);
+        Guard.IsNotNull(sequenceAggregator);
+        Guard.IsNotNull(sequenceUnionAggregator);
+        Guard.IsNotNull(sequenceCloner);
+        Guard.IsNotNull(sequenceToSequenceUnionCaster);
 
         NodeMap = nodeMap;
         ScanMap = scanMap;
         _idealPremise = new();
+        _nodeIdCache = new();
+        _sequenceAggregator = sequenceAggregator;
+        _sequenceUnionAggregator = sequenceUnionAggregator;
+        _sequenceCloner = sequenceCloner;
+        _sequenceToSequenceUnionCaster= sequenceToSequenceUnionCaster;
     }
 
     public void SetScanResultArgument(ScanResult<int, TExtra> scanResult)
@@ -59,19 +76,30 @@ public class SampleNfaPremise<T, TExtra> : INfaPremise
 
     public ValueNull EmptyMutableInnerSiblingContext => default;
 
-    public SequenceIdealContext<T, NodeId> CloneMutableDepthContext(SequenceIdealContext<T, NodeId> depthContext) => depthContext.Clone();
+    public ValueWithIdealContext<TAggregationSequence, SequenceIdealContext<T, NodeId>> CloneMutableDepthContext(ValueWithIdealContext<TAggregationSequence, SequenceIdealContext<T, NodeId>> depthContext)
+    {
+        return new(_sequenceCloner(depthContext.Value), depthContext.IdealContext.Clone());
+    }
 
-    public ImmutableList<SequenceLatticeSnapshot<T, TExtra>> EmptyPreviousAggregation => [];
+    public ValueNull EmptyPreviousAggregation => default;
 
-    public ImmutableList<SequenceLatticeSnapshot<T, TExtra>> AggregateOuterPrevious(scoped ref MutableOuterContextRecord<ValueNull, ValueNull, SequenceIdealContext<T, NodeId>> mutableContext, ImmutableList<SequenceLatticeSnapshot<T, TExtra>> source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<NodeId, NodeIdArrow, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>>> value)
+    public ValueNull AggregateOuterPrevious
+    (
+        scoped ref MutableOuterContextRecord<ValueNull, ValueNull, ValueWithIdealContext<TAggregationSequence, SequenceIdealContext<T, NodeId>>> mutableContext,
+        ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<NodeId, NodeIdArrow, ValueNull, TAggregationSequenceUnion>> value
+    )
     {
         return source;
     }
 
-    public ImmutableList<SequenceLatticeSnapshot<T, TExtra>> AggregateInnerPrevious(scoped ref MutableInnerContextRecord<ValueNull, ValueNull, SequenceIdealContext<T, NodeId>, ValueNull> mutableContext, ImmutableList<SequenceLatticeSnapshot<T, TExtra>> source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<NodeId, NodeIdArrow, NodeIdArrow, NodeIdOutArrowSet, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>>> value)
+    public ValueNull AggregateInnerPrevious
+    (
+        scoped ref MutableInnerContextRecord<ValueNull, ValueNull, ValueWithIdealContext<TAggregationSequence, SequenceIdealContext<T, NodeId>>, ValueNull> mutableContext,
+        ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<NodeId, NodeIdArrow, NodeIdArrow, NodeIdOutArrowSet, ValueNull, TAggregationSequenceUnion>> value
+    )
     {
         ScanResult<int, TExtra> scanResult = ScanResultArgument;
-        var ideal = mutableContext.MutableDepthContext.CurrentIdeal;
+        var ideal = mutableContext.MutableDepthContext.IdealContext.CurrentIdeal;
 
         if (!scanResult.IsSuccess) { return source; }
 
@@ -91,39 +119,55 @@ public class SampleNfaPremise<T, TExtra> : INfaPremise
             return source;
         }
 
-        mutableContext.MutableDepthContext.CurrentIdeal = lesserIdeal;
+        mutableContext.MutableDepthContext.IdealContext.CurrentIdeal = lesserIdeal;
+
         SequenceLatticeSnapshot<T, TExtra> snapshot = new(sublattice, scanResult.Extra);
-        return source.Add(snapshot);
+        mutableContext.MutableDepthContext.Value = _sequenceAggregator.Aggregate(mutableContext.MutableDepthContext.Value, snapshot);
+        return default;
     }
 
-    public ImmutableList<SequenceLatticeSnapshot<T, TExtra>> EmptyPostAggregation => [];
+    public TAggregationSequenceUnion EmptyPostAggregation => _sequenceUnionAggregator.InitialSource;
 
-    public ImmutableList<SequenceLatticeSnapshot<T, TExtra>> AggregateInnerPost(scoped ref MutableInnerContextRecord<ValueNull, ValueNull, SequenceIdealContext<T, NodeId>, ValueNull> mutableContext, ImmutableList<SequenceLatticeSnapshot<T, TExtra>> source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<NodeId, NodeIdArrow, NodeIdArrow, NodeIdOutArrowSet, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>>> value)
+    public TAggregationSequenceUnion AggregateInnerPost
+    (
+        scoped ref MutableInnerContextRecord<ValueNull, ValueNull, ValueWithIdealContext<TAggregationSequence, SequenceIdealContext<T, NodeId>>, ValueNull> mutableContext,
+        TAggregationSequenceUnion source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<NodeId, NodeIdArrow, NodeIdArrow, NodeIdOutArrowSet, ValueNull, TAggregationSequenceUnion>> value
+    )
     {
-        return source;
+        TAggregationSequenceUnion v1 = _sequenceToSequenceUnionCaster(mutableContext.MutableDepthContext.Value);
+        TAggregationSequenceUnion v2 = _sequenceUnionAggregator.Aggregate(value.Snapshot.PostAggregation, source);
+        TAggregationSequenceUnion v3 = _sequenceUnionAggregator.Aggregate(v2, v1);
+
+        return v3;
     }
 
-    public ImmutableList<SequenceLatticeSnapshot<T, TExtra>> AggregateOuterPost(scoped ref MutableOuterContextRecord<ValueNull, ValueNull, SequenceIdealContext<T, NodeId>> mutableContext, ImmutableList<SequenceLatticeSnapshot<T, TExtra>> source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<NodeId, NodeIdArrow, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>>> value)
+    public TAggregationSequenceUnion AggregateOuterPost(scoped ref MutableOuterContextRecord<ValueNull, ValueNull, ValueWithIdealContext<TAggregationSequence, SequenceIdealContext<T, NodeId>>> mutableContext, TAggregationSequenceUnion source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<NodeId, NodeIdArrow, ValueNull, TAggregationSequenceUnion>> value)
     {
         return source;
     }
 
     public NodeIdArrow EmbedToInArrow(NodeIdArrow outArrow) => outArrow;
 
-    public bool CanRunOuterPhase(scoped ref readonly MutableOuterContextRecord<ValueNull, ValueNull, SequenceIdealContext<T, NodeId>> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<NodeId, NodeIdArrow, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>>> phaseSnapshot)
+    public bool CanRunOuterPhase(scoped ref readonly MutableOuterContextRecord<ValueNull, ValueNull, ValueWithIdealContext<TAggregationSequence, SequenceIdealContext<T, NodeId>>> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<NodeId, NodeIdArrow, ValueNull, TAggregationSequenceUnion>> phaseSnapshot)
     {
         return true;
     }
 
-    public bool CanRunInnerPhase(scoped ref readonly MutableInnerContextRecord<ValueNull, ValueNull, SequenceIdealContext<T, NodeId>, ValueNull> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<NodeId, NodeIdArrow, NodeIdArrow, NodeIdOutArrowSet, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>, ImmutableList<SequenceLatticeSnapshot<T, TExtra>>>> phaseSnapshot)
+    public bool CanRunInnerPhase(scoped ref readonly MutableInnerContextRecord<ValueNull, ValueNull, ValueWithIdealContext<TAggregationSequence, SequenceIdealContext<T, NodeId>>, ValueNull> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<NodeId, NodeIdArrow, NodeIdArrow, NodeIdOutArrowSet, ValueNull, TAggregationSequenceUnion>> phaseSnapshot)
     {
         return true;
     }
+
 
     public NodeIdOutArrowSet GetDirectSuccessorArrows(NodeId node)
     {
-        throw new NotImplementedException();
+        if (!_nodeIdCache.TryGetValue(node, out var result))
+        {
+            result = new(NodeMap, node);
+            _nodeIdCache.Add(node, result);
+        }
+        
+        return result;
     }
-
 
 }

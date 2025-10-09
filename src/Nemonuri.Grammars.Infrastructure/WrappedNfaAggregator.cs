@@ -6,20 +6,20 @@ namespace Nemonuri.Grammars.Infrastructure;
 internal readonly struct WrappedNfaAggregator
 <
     TNfaPremise,
-    TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext, TPrevious, TPost,
+    TMutableGraphContext, TMutableSiblingContext, TExtraMutableDepthContext, TMutableInnerSiblingContext, TPrevious, TPost,
     TNode, TInArrow, TOutArrow, TOutArrowSet,
-    TBound, TLogicalSet, TIdeal, TExtraScanResult
+    TBound, TLogicalSet, TIdeal, TIdealContext, TExtraScanResult
 > :
     IHomogeneousSuccessorAggregator
     <
-        TMutableGraphContext, TMutableSiblingContext, TIdealContext, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>, TPrevious, TPost,
+        TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>, TPrevious, TPost,
         TNode, TInArrow, TOutArrow, TOutArrowSet
     >
     where TNfaPremise : INfaPremise
     <
-        TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext, TPrevious, TPost,
+        TMutableGraphContext, TMutableSiblingContext, TExtraMutableDepthContext, TMutableInnerSiblingContext, TPrevious, TPost,
         TNode, TInArrow, TOutArrow, TOutArrowSet,
-        TBound, TLogicalSet, TIdeal, TExtraScanResult
+        TBound, TLogicalSet, TIdeal, TIdealContext, TExtraScanResult
     >
     where TIdeal : IIdeal<TBound>
     where TInArrow : IArrow<TNode, TNode>
@@ -39,21 +39,22 @@ internal readonly struct WrappedNfaAggregator
 
     public ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult> EmptyMutableInnerSiblingContext => new(_nfa.EmptyMutableInnerSiblingContext, default);
 
-    public TIdealContext CloneMutableDepthContext(TIdealContext depthContext) => _nfa.CloneMutableDepthContext(depthContext);
+    public ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext> CloneMutableDepthContext(ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext> depthContext) =>
+        _nfa.CloneMutableDepthContext(depthContext);
 
     public TPrevious EmptyPreviousAggregation => _nfa.EmptyPreviousAggregation;
 
 
-    public TPrevious AggregateOuterPrevious(scoped ref MutableOuterContextRecord<TMutableGraphContext, TMutableSiblingContext, TIdealContext> mutableContext, TPrevious source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value)
+    public TPrevious AggregateOuterPrevious(scoped ref MutableOuterContextRecord<TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>> mutableContext, TPrevious source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value)
     {
         return _nfa.AggregateOuterPrevious(ref mutableContext, source, value);
     }
 
-    public TPrevious AggregateInnerPrevious(scoped ref MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TIdealContext, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>> mutableContext, TPrevious source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value)
+    public TPrevious AggregateInnerPrevious(scoped ref MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>> mutableContext, TPrevious source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value)
     {
         if (!mutableContext.MutableInnerSiblingContext.ScanResult.IsSuccess) { return source; }
 
-        MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext> embeddedContext =
+        MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>, TMutableInnerSiblingContext> embeddedContext =
             new(mutableContext.MutableOuterContext, ref mutableContext.MutableInnerSiblingContext.WrappedValue);
 
         _nfa.SetScanResultArgument(mutableContext.MutableInnerSiblingContext.ScanResult);
@@ -62,37 +63,37 @@ internal readonly struct WrappedNfaAggregator
 
     public TPost EmptyPostAggregation => _nfa.EmptyPostAggregation;
 
-    public TPost AggregateInnerPost(scoped ref MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TIdealContext, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>> mutableContext, TPost source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value)
+    public TPost AggregateInnerPost(scoped ref MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>> mutableContext, TPost source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value)
     {
         if (!mutableContext.MutableInnerSiblingContext.ScanResult.IsSuccess) { return source; }
 
-        MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext> embeddedContext =
+        MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>, TMutableInnerSiblingContext> embeddedContext =
             new(mutableContext.MutableOuterContext, ref mutableContext.MutableInnerSiblingContext.WrappedValue);
 
         _nfa.SetScanResultArgument(mutableContext.MutableInnerSiblingContext.ScanResult);
         return _nfa.AggregateInnerPost(ref embeddedContext, source, value);
     }
 
-    public TPost AggregateOuterPost(scoped ref MutableOuterContextRecord<TMutableGraphContext, TMutableSiblingContext, TIdealContext> mutableContext, TPost source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value)
+    public TPost AggregateOuterPost(scoped ref MutableOuterContextRecord<TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>> mutableContext, TPost source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value)
     {
         return _nfa.AggregateOuterPost(ref mutableContext, source, value);
     }
 
     public TInArrow EmbedToInArrow(TOutArrow outArrow) => _nfa.EmbedToInArrow(outArrow);
 
-    public bool CanRunOuterPhase(scoped ref readonly MutableOuterContextRecord<TMutableGraphContext, TMutableSiblingContext, TIdealContext> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> phaseSnapshot)
+    public bool CanRunOuterPhase(scoped ref readonly MutableOuterContextRecord<TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> phaseSnapshot)
     {
         return _nfa.CanRunOuterPhase(in context, phaseSnapshot);
     }
 
-    public bool CanRunInnerPhase(scoped ref readonly MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TIdealContext, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> phaseSnapshot)
+    public bool CanRunInnerPhase(scoped ref readonly MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> phaseSnapshot)
     {
         if (context.MutableInnerSiblingContext.ScanResult.Status == ScanResultStatus.ScanFail)
         {
             return false;
         }
 
-        MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext> embeddedContext =
+        MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>, TMutableInnerSiblingContext> embeddedContext =
             new(context.MutableOuterContext, ref context.MutableInnerSiblingContext.WrappedValue);
 
         if (!_nfa.CanRunInnerPhase(in embeddedContext, phaseSnapshot))
@@ -112,7 +113,7 @@ internal readonly struct WrappedNfaAggregator
             context.MutableInnerSiblingContext.ScanResult = scanResult;
             if (scanResult.IsSuccess)
             {
-                context.MutableDepthContext.Memoize(phaseSnapshot.Snapshot.OutArrow.Head, scanResult.UpperBound);
+                context.MutableDepthContext.IdealContext.Memoize(phaseSnapshot.Snapshot.OutArrow.Head, scanResult.UpperBound);
             }
             return scanResult.IsSuccess;
         }
@@ -125,11 +126,11 @@ internal readonly struct WrappedNfaAggregator
 
     private ScanResult<TBound, TExtraScanResult> ScanAndCheckCanEnter
     (
-        scoped ref readonly MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TIdealContext, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>> context,
+        scoped ref readonly MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>> context,
         ref readonly LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> phaseSnapshot
     )
     {
-        ref readonly TIdealContext idealContext = ref context.MutableDepthContext;
+        ref readonly TIdealContext idealContext = ref context.MutableDepthContext.IdealContext;
         TIdeal currentIdeal = idealContext.CurrentIdeal;
 
         ScanResult<TBound, TExtraScanResult> scanResult = _nfa.Scan(phaseSnapshot.Snapshot.OutArrow, currentIdeal);
