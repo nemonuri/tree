@@ -8,7 +8,7 @@ public static class TestDataTheory
 {
     public readonly static IReadOnlyList<int> Data1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-    public static SampleNfaPremise<int, ScanExtraRecord, ImmutableList<AggregationSequenceRecord<int>>, ImmutableHashSet<ImmutableList<AggregationSequenceRecord<int>>>>
+    public static SampleNfaPremise<int, ScanExtraRecord, AggregationSequence, AggregationSequenceUnion>
     CreateGrammar1()
     {
         //    (v0{v0 <= 5})*    (v1{v1 <= 10})*    v2{v2 == 10}
@@ -37,27 +37,23 @@ public static class TestDataTheory
             { new("A4"), new(new("A4"), new ScanPremise([static v2 => v2 == 10])) },
         };
 
-        SampleNfaPremise<int, ScanExtraRecord, ImmutableList<AggregationSequenceRecord<int>>, ImmutableHashSet<ImmutableList<AggregationSequenceRecord<int>>>> result = new
+        SampleNfaPremise<int, ScanExtraRecord, AggregationSequence, AggregationSequenceUnion> result = new
         (
             nodeMap: nodeMap,
             scanMap: scanMap,
             sequenceAggregator: new SequenceAggregator1<int>(),
             sequenceUnionAggregator: new SequenceUnionAggregator1<int>(),
             sequenceCloner: static a => a,
-            sequenceToSequenceUnionCaster: static seq => ImmutableHashSet.Create
-            (
-                SequenceEqualityComparer1<int>.Instance,
-                IsFullConvered(seq) ? [seq] : []
-            )
+            sequenceToSequenceUnionCaster: static (canon, seq) => new(IsFullConvered(canon, seq) ? [seq] : [])
         );
 
         return result;
 
-        static bool IsFullConvered(ImmutableList<AggregationSequenceRecord<int>> list)
+        static bool IsFullConvered(IReadOnlyList<int> canon, AggregationSequence seq)
         {
-            if (!(list.Count > 0)) { return false; }
-            if (!(list[0].Offset == 0)) { return false; }
-            if (!(list.Sum(static r => r.Length) == list[0].Canon.Count)) { return false; }
+            if (!(seq.InternalAggregationSequence.Count > 0)) { return false; }
+            if (!(seq.InternalAggregationSequence[0].Offset == 0)) { return false; }
+            if (!(seq.InternalAggregationSequence.Sum(static r => r.Length) == canon.Count)) { return false; }
 
             return true;
         }
@@ -94,60 +90,53 @@ public static class TestDataTheory
 
 public readonly record struct ScanExtraRecord(NodeArrowId NodeArrowId, int GreatestLowerBound);
 
-public readonly record struct AggregationSequenceRecord<T>
-(
-    IReadOnlyList<T> Canon, NodeArrowId NodeArrowId, int Offset, int Length
-); //ImmutableArray<T> Segment
-
 public class SequenceAggregator1<T> :
-    IInitialSourceGivenAggregator<ImmutableList<AggregationSequenceRecord<T>>, SequenceLatticeSnapshot<T, ScanExtraRecord>>
+    IInitialSourceGivenAggregator<AggregationSequence, SequenceLatticeSnapshot<T, ScanExtraRecord>>
 {
     public SequenceAggregator1() { }
 
-    public ImmutableList<AggregationSequenceRecord<T>> InitialSource => [];
+    public AggregationSequence InitialSource => new([]);
 
-    public ImmutableList<AggregationSequenceRecord<T>> Aggregate(ImmutableList<AggregationSequenceRecord<T>> source, SequenceLatticeSnapshot<T, ScanExtraRecord> value)
+    public AggregationSequence Aggregate(AggregationSequence source, SequenceLatticeSnapshot<T, ScanExtraRecord> value)
     {
         //--- convert ---
-        AggregationSequenceRecord<T> v = new(value.Sequence.Canon, value.Extra.NodeArrowId, value.Sequence.LeastUpperBound, value.Extra.GreatestLowerBound - value.Sequence.LeastUpperBound);
+        AggregationUnit v = new(value.Extra.NodeArrowId, value.Sequence.LeastUpperBound, value.Extra.GreatestLowerBound - value.Sequence.LeastUpperBound);
         //---|
 
         return source.Add(v);
     }
 }
 
-public class SequenceEqualityComparer1<T> : IEqualityComparer<ImmutableList<AggregationSequenceRecord<T>>>
+public class SequenceUnionAggregator1<T> :
+    IInitialSourceGivenAggregator<AggregationSequenceUnion, AggregationSequenceUnion>
+{
+    public SequenceUnionAggregator1() { }
+
+    public AggregationSequenceUnion InitialSource => new([]);
+
+    public AggregationSequenceUnion Aggregate(AggregationSequenceUnion source, AggregationSequenceUnion value)
+    {
+        return source.Union(value);
+    }
+}
+
+public class SequenceEqualityComparer1<T> : IEqualityComparer<ImmutableList<AggregationSequence>>
 {
     public static readonly SequenceEqualityComparer1<T> Instance = new();
 
     public SequenceEqualityComparer1() { }
 
-    public bool Equals(ImmutableList<AggregationSequenceRecord<T>>? x, ImmutableList<AggregationSequenceRecord<T>>? y)
+    public bool Equals(ImmutableList<AggregationSequence>? x, ImmutableList<AggregationSequence>? y)
     {
         if (x is null || y is null) { return false; }
 
         return x.SequenceEqual(y);
     }
 
-    public int GetHashCode([DisallowNull] ImmutableList<AggregationSequenceRecord<T>> obj)
+    public int GetHashCode([DisallowNull] ImmutableList<AggregationSequence> obj)
     {
         return obj.Aggregate(new HashCode(), static (a, e) => { a.Add(e); return a; }, static h => h.ToHashCode());
     }
 }
 
-public class SequenceUnionAggregator1<T> :
-    IInitialSourceGivenAggregator<ImmutableHashSet<ImmutableList<AggregationSequenceRecord<T>>>, ImmutableHashSet<ImmutableList<AggregationSequenceRecord<T>>>>
-{
-    public SequenceUnionAggregator1() { }
-
-    public ImmutableHashSet<ImmutableList<AggregationSequenceRecord<T>>> InitialSource => [];
-
-    public ImmutableHashSet<ImmutableList<AggregationSequenceRecord<T>>> Aggregate
-    (
-        ImmutableHashSet<ImmutableList<AggregationSequenceRecord<T>>> source, ImmutableHashSet<ImmutableList<AggregationSequenceRecord<T>>> value
-    )
-    {
-        return source.Union(value);
-    }
-}
 

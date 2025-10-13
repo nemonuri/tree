@@ -17,7 +17,7 @@ public class SampleNfaPremise<T, TExtra, TAggregationSequence, TAggregationSeque
     private readonly IInitialSourceGivenAggregator<TAggregationSequence, SequenceLatticeSnapshot<T, TExtra>> _sequenceAggregator;
     private readonly IInitialSourceGivenAggregator<TAggregationSequenceUnion, TAggregationSequenceUnion> _sequenceUnionAggregator;
     private readonly Func<TAggregationSequence, TAggregationSequence> _sequenceCloner;
-    private readonly Func<TAggregationSequence, TAggregationSequenceUnion> _sequenceToSequenceUnionCaster;
+    private readonly Func<IReadOnlyList<T>, TAggregationSequence, TAggregationSequenceUnion> _sequenceToSequenceUnionCaster;
 
     public SampleNfaPremise
     (
@@ -26,7 +26,7 @@ public class SampleNfaPremise<T, TExtra, TAggregationSequence, TAggregationSeque
         IInitialSourceGivenAggregator<TAggregationSequence, SequenceLatticeSnapshot<T, TExtra>> sequenceAggregator,
         IInitialSourceGivenAggregator<TAggregationSequenceUnion, TAggregationSequenceUnion> sequenceUnionAggregator,
         Func<TAggregationSequence, TAggregationSequence> sequenceCloner,
-        Func<TAggregationSequence, TAggregationSequenceUnion> sequenceToSequenceUnionCaster
+        Func<IReadOnlyList<T>, TAggregationSequence, TAggregationSequenceUnion> sequenceToSequenceUnionCaster
     )
     {
         Guard.IsNotNull(nodeMap);
@@ -134,7 +134,7 @@ public class SampleNfaPremise<T, TExtra, TAggregationSequence, TAggregationSeque
         TAggregationSequenceUnion source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<NodeId, NodeIdArrow, NodeIdArrow, NodeIdOutArrowSet, ValueNull, TAggregationSequenceUnion>> value
     )
     {
-        TAggregationSequenceUnion v1 = _sequenceToSequenceUnionCaster(mutableContext.MutableDepthContext.Value);
+        TAggregationSequenceUnion v1 = _sequenceToSequenceUnionCaster(mutableContext.MutableDepthContext.IdealContext.CurrentIdeal.Canon, mutableContext.MutableDepthContext.Value);
         TAggregationSequenceUnion v2 = _sequenceUnionAggregator.Aggregate(value.Snapshot.PostAggregation, source);
         TAggregationSequenceUnion v3 = _sequenceUnionAggregator.Aggregate(v2, v1);
 

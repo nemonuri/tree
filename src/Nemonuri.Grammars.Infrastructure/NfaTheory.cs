@@ -7,21 +7,22 @@ public static class NfaTheory
     public static TPost AggregateHomogeneousSuccessors
     <
         TNfaPremise,
-        TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext, TPrevious, TPost,
+        TMutableGraphContext, TMutableSiblingContext, TExtraMutableDepthContext, TMutableInnerSiblingContext, TPrevious, TPost,
         TNode, TInArrow, TOutArrow, TOutArrowSet,
-        TBound, TLogicalSet, TIdeal, TExtraScanResult
+        TBound, TLogicalSet, TIdeal, TIdealContext, TExtraScanResult
     >
     (
         TNfaPremise nfaPremise,
         scoped ref TMutableGraphContext mutableGraphContext,
-        TIdealContext depthContext,
+        TExtraMutableDepthContext extraMutableDepthContext,
+        TIdealContext idealContext,
         TNode initialNode
     )
         where TNfaPremise : INfaPremise
         <
-            TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext, TPrevious, TPost,
+            TMutableGraphContext, TMutableSiblingContext, TExtraMutableDepthContext, TMutableInnerSiblingContext, TPrevious, TPost,
             TNode, TInArrow, TOutArrow, TOutArrowSet,
-            TBound, TLogicalSet, TIdeal, TExtraScanResult
+            TBound, TLogicalSet, TIdeal, TIdealContext, TExtraScanResult
         >
         where TIdeal : IIdeal<TBound>
         where TInArrow : IArrow<TNode, TNode>
@@ -32,9 +33,9 @@ public static class NfaTheory
         WrappedNfaAggregator
         <
             TNfaPremise,
-            TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext, TPrevious, TPost,
+            TMutableGraphContext, TMutableSiblingContext, TExtraMutableDepthContext, TMutableInnerSiblingContext, TPrevious, TPost,
             TNode, TInArrow, TOutArrow, TOutArrowSet,
-            TBound, TLogicalSet, TIdeal, TExtraScanResult
+            TBound, TLogicalSet, TIdeal, TIdealContext, TExtraScanResult
         > w = new(nfaPremise);
 
         TPost post = AggregatingTheory.AggregateHomogeneousSuccessors
@@ -42,15 +43,15 @@ public static class NfaTheory
             WrappedNfaAggregator
             <
                 TNfaPremise,
-                TMutableGraphContext, TMutableSiblingContext, TIdealContext, TMutableInnerSiblingContext, TPrevious, TPost,
+                TMutableGraphContext, TMutableSiblingContext, TExtraMutableDepthContext, TMutableInnerSiblingContext, TPrevious, TPost,
                 TNode, TInArrow, TOutArrow, TOutArrowSet,
-                TBound, TLogicalSet, TIdeal, TExtraScanResult
+                TBound, TLogicalSet, TIdeal, TIdealContext, TExtraScanResult
             >,
-            TMutableGraphContext, TMutableSiblingContext, TIdealContext, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>, TPrevious, TPost,
+            TMutableGraphContext, TMutableSiblingContext, ValueWithIdealContext<TExtraMutableDepthContext, TIdealContext>, ValueWithScanResult<TMutableInnerSiblingContext, TBound, TIdeal, TExtraScanResult>, TPrevious, TPost,
             TNode, TInArrow, TOutArrow, TOutArrowSet
         >
         (
-            w, ref mutableGraphContext, depthContext, new InitialInfo<TNode>(initialNode)
+            w, ref mutableGraphContext, new(extraMutableDepthContext,idealContext), new InitialInfo<TNode>(initialNode)
         );
 
         return post;
