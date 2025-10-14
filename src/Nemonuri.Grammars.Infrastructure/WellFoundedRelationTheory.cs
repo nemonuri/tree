@@ -12,7 +12,7 @@ public static class WellFoundedRelationTheory
 
     public static bool TryCreateLesserIdeal<TIdealPremise, T, TSuperset, TIdeal>
     (
-        TIdealPremise premise, TIdeal ideal, T lesserUpperBound,
+        TIdealPremise premise, TIdeal ideal, T lesserUpperBound, bool isStrict,
         [NotNullWhen(true)] out TIdeal? lesserIdeal
     )
         where TIdealPremise : IIdealPremise<T, TSuperset, TIdeal>
@@ -26,7 +26,7 @@ public static class WellFoundedRelationTheory
                 !premise.IsEmpty(set) &&
                 premise.IsMember(set, lesserUpperBound) &&
                 premise.IsLesserOrEqualThan(lesserUpperBound, ideal.LeastUpperBound) &&
-                !premise.AreEqual(lesserUpperBound, ideal.LeastUpperBound)
+                (!isStrict || !premise.AreEqual(lesserUpperBound, ideal.LeastUpperBound))
             )
         )
         {

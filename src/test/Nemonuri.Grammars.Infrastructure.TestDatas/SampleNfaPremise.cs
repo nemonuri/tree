@@ -43,7 +43,7 @@ public class SampleNfaPremise<T, TExtra, TAggregationSequence, TAggregationSeque
         _sequenceAggregator = sequenceAggregator;
         _sequenceUnionAggregator = sequenceUnionAggregator;
         _sequenceCloner = sequenceCloner;
-        _sequenceToSequenceUnionCaster= sequenceToSequenceUnionCaster;
+        _sequenceToSequenceUnionCaster = sequenceToSequenceUnionCaster;
     }
 
     public void SetScanResultArgument(ScanResult<int, TExtra> scanResult)
@@ -103,7 +103,7 @@ public class SampleNfaPremise<T, TExtra, TAggregationSequence, TAggregationSeque
 
         if (!scanResult.IsSuccess) { return source; }
 
-        if (!WellFoundedRelationTheory.TryCreateLesserIdeal<SequenceLatticePremise<T>, int, IReadOnlyList<T>, SequenceLattice<T>>(_idealPremise, ideal, scanResult.UpperBound, out var lesserIdeal))
+        if (!WellFoundedRelationTheory.TryCreateLesserIdeal<SequenceLatticePremise<T>, int, IReadOnlyList<T>, SequenceLattice<T>>(_idealPremise, ideal, scanResult.UpperBound, false, out var lesserIdeal))
         {
             return source;
         }
