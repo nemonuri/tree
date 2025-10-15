@@ -2,8 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Nemonuri.Graphs.Infrastructure;
 
-public readonly record struct ValueNull { }
-
 public interface IEmbedder<TSource, TTarget, TRemainder>
 { 
     bool TryEmbed(TSource source, [NotNullWhen(true)] out TTarget target, out TRemainder? remainder);
