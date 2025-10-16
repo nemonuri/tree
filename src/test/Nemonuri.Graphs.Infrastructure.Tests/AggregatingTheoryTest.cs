@@ -125,6 +125,33 @@ public class AggregatingTheoryTest
         Assert.Equal(expected, actual);
     }
 
+    [Theory]
+    [MemberData(nameof(Entry3))]
+    public void AggregateHomogeneousSuccessors_WhenAggeratorIsIntNodeParenthesizedStringfier3
+    (
+        I::NodeLabel nodeLabel,
+        string expected
+    )
+    {
+        // Arrange
+        I::IntNodeParenthesizedStringfier3 aggregator = new();
+        I::IntNode node = I::TestDataTheory.IntNodeMap[nodeLabel];
+
+        // Act
+        var actual = AggregatingTheory.AggregateHomogeneousSuccessors
+        <
+            I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet, ValueNull, string,
+            I::IntNodeParenthesizedStringfier3.ChildrenScopeContext,
+            ValueNull, ValueNull,
+            I::IntNodeParenthesizedStringfier3.GraphScopeContext,
+            I::IntNodeParenthesizedStringfier3
+        >
+        (aggregator, node);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
     public static TheoryData<I::NodeLabel, string> Entry3 => new()
     {
         { I::NodeLabel.Single_0, "0" },
