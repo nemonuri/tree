@@ -12,7 +12,7 @@ public record IntNode(int Value, IntNode[] Children)
 
 public readonly record struct IntNodeArrow(IntNode Tail, IntNode Head) : IArrow<IntNode, IntNode>;
 
-public class IntNodeOutArrowSet : IOutArrowSet<IntNodeArrow, IntNode, IntNode>
+public class IntNodeOutArrowSet : IOutArrowSet<IntNode, IntNode, IntNodeArrow>
 {
     public IntNodeOutArrowSet(IntNode commonTail, ImmutableList<IntNode> heads)
     {
@@ -28,7 +28,7 @@ public class IntNodeOutArrowSet : IOutArrowSet<IntNodeArrow, IntNode, IntNode>
     public ImmutableList<IntNode> Heads { get; }
 
     public bool TryGetCommonTail([NotNullWhen(true)] out IntNode? commonTail) =>
-        (commonTail = CommonTail) is not null;
+        (commonTail = Heads.Count > 0 ? CommonTail : null) is not null;
 
     public IEnumerator<IntNodeArrow> GetEnumerator()
     {

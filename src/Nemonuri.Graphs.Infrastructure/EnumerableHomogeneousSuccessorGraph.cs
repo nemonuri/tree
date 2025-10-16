@@ -6,7 +6,7 @@ public class EnumerableHomogeneousSuccessorGraph<TGraph, TNode, TOutArrow, TOutA
     IEnumerable<PositionedNode<TNode>>
     where TGraph : ISuccessorGraph<TNode, TNode, TOutArrow, TOutArrowSet>
     where TOutArrow : IArrow<TNode, TNode>
-    where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, TNode>
+    where TOutArrowSet : IOutArrowSet<TNode, TNode, TOutArrow>
 {
     private readonly TGraph _graph;
     private readonly TNode _initialNode;

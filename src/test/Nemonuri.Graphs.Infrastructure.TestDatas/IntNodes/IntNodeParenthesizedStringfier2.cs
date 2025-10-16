@@ -4,8 +4,8 @@ namespace Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
 
 public class IntNodeParenthesizedStringfier2 : IHomogeneousSuccessorAggregator
 <
-    ValueNull, int /* Sibling index */, ValueNull, ValueNull, ValueNull, string,
-    IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet
+    IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string,
+    int /* Sibling index */, ValueNull, ValueNull, ValueNull
 >
 {
     private readonly StringBuilder _sb = new();
@@ -14,18 +14,13 @@ public class IntNodeParenthesizedStringfier2 : IHomogeneousSuccessorAggregator
     {
     }
 
-    public int EmptyMutableSiblingContext => 0;
-
-    public ValueNull EmptyPreviousAggregation => default;
-
-    public ValueNull EmptyMutableInnerSiblingContext => default;
-
-    public ValueNull AggregateOuterPrevious(scoped ref MutableOuterContextRecord<ValueNull, int, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
+    public ValueNull CreateInitialPrevious(scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> context) => default;
+    public ValueNull AggregateOuterPrevious(ValueNull left, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> right, scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> context)
     {
-        var node = value.Snapshot.OuterNode;
+        var node = right.Snapshot.OuterNode;
 
         //--- graph open ---
-        if (value.PhaseLabel.IsInitial())
+        if (right.PhaseLabel.IsInitial())
         {
             _sb.Clear();
         }
@@ -43,9 +38,9 @@ public class IntNodeParenthesizedStringfier2 : IHomogeneousSuccessorAggregator
         return default;
     }
 
-    public ValueNull AggregateInnerPrevious(scoped ref MutableInnerContextRecord<ValueNull, int, ValueNull, ValueNull> mutableContext, ValueNull source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
+    public ValueNull AggregateInnerPrevious(ValueNull left, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> right, scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> context)
     {
-        ref int siblingIndex = ref mutableContext.MutableSiblingContext;
+        ref int siblingIndex = ref context.ChildrenScopeContext;
 
         //--- inner list open ---
         _sb.Append(' ');
@@ -60,16 +55,18 @@ public class IntNodeParenthesizedStringfier2 : IHomogeneousSuccessorAggregator
         return default;
     }
 
-    public string EmptyPostAggregation => string.Empty;
+    public string CreateInitialPost(scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> context) => string.Empty;
 
-    public string AggregateInnerPost(scoped ref MutableInnerContextRecord<ValueNull, int, ValueNull, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> value)
+    public string CreateFallbackPost(scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> context) => CreateInitialPost(ref context);
+
+    public string AggregateInnerPost(string left, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> right, scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> context)
     {
         throw new InvalidOperationException();
     }
 
-    public string AggregateOuterPost(scoped ref MutableOuterContextRecord<ValueNull, int, ValueNull> mutableContext, string source, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> value)
+    public string AggregateOuterPost(string left, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> right, scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> context)
     {
-        int siblingIndex = mutableContext.MutableSiblingContext;
+        int siblingIndex = context.ChildrenScopeContext;
 
         //--- inner list close ---
         if (siblingIndex > 0)
@@ -79,7 +76,7 @@ public class IntNodeParenthesizedStringfier2 : IHomogeneousSuccessorAggregator
         //---|
 
         //--- outer node close ---
-        var node = value.Snapshot.OuterNode;
+        var node = right.Snapshot.OuterNode;
         if (node.Children.Length > 0)
         {
             _sb.Append(')');
@@ -88,24 +85,60 @@ public class IntNodeParenthesizedStringfier2 : IHomogeneousSuccessorAggregator
 
         return
         //--- graph close ---
-            value.PhaseLabel.IsInitial() ? _sb.ToString() 
+            right.PhaseLabel.IsInitial() ? _sb.ToString() 
         //---|
-            : EmptyPostAggregation;
+            : CreateFallbackPost(ref context);
     }
 
-    public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow) => outArrow;
+    public IntNodeArrow EmbedToInArrow(IntNodeArrow outArrow, scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> context) => outArrow;
 
-    public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node) => new(node);
-
-    public ValueNull CloneMutableDepthContext(ValueNull depthContext) => depthContext;
-
-    public bool CanRunOuterPhase(scoped ref readonly MutableOuterContextRecord<ValueNull, int, ValueNull> context, LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> phaseSnapshot)
+    public bool CanRunOuterPhase(LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<IntNode, IntNodeArrow, ValueNull, string>> phase, scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> context)
     {
         return true;
     }
 
-    public bool CanRunInnerPhase(scoped ref readonly MutableInnerContextRecord<ValueNull, int, ValueNull, ValueNull> context, LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> phaseSnapshot)
+    public bool CanRunInnerPhase(LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<IntNode, IntNodeArrow, IntNodeArrow, IntNodeOutArrowSet, ValueNull, string>> phase, scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> context)
     {
-        return phaseSnapshot.PhaseLabel != InnerPhaseLabel.InnerPost;
+        return phase.PhaseLabel != InnerPhaseLabel.InnerPost;
+    }
+
+    public IntNodeOutArrowSet GetDirectSuccessorArrows(IntNode node, scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> context) => new(node);
+
+    public ValueNull CreateInitialGraphScopeContext() => default;
+
+    public ValueNull CreateInitialDescendantsScopeContext(scoped ref ValueNull graph) => default;
+
+    public ValueNull CreateNextDescendantsScopeContext(scoped ref readonly ValueNull descendants, scoped ref readonly int children, scoped ref ValueNull graph) => default;
+
+    public int CreateInitialChildrenScopeContext(scoped ref readonly ValueNull descendants, scoped ref ValueNull graph) => 0;
+
+    public ValueNull CreateInitialChildScopeContext(scoped ref readonly int children, scoped ref readonly ValueNull descendants, scoped ref ValueNull graph) => default;
+
+    public void DisposeChildScopeContext(scoped ref ValueNull child, scoped ref ValueNull graph) { }
+
+    public void DisposeChildrenScopeContext(scoped ref int children, scoped ref ValueNull graph) { }
+
+    public void DisposeDescendantsScopeContext(scoped ref ValueNull descendants, scoped ref ValueNull graph) { }
+
+    public void DisposeGraphScopeContext(scoped ref ValueNull graph) { }
+
+    public AggregatorContext<int, ValueNull, ValueNull, ValueNull> CreateInnerAggregatorContext(ref int childrenScopeContext, ref ValueNull descendantsScopeContext, ref ValueNull childScopeContext, ref ValueNull graphScopeContext)
+    {
+        return AggregatorContextTheory.CreateInnerAggregatorContext(ref childrenScopeContext, ref descendantsScopeContext, ref childScopeContext, ref graphScopeContext);
+    }
+
+    public AggregatorContext<int, ValueNull, ValueNull, ValueNull> CreateOuterAggregatorContext(ref int childrenScopeContext, ref ValueNull descendantsScopeContext, ref ValueNull graphScopeContext)
+    {
+        return AggregatorContextTheory.CreateOuterAggregatorContext(ref childrenScopeContext, ref descendantsScopeContext, ref graphScopeContext);
+    }
+
+    public void DeconstructOuterAggregatorContext(scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> aggregatorContext, out int childrenScopeContext, out ValueNull descendantsScopeContext, out ValueNull graphScopeContext)
+    {
+        AggregatorContextTheory.DeconstructOuterAggregatorContext(ref aggregatorContext, out childrenScopeContext, out descendantsScopeContext, out graphScopeContext);
+    }
+
+    public void DeconstructInnerAggregatorContext(scoped ref AggregatorContext<int, ValueNull, ValueNull, ValueNull> aggregatorContext, out int childrenScopeContext, out ValueNull descendantsScopeContext, out ValueNull childScopeContext, out ValueNull graphScopeContext)
+    {
+        AggregatorContextTheory.DeconstructInnerAggregatorContext(ref aggregatorContext, out childrenScopeContext, out descendantsScopeContext, out childScopeContext, out graphScopeContext);
     }
 }

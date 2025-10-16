@@ -135,7 +135,7 @@ public class SampleNfaPremise<T, TExtra, TAggregationSequence, TAggregationSeque
     )
     {
         TAggregationSequenceUnion v1 = _sequenceToSequenceUnionCaster(mutableContext.MutableDepthContext.IdealContext.CurrentIdeal.Canon, mutableContext.MutableDepthContext.Value);
-        TAggregationSequenceUnion v2 = _sequenceUnionAggregator.Aggregate(value.Snapshot.PostAggregation, source);
+        TAggregationSequenceUnion v2 = _sequenceUnionAggregator.Aggregate(value.Snapshot.Post, source);
         TAggregationSequenceUnion v3 = _sequenceUnionAggregator.Aggregate(v2, v1);
 
         return v3;

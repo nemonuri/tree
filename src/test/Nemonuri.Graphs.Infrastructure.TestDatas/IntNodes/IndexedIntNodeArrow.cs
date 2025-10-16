@@ -6,7 +6,7 @@ namespace Nemonuri.Graphs.Infrastructure.TestDatas.IntNodes;
 
 public readonly record struct IndexedIntNodeArrow(IntNode Tail, IntNode Head, int Index) : IArrow<IntNode, IntNode>;
 
-public class IndexedIntNodeOutArrowSet : IOutArrowSet<IndexedIntNodeArrow, IntNode, IntNode>, IReadOnlyCollection<IndexedIntNodeArrow>
+public class IndexedIntNodeOutArrowSet : IOutArrowSet<IntNode, IntNode, IndexedIntNodeArrow>, IReadOnlyCollection<IndexedIntNodeArrow>
 {
     public IndexedIntNodeOutArrowSet(IntNode commonTail, ImmutableList<IntNode> heads)
     {
@@ -22,7 +22,7 @@ public class IndexedIntNodeOutArrowSet : IOutArrowSet<IndexedIntNodeArrow, IntNo
     public ImmutableList<IntNode> Heads { get; }
 
     public bool TryGetCommonTail([NotNullWhen(true)] out IntNode? commonTail) =>
-        (commonTail = CommonTail) is not null;
+        (commonTail = Heads.Count > 0 ? CommonTail : null) is not null;
 
     public IEnumerator<IndexedIntNodeArrow> GetEnumerator()
     {

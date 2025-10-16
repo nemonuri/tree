@@ -18,16 +18,15 @@ public class AggregatingTheoryTest
         // Arrange
         I::IntNodeAdder aggregator = new();
         I::IntNode node = I::TestDataTheory.IntNodeMap[nodeLabel];
-        ValueNull context = default;
 
         // Act
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
-            I::IntNodeAdder,
-            ValueNull, ValueNull, ValueNull, ValueNull, int,
-            I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet
+            I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet, ValueNull, int,
+            ValueNull, ValueNull, ValueNull, ValueNull,
+            I::IntNodeAdder
         >
-        (aggregator, ref context, default, node);
+        (aggregator, node);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -53,16 +52,15 @@ public class AggregatingTheoryTest
         // Arrange
         I::IntNodeStringfier aggregator = new();
         I::IntNode node = I::TestDataTheory.IntNodeMap[nodeLabel];
-        ValueNull context = default;
 
         // Act
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
-            I::IntNodeStringfier,
-            ValueNull, ValueNull, ValueNull, ValueNull, string,
-            I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet
+            I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet, ValueNull, string,
+            ValueNull, ValueNull, ValueNull, ValueNull,
+            I::IntNodeStringfier
         >
-        (aggregator, ref context, default, node);
+        (aggregator, node);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -88,16 +86,15 @@ public class AggregatingTheoryTest
         // Arrange
         I::IntNodeParenthesizedStringfier1 aggregator = new();
         I::IntNode node = I::TestDataTheory.IntNodeMap[nodeLabel];
-        ValueNull context = default;
 
         // Act
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
-            I::IntNodeParenthesizedStringfier1,
-            ValueNull, ValueNull, ValueNull, ValueNull, string,
-            I::IntNode, I::IndexedIntNodeArrow, I::IndexedIntNodeArrow, I::IndexedIntNodeOutArrowSet
+            I::IntNode, I::IndexedIntNodeArrow, I::IndexedIntNodeArrow, I::IndexedIntNodeOutArrowSet, ValueNull, string,
+            ValueNull, ValueNull, ValueNull, ValueNull, 
+            I::IntNodeParenthesizedStringfier1
         >
-        (aggregator, ref context, default, node);
+        (aggregator, node);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -114,16 +111,15 @@ public class AggregatingTheoryTest
         // Arrange
         I::IntNodeParenthesizedStringfier2 aggregator = new();
         I::IntNode node = I::TestDataTheory.IntNodeMap[nodeLabel];
-        ValueNull context = default;
 
         // Act
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
-            I::IntNodeParenthesizedStringfier2,
-            ValueNull, int, ValueNull, ValueNull, string,
-            I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet
+            I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet, ValueNull, string,
+            int, ValueNull, ValueNull, ValueNull,
+            I::IntNodeParenthesizedStringfier2
         >
-        (aggregator, ref context, default, node);
+        (aggregator, node);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -147,7 +143,6 @@ public class AggregatingTheoryTest
     {
         // Arrange
         I::IntNode node = I::TestDataTheory.IntNodeMap[nodeLabel];
-        ValueNull context = default;
         Func<int, string> selector = static i => i.ToString();
         S::IntNodeToStringNodeSelector aggregator = new(selector);
 
@@ -168,11 +163,11 @@ public class AggregatingTheoryTest
         // Act
         var actual = AggregatingTheory.AggregateHomogeneousSuccessors
         <
-            S::IntNodeToStringNodeSelector,
-            ValueNull, ValueNull, ValueNull, ValueNull, ImmutableList<S::StringNode>,
-            I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet
+            I::IntNode, I::IntNodeArrow, I::IntNodeArrow, I::IntNodeOutArrowSet, ValueNull, ImmutableList<S::StringNode>,
+            ValueNull, ValueNull, ValueNull, ValueNull, 
+            S::IntNodeToStringNodeSelector
         >
-        (aggregator, ref context, default, node);
+        (aggregator, node);
 
         // Assert
         Assert.Single(actual);

@@ -1,22 +1,54 @@
 namespace Nemonuri.Graphs.Infrastructure;
 
-public interface IAggregatorContextPremise<TDescendants, TChildren, TChild, TGraph>
+public interface IAggregatorContextPremise<TChildren, TDescendants, TChild, TGraph>
 {
     TGraph CreateInitialGraphScopeContext();
 
     TDescendants CreateInitialDescendantsScopeContext(scoped ref TGraph graph);
 
-    TDescendants CloneDescendantsScopeContext(scoped ref readonly TDescendants descendants, scoped ref TGraph graph);
+    TDescendants CreateNextDescendantsScopeContext(scoped ref readonly TDescendants descendants, scoped ref readonly TChildren children, scoped ref TGraph graph);
 
-    TChildren CreateChildrenScopeContext(scoped ref readonly TDescendants descendants, scoped ref TGraph graph);
+    TChildren CreateInitialChildrenScopeContext(scoped ref readonly TDescendants descendants, scoped ref TGraph graph);
 
-    TChild CreateChildScopeContext(scoped ref readonly TDescendants descendants, scoped ref readonly TChildren children, scoped ref TGraph graph);
+    TChild CreateInitialChildScopeContext(scoped ref readonly TChildren children, scoped ref readonly TDescendants descendants, scoped ref TGraph graph);
 
-    AggregatorContext<TDescendants, TChildren, TChild, TGraph> CreateInnerAggregatorContext(ref TDescendants descendantsScopeContext, ref TChildren childrenScopeContext, ref TChild childScopeContext, ref TGraph graphScopeContext);
+    void DisposeChildScopeContext(scoped ref TChild child, scoped ref TGraph graph);
 
-    AggregatorContext<TDescendants, TChildren, ValueNull, TGraph> CreateOuterAggregatorContext(ref TDescendants descendantsScopeContext, ref TChildren childrenScopeContext, ref TGraph graphScopeContext);
+    void DisposeChildrenScopeContext(scoped ref TChildren children, scoped ref TGraph graph);
 
-    void DeconstructOuterAggregatorContext(scoped ref AggregatorContext<TDescendants, TChildren, ValueNull, TGraph> aggregatorContext, out TDescendants descendantsScopeContext, out TChildren childrenScopeContext, out TGraph graphScopeContext);
+    void DisposeDescendantsScopeContext(scoped ref TDescendants descendants, scoped ref TGraph graph);
 
-    void DeconstructInnerAggregatorContext(scoped ref AggregatorContext<TDescendants, TChildren, TChild, TGraph> aggregatorContext, out TChildren childrenScopeContext, out TChild childScopeContext, out TGraph graphScopeContext);
+    void DisposeGraphScopeContext(scoped ref TGraph graph);
+
+    AggregatorContext<TChildren, TDescendants, TChild, TGraph> CreateInnerAggregatorContext
+    (
+        ref TChildren childrenScopeContext,
+        ref TDescendants descendantsScopeContext,
+        ref TChild childScopeContext,
+        ref TGraph graphScopeContext
+    );
+
+    AggregatorContext<TChildren, TDescendants, ValueNull, TGraph> CreateOuterAggregatorContext
+    (
+        ref TChildren childrenScopeContext,
+        ref TDescendants descendantsScopeContext,
+        ref TGraph graphScopeContext
+    );
+
+    void DeconstructOuterAggregatorContext
+    (
+        scoped ref AggregatorContext<TChildren, TDescendants, ValueNull, TGraph> aggregatorContext,
+        out TChildren childrenScopeContext,
+        out TDescendants descendantsScopeContext,
+        out TGraph graphScopeContext
+    );
+
+    void DeconstructInnerAggregatorContext
+    (
+        scoped ref AggregatorContext<TChildren, TDescendants, TChild, TGraph> aggregatorContext,
+        out TChildren childrenScopeContext,
+        out TDescendants descendantsScopeContext,
+        out TChild childScopeContext,
+        out TGraph graphScopeContext
+    );
 }

@@ -2,61 +2,63 @@
 
 public interface IHomogeneousSuccessorAggregator
 <
-    TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TMutableInnerSiblingContext, TPrevious, TPost,
-    TNode, TInArrow, TOutArrow, TOutArrowSet
+    TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost,
+    TChildren, TDescendants, TChild, TGraph
 > :
-    ISuccessorGraph<TNode, TNode, TOutArrow, TOutArrowSet>
+    IAggregatorContextPremise<TChildren, TDescendants, TChild, TGraph>
     where TInArrow : IArrow<TNode, TNode>
     where TOutArrow : IArrow<TNode, TNode>
-    where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, TNode>
+    where TOutArrowSet : IOutArrowSet<TNode, TNode, TOutArrow>
 {
-    TMutableSiblingContext EmptyMutableSiblingContext { get; }
-
-    TMutableInnerSiblingContext EmptyMutableInnerSiblingContext { get; }
-
-    TMutableDepthContext CloneMutableDepthContext(TMutableDepthContext depthContext);
-
-    TPrevious EmptyPreviousAggregation { get; }
+    TPrevious CreateInitialPrevious(scoped ref AggregatorContext<TChildren, TDescendants, ValueNull, TGraph> context);
 
     TPrevious AggregateOuterPrevious
     (
-        scoped ref MutableOuterContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> mutableContext, TPrevious source,
-        LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value
+        TPrevious left,
+        LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> right,
+        scoped ref AggregatorContext<TChildren, TDescendants, ValueNull, TGraph> context
     );
 
     TPrevious AggregateInnerPrevious
     (
-        scoped ref MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TMutableInnerSiblingContext> mutableContext, TPrevious source,
-        LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value
+        TPrevious left,
+        LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> right,
+        scoped ref AggregatorContext<TChildren, TDescendants, TChild, TGraph> context
     );
 
 
-    TPost EmptyPostAggregation { get; }
+    TPost CreateInitialPost(scoped ref AggregatorContext<TChildren, TDescendants, ValueNull, TGraph> context);
+
+    TPost CreateFallbackPost(scoped ref AggregatorContext<TChildren, TDescendants, TChild, TGraph> context);
 
     TPost AggregateInnerPost
     (
-        scoped ref MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TMutableInnerSiblingContext> mutableContext, TPost source,
-        LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> value
+        TPost left,
+        LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> right,
+        scoped ref AggregatorContext<TChildren, TDescendants, TChild, TGraph> context
     );
 
     TPost AggregateOuterPost
     (
-        scoped ref MutableOuterContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> mutableContext, TPost source,
-        LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> value
+        TPost left,
+        LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> right,
+        scoped ref AggregatorContext<TChildren, TDescendants, ValueNull, TGraph> context
     );
 
 
-    TInArrow EmbedToInArrow(TOutArrow outArrow);
+    TInArrow EmbedToInArrow(TOutArrow outArrow, scoped ref AggregatorContext<TChildren, TDescendants, TChild, TGraph> context);
 
     bool CanRunOuterPhase
     (
-        scoped ref readonly MutableOuterContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext> context,
-        LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> phaseSnapshot
+        LabeledPhaseSnapshot<OuterPhaseLabel, OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPost>> phase,
+        scoped ref AggregatorContext<TChildren, TDescendants, ValueNull, TGraph> context
     );
-    
+
     bool CanRunInnerPhase
     (
-        scoped ref readonly MutableInnerContextRecord<TMutableGraphContext, TMutableSiblingContext, TMutableDepthContext, TMutableInnerSiblingContext> context,
-        LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> phaseSnapshot
+        LabeledPhaseSnapshot<InnerPhaseLabel, InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>> phase,
+        scoped ref AggregatorContext<TChildren, TDescendants, TChild, TGraph> context
     );
+    
+    TOutArrowSet GetDirectSuccessorArrows(TNode node, scoped ref AggregatorContext<TChildren, TDescendants, ValueNull, TGraph> context);
 }

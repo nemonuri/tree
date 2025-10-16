@@ -4,8 +4,8 @@ public readonly record struct OuterPhaseSnapshot<TNode, TInArrow, TPrevious, TPo
 (
     InitialOrRecursiveInfo<TNode, TNode, TInArrow, TPrevious> InitialOrRecursiveInfo,
     TNode OuterNode,
-    TPrevious PreviousAggregation,
-    TPost PostAggregation
+    TPrevious Previous,
+    TPost Post
 )
     where TInArrow : IArrow<TNode, TNode>
 ;
@@ -16,7 +16,7 @@ public readonly record struct InnerPhaseSnapshotComplement<TNode, TOutArrow, TOu
     TOutArrowSet OutArrowSet
 )
     where TOutArrow : IArrow<TNode, TNode>
-    where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, TNode>
+    where TOutArrowSet : IOutArrowSet<TNode, TNode, TOutArrow>
 ;
 
 public readonly record struct InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOutArrowSet, TPrevious, TPost>
@@ -26,12 +26,12 @@ public readonly record struct InnerPhaseSnapshot<TNode, TInArrow, TOutArrow, TOu
 )
     where TInArrow : IArrow<TNode, TNode>
     where TOutArrow : IArrow<TNode, TNode>
-    where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, TNode>
+    where TOutArrowSet : IOutArrowSet<TNode, TNode, TOutArrow>
 {
     public InitialOrRecursiveInfo<TNode, TNode, TInArrow, TPrevious> InitialOrRecursiveInfo => OuterPhaseSnapshot.InitialOrRecursiveInfo;
     public TNode OuterNode => OuterPhaseSnapshot.OuterNode;
-    public TPrevious PreviousAggregation => OuterPhaseSnapshot.PreviousAggregation;
-    public TPost PostAggregation => OuterPhaseSnapshot.PostAggregation;
+    public TPrevious Previous => OuterPhaseSnapshot.Previous;
+    public TPost Post => OuterPhaseSnapshot.Post;
     public TOutArrow OutArrow => InnerPhaseSnapshotComplement.OutArrow;
     public TOutArrowSet OutArrowSet => InnerPhaseSnapshotComplement.OutArrowSet;
 }

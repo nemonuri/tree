@@ -11,36 +11,24 @@ public interface IGraph<TNode, TNodeSet>
 
 public interface IDigraph
 <
-    TNode, TTail, TInArrow, TInArrowSet, THead, TOutArrow, TOutArrowSet
+    TTail, TNode, THead, TInArrow, TOutArrow, TInArrowSet, TOutArrowSet
 > :
     IPredecessorGraph<TTail, TNode, TInArrow, TInArrowSet>,
     ISuccessorGraph<TNode, THead, TOutArrow, TOutArrowSet>
     where TInArrow : IArrow<TTail, TNode>
-    where TInArrowSet : IInArrowSet<TInArrow, TTail, TNode>
+    where TInArrowSet : IInArrowSet<TTail, TNode, TInArrow>
     where TOutArrow : IArrow<TNode, THead>
-    where TOutArrowSet : IOutArrowSet<TOutArrow, TNode, THead>
+    where TOutArrowSet : IOutArrowSet<TNode, THead, TOutArrow>
 {
 }
 
 public interface IDynamicDigraph
 <
-    TContext, TNode, TTail, TTailSet, THead, THeadSet, TEffect
+    TTail, TNode, THead, TTailSet, THeadSet, TEffect
 > :
     IDynamicPredecessorGraph<TTail, TNode, TTailSet, TEffect>,
     IDynamicSuccessorGraph<TNode, THead, THeadSet, TEffect>
     where TTailSet : IEnumerable<TTail>
     where THeadSet : IEnumerable<THead>
 {
-}
-
-public interface IVisitor<TNode, TNodeInfo, TEffect>
-{
-    TNode? CurrentNode { get; }
-    TNodeInfo? CurrentNodeInfo { get; }
-
-    [MemberNotNullWhen(true, nameof(CurrentNode))]
-    bool MoveForward(out TEffect? effect);
-
-    [MemberNotNullWhen(true, nameof(CurrentNode))]
-    bool MoveBackward(out TEffect? effect);
 }
